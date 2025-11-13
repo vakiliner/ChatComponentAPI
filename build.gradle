@@ -1,0 +1,16 @@
+plugins {
+	id 'application'
+}
+
+version = project.version
+
+base {
+	archivesName = project.archives_base_name
+}
+
+java {
+	withSourcesJar()
+
+	sourceCompatibility = JavaVersion.VERSION_1_8
+	targetCompatibility = JavaVersion.VERSION_1_8
+}
