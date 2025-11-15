@@ -18,7 +18,7 @@ public class BukkitChatCommandSender implements ChatCommandSender {
 	}
 
 	public String getName() {
-		return this.sender.getName();
+		return this.sender.getName1();
 	}
 
 	public boolean isConsole() {
