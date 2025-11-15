@@ -1,0 +1,55 @@
+plugins {
+	id 'eclipse'
+	id 'idea'
+	id 'maven-publish'
+	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+minecraft {
+	mappings channel: mapping_channel, version: mapping_version
+	copyIdeResources = true
+
+	runs {
+		configureEach {
+			workingDirectory project.file('run')
+
+			property 'forge.logging.markers', 'REGISTRIES'
+			property 'forge.logging.console.level', 'debug'
+
+			mods {
+				"chatcomponentapi" {
+					source sourceSets.main
+				}
+			}
+		}
+
+		client {
+		}
+
+		server {
+			args '--nogui'
+		}
+
+		data {
+			workingDirectory project.file('run-data')
+
+			args '--mod', 'chatcomponentapi', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+		}
+	}
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+dependencies {
+	implementation project(':base')
+	minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+	inputs.property "version", project.version
+
+	filesMatching('META-INF/mods.toml') {
+		expand "version": inputs.properties.version
+	}
+}

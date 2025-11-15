@@ -1,6 +1,10 @@
-.gradle
+# gradle
+
+.gradle/
 **/build/
 !**/src/**/build/
+out/
+classes/
 
 # Ignore Gradle GUI config
 gradle-app.setting
@@ -14,8 +18,43 @@ gradle-app.setting
 # Cache of project
 .gradletasknamecache
 
-# Eclipse Gradle plugin generated files
-# Eclipse Core
-.project
-# JDT-specific (Eclipse Java Development Tools)
+# eclipse
+
+*.launch
+.metadata
+
+# idea
+
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# vscode
+
+.settings/
+.vscode/
+bin/
 .classpath
+.project
+
+# macos
+
+*.DS_Store
+
+# fabric
+
+run/
+
+# java
+
+hs_err_*.log
+replay_*.log
+*.hprof
+*.jfr
+
+# Files from Forge MDK
+forge*changelog.txt
+
+# other
+eclipse
