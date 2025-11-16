@@ -1,0 +1,8 @@
+plugins {
+	id 'application'
+}
+
+dependencies {
+	implementation project(':base')
+	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+}
