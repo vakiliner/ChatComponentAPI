@@ -24,8 +24,7 @@
 		"chatcomponentapi.mixins.fabric.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.17.3",
-		"minecraft": "~1.16.5",
+		"minecraft": ">=1.16.4",
 		"java": ">=1.8"
 	},
 	"custom": {
