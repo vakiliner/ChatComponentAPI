@@ -1,9 +1,8 @@
 package vakiliner.chatcomponentapi.fabric;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -11,6 +10,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSource;
+import net.minecraft.core.Registry;
 import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
@@ -18,11 +18,13 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.SelectorComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.PlayerTeam;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
@@ -31,9 +33,11 @@ import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.component.ChatComponentFormat;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
@@ -42,67 +46,12 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleMixin;
 
 public class FabricParser extends BaseParser {
-	private static final IStyleParser STYLE_PARSER;
-	private static final Method SEND_MESSAGE_WITH_TYPE;
-	private static final Method SEND_MESSAGE_WITHOUT_TYPE;
-	private static final Method SET_STYLE;
-	private static final Method APPEND;
-
-	static {
-		IStyleParser parser;
-		try {
-			parser = new HoverEventContents();
-		} catch (NoClassDefFoundError err) {
-			parser = new OldStyle();
-		}
-		STYLE_PARSER = parser;
-		try {
-			SET_STYLE = BaseComponent.class.getMethod("method_10862", Style.class);
-			APPEND = BaseComponent.class.getMethod("method_10852", Component.class);
-		} catch (NoSuchMethodException err) {
-			throw new RuntimeException(err);
-		}
-		Method sendMessageWithType;
-		Method sendMessageWithoutType;
-		try {
-			sendMessageWithType = ServerPlayer.class.getMethod("method_14254", Component.class, ChatType.class, UUID.class);
-		} catch (NoSuchMethodException err) {
-			try {
-				sendMessageWithType = ServerPlayer.class.getMethod("method_14254", Component.class, ChatType.class);
-			} catch (NoSuchMethodException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		try {
-			sendMessageWithoutType = CommandSource.class.getMethod("method_9203", Component.class, UUID.class);
-		} catch (NoSuchMethodException err) {
-			try {
-				sendMessageWithoutType = CommandSource.class.getMethod("method_9203", Component.class);
-			} catch (NoSuchMethodException e) {
-				throw new RuntimeException(e);
-			}
-		}
-		SEND_MESSAGE_WITH_TYPE = sendMessageWithType;
-		SEND_MESSAGE_WITHOUT_TYPE = sendMessageWithoutType;
-	}
-
 	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
-		try {
-			if (commandSource instanceof ServerPlayer) {
-				if (SEND_MESSAGE_WITH_TYPE.getParameterTypes().length == 3) {
-						SEND_MESSAGE_WITH_TYPE.invoke(commandSource, fabric(component), fabric(type), uuid != null ? uuid : Util.NIL_UUID);
-				} else {
-					SEND_MESSAGE_WITH_TYPE.invoke(commandSource, fabric(component), fabric(type));
-				}
-			} else {
-				if (SEND_MESSAGE_WITHOUT_TYPE.getParameterTypes().length == 2) {
-					SEND_MESSAGE_WITHOUT_TYPE.invoke(commandSource, fabric(component), uuid != null ? uuid : Util.NIL_UUID);
-				} else {
-					SEND_MESSAGE_WITHOUT_TYPE.invoke(commandSource, fabric(component));
-				}
-			}
-		} catch (IllegalAccessException | InvocationTargetException err) {
-			throw new RuntimeException(err);
+		if (uuid == null) uuid = Util.NIL_UUID;
+		if (commandSource instanceof ServerPlayer) {
+			((ServerPlayer) commandSource).sendMessage(fabric(component), fabric(type), uuid);
+		} else {
+			commandSource.sendMessage(fabric(component), uuid);
 		}
 	}
 
@@ -125,18 +74,10 @@ public class FabricParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse Component from " + raw.getClass());
 		}
-		try {
-			SET_STYLE.invoke(component, fabricStyle(raw));
-		} catch (IllegalAccessException | InvocationTargetException err) {
-			throw new RuntimeException(err);
-		}
+		component.setStyle(fabricStyle(raw));
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
-			try {
-				APPEND.invoke(component, fabric(chatComponent));
-			} catch (IllegalAccessException | InvocationTargetException err) {
-				throw new RuntimeException(err);
-			}
+			component.append(fabric(chatComponent));
 		}
 		return component;
 	}
@@ -158,7 +99,7 @@ public class FabricParser extends BaseParser {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
 		Style style = raw.getStyle();
-		STYLE_PARSER.copyColor(chatComponent, style);
+		chatComponent.setColor(fabric(style.getColor()));
 		chatComponent.setBold(((StyleMixin) style).getBold());
 		chatComponent.setItalic(((StyleMixin) style).getItalic());
 		chatComponent.setStrikethrough(((StyleMixin) style).getStrikethrough());
@@ -178,12 +119,16 @@ public class FabricParser extends BaseParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static HoverEvent fabric(ChatHoverEvent<?> event) {
-		return event != null ? STYLE_PARSER.fabric(event) : null;
+		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), fabricContent(event.getContents())) : null;
 	}
 
-	public static ChatHoverEvent<?> fabric(HoverEvent event) {
-		return event != null ? STYLE_PARSER.fabric(event) : null;
+	@SuppressWarnings("unchecked")
+	public static <V> ChatHoverEvent<?> fabric(HoverEvent event) {
+		if (event == null) return null;
+		HoverEvent.Action<?> action = event.getAction();
+		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) fabricContent2(event.getValue(action)));
 	}
 
 	public static ResourceLocation fabric(ChatId id) {
@@ -204,7 +149,22 @@ public class FabricParser extends BaseParser {
 
 	public static Style fabricStyle(ChatComponent component) {
 		Objects.requireNonNull(component);
-		return STYLE_PARSER.injectStyle(component);
+		Style style = Style.EMPTY;
+		TextColor color = fabric(component.getColorRaw());
+		if (color != null) {
+			style = style.withColor(color);
+		}
+		for (Map.Entry<ChatComponentFormat, Boolean> entry : component.getFormatsRaw().entrySet()) {
+			Boolean isSetted = entry.getValue();
+			if (isSetted != null && isSetted) {
+				style = style.applyFormat(FabricParser.fabric(entry.getKey().asTextFormat()));
+			}
+		}
+		ChatClickEvent clickEvent = component.getClickEvent();
+		if (clickEvent != null) style = style.withClickEvent(FabricParser.fabric(clickEvent));
+		ChatHoverEvent<?> hoverEvent = component.getHoverEvent();
+		if (hoverEvent != null) style = style.withHoverEvent(FabricParser.fabric(hoverEvent));
+		return style;
 	}
 
 	public static ChatFormatting fabric(ChatTextFormat format) {
@@ -213,6 +173,49 @@ public class FabricParser extends BaseParser {
 
 	public static ChatTextFormat fabric(ChatFormatting formatting) {
 		return formatting != null ? ChatTextFormat.getByChar(formatting.toString().charAt(1)) : null;
+	}
+
+	public static Object fabricContent(Object raw) {
+		if (raw == null) {
+			return null;
+		} else if (raw instanceof ChatComponent) {
+			ChatComponent content = (ChatComponent) raw;
+			return FabricParser.fabric(content);
+		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
+			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
+			return new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(FabricParser.fabric(content.getType())), content.getUniqueId(), FabricParser.fabric(content.getName()));
+		} else if (raw instanceof ChatHoverEvent.ShowItem) {
+			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
+			return new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(FabricParser.fabric(content.getItem())), content.getCount()));
+		} else {
+			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
+		}
+	}
+
+	public static Object fabricContent2(Object raw) {
+		if (raw == null) {
+			return null;
+		} else if (raw instanceof Component) {
+			Component content = (Component) raw;
+			return FabricParser.fabric(content);
+		} else if (raw instanceof HoverEvent.EntityTooltipInfo) {
+			HoverEvent.EntityTooltipInfo content = (HoverEvent.EntityTooltipInfo) raw;
+			return new ChatHoverEvent.ShowEntity(FabricParser.fabric(Registry.ENTITY_TYPE.getKey(content.type)), content.id, FabricParser.fabric(content.name));
+		} else if (raw instanceof HoverEvent.ItemStackInfo) {
+			HoverEvent.ItemStackInfo content = (HoverEvent.ItemStackInfo) raw;
+			ItemStack itemStack = content.getItemStack();
+			return new ChatHoverEvent.ShowItem(FabricParser.fabric(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
+		} else {
+			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
+		}
+	}
+
+	public static TextColor fabric(ChatTextColor color) {
+		return color != null ? TextColor.fromRgb(color.value()) : null;
+	}
+
+	public static ChatTextColor fabric(TextColor color) {
+		return color != null ? ChatTextColor.color(color.getValue(), null) : null;
 	}
 
 	public ChatPlayer toChatPlayer(ServerPlayer player) {
