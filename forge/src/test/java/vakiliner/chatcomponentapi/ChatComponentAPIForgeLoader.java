@@ -33,6 +33,7 @@ public class ChatComponentAPIForgeLoader {
 	public static final ForgeParser PARSER = new ForgeParser();
 	public static final Logger LOGGER = LogManager.getLogger("chatcomponentapi");
 	private static final List<Throwable> ERRORS = new ArrayList<>();
+	private static int testCount = 0;
 	private static int failCount = 0;
 
 	public ChatComponentAPIForgeLoader() {
@@ -96,7 +97,7 @@ public class ChatComponentAPIForgeLoader {
 			ChatComponentWithLegacyText chatComponentWithLegacyText = chatComponent.withLegacyText(legacyText);
 			return chatComponentWithLegacyText.toLegacyText().equals(legacyText) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
-		LOGGER.info("Fails " + failCount);
+		LOGGER.info("Fails " + failCount + '/' + testCount);
 		ERRORS.forEach(Throwable::printStackTrace);
 	}
 
@@ -122,6 +123,7 @@ public class ChatComponentAPIForgeLoader {
 			success = output;
 			error = fail;
 		}
+		testCount++;
 		if (!success) {
 			failCount++;
 			ERRORS.add(new RuntimeException("Test failed: " + name, error));
