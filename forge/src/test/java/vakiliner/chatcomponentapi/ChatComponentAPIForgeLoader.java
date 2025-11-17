@@ -35,7 +35,7 @@ public class ChatComponentAPIForgeLoader {
 	private static final List<Throwable> ERRORS = new ArrayList<>();
 	private static int failCount = 0;
 
-	public void onInitialize() {
+	public ChatComponentAPIForgeLoader() {
 		LOGGER.info("Tests started");
 		test("Parse text component", () -> {
 			ITextComponent input = new StringTextComponent("123");
