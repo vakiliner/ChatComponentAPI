@@ -7,7 +7,12 @@ import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
@@ -20,6 +25,8 @@ import net.minecraft.network.chat.ClickEvent.Action;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import vakiliner.chatcomponentapi.base.ChatCommandSender;
+import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
@@ -29,14 +36,38 @@ import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.fabric.FabricParser;
 
-public class ChatComponentAPIFabricLoader implements ModInitializer {
+public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegistrationCallback {
 	public static final FabricParser PARSER = new FabricParser();
 	public static final Logger LOGGER = LogManager.getLogger("chatcomponentapi");
 	private static final List<Throwable> ERRORS = new ArrayList<>();
+	private static int testCount = 0;
 	private static int failCount = 0;
 
 	public void onInitialize() {
-		LOGGER.info("Tests started");
+		CommandRegistrationCallback.EVENT.register(this);
+		startTests(ChatComponentAPIFabricLoader::startTests);
+	}
+
+	public void register(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
+		dispatcher.register(testCommand());
+	}
+
+	private static LiteralArgumentBuilder<CommandSourceStack> testCommand() {
+		LiteralArgumentBuilder<CommandSourceStack> chatcomponentapi = LiteralArgumentBuilder.literal("chatcomponentapi");
+		LiteralArgumentBuilder<CommandSourceStack> test = LiteralArgumentBuilder.literal("test");
+		return chatcomponentapi.requires((stack) -> {
+			return stack.hasPermission(2);
+		}).then(test.executes((context) -> startTests(() -> {
+			CommandSourceStack commandSourceStack = context.getSource();
+			CommandSource commandSource = commandSourceStack.getEntity();
+			if (commandSource == null) {
+				commandSource = commandSourceStack.getServer();
+			}
+			startTests(commandSource);
+		})));
+	}
+
+	public static void startTests() {
 		test("Parse text component", () -> {
 			Component input = new TextComponent("123");
 			ChatComponent test = FabricParser.fabric(input);
@@ -96,11 +127,36 @@ public class ChatComponentAPIFabricLoader implements ModInitializer {
 			ChatComponentWithLegacyText chatComponentWithLegacyText = chatComponent.withLegacyText(legacyText);
 			return chatComponentWithLegacyText.toLegacyText().equals(legacyText) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
-		LOGGER.info("Fails " + failCount);
-		ERRORS.forEach(Throwable::printStackTrace);
 	}
 
-	@SuppressWarnings("unused")
+	public static void startTests(CommandSource commandSource) {
+		ChatCommandSender chatCommandSender = PARSER.toChatCommandSender(commandSource);
+		test("Send message", () -> {
+			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"));
+		});
+		test("Send message with message type", () -> {
+			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, null);
+			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, null);
+		});
+		test("Send message with uuid", () -> {
+			ChatPlayer chatPlayer = chatCommandSender instanceof ChatPlayer ? (ChatPlayer) chatCommandSender : null;
+			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : null;
+			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, uuid);
+			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, uuid);
+		});
+	}
+
+	private static int startTests(Runnable runnable) {
+		LOGGER.info("Tests started");
+		runnable.run();
+		int tests = testCount;
+		int fails = failCount;
+		LOGGER.info("Fails " + fails + '/' + testCount);
+		ERRORS.forEach(Throwable::printStackTrace);
+		clearTests();
+		return fails > 0 ? -1 : tests;
+	}
+
 	private static boolean test(String name, Runnable runnable) {
 		return test(name, () -> {
 			runnable.run();
@@ -122,10 +178,17 @@ public class ChatComponentAPIFabricLoader implements ModInitializer {
 			success = output;
 			error = fail;
 		}
+		testCount++;
 		if (!success) {
 			failCount++;
 			ERRORS.add(new RuntimeException("Test failed: " + name, error));
 		}
 		return success;
+	}
+
+	private static void clearTests() {
+		testCount = 0;
+		failCount = 0;
+		ERRORS.clear();
 	}
 }
