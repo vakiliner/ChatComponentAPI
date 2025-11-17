@@ -3,20 +3,27 @@ plugins {
 }
 
 allprojects {
-	version = project.version
-}
-
-subprojects {
 	apply plugin: 'java'
 
+	version = project.version
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
 }
 
 task fatJar(type: Jar) {
-	archiveBaseName = project.archives_base_name
-	from subprojects.collect { project ->
+	inputs.property "archivesName", project.base.archivesName
+	from allprojects.collect { project ->
 		project.sourceSets.main.output
 	}
-	dependsOn subprojects.collect { it.tasks.named('jar') }
+}
+
+task devFatJar(type: Jar) {
+	archiveBaseName = "Dev${project.archives_base_name}"
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from allprojects.collect { project ->
+		project.sourceSets.test.output
+	}
+	from allprojects.collect { project ->
+		project.sourceSets.main.output
+	}
 }
