@@ -11,8 +11,19 @@ allprojects {
 }
 
 task fatJar(type: Jar) {
-	archiveBaseName = project.archives_base_name
-	from subprojects.collect { project ->
+	inputs.property "archivesName", project.base.archivesName
+	from allprojects.collect { project ->
+		project.sourceSets.main.output
+	}
+}
+
+task devFatJar(type: Jar) {
+	archiveBaseName = "Dev${project.archives_base_name}"
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	from allprojects.collect { project ->
+		project.sourceSets.test.output
+	}
+	from allprojects.collect { project ->
 		project.sourceSets.main.output
 	}
 }
