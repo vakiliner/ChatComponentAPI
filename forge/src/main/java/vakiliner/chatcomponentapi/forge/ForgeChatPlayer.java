@@ -30,12 +30,10 @@ public class ForgeChatPlayer implements ChatPlayer {
 		return this.player.getGameProfile().getId();
 	}
 
-	@SuppressWarnings("null")
 	public boolean isOp() {
 		return this.player.getServer().getPlayerList().isOp(this.player.getGameProfile());
 	}
 
-	@SuppressWarnings("null")
 	public ChatTeam getTeam() {
 		return this.parser.toChatTeam(this.player.getServer().getScoreboard().getPlayerTeam(this.getName()));
 	}
