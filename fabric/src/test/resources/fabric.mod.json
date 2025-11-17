@@ -23,6 +23,9 @@
 	"mixins": [
 		"chatcomponentapi.mixins.fabric.json"
 	],
+	"depends": {
+		"fabric-command-api-v1": "*"
+	},
 	"custom": {
 		"modmenu": {
 			"links": {
