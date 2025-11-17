@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "chatcomponentapi",
+	"version": "${version}",
+	"name": "ChatComponentAPI",
+	"description": "ChatComponentAPI для ChatModerator",
+	"authors": [
+		"VAKiliner"
+	],
+	"contact": {
+		"homepage": "https://github.com/vakiliner/ChatComponentAPI",
+		"issues": "https://github.com/vakiliner/ChatComponentAPI/issues",
+		"sources": "https://github.com/vakiliner/ChatComponentAPI"
+	},
+	"license": "CC0-1.0",
+	"icon": "icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"vakiliner.chatcomponentapi.ChatComponentAPIFabricLoader"
+		]
+	},
+	"mixins": [
+		"chatcomponentapi.mixins.fabric.json"
+	],
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/rsDWHrHbEr",
+				"modmenu.youtube": "https://youtube.com/channel/UCrJCX5gqOkVwH-Qq9HYyoxg"
+			},
+			"badges": [
+				"library"
+			]
+		}
+	}
+}
