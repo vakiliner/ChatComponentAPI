@@ -51,6 +51,17 @@ public class ChatComponentWithLegacyText extends ChatComponent {
 		return this.component.withLegacyText(getLegacyText);
 	}
 
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof ChatComponentWithLegacyText)) {
+			return false;
+		} else {
+			ChatComponentWithLegacyText other = (ChatComponentWithLegacyText) obj;
+			return this.component.equals(other.component) && this.toLegacyText().equals(other.toLegacyText());
+		}
+	}
+
 	protected String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
 		throw new UnsupportedOperationException();
 	}
