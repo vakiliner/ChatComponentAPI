@@ -11,20 +11,16 @@ dependencies {
 	modImplementation fabricApi.module("fabric-command-api-v1", "0.42.0+1.16")
 }
 
+compileJava {
+	source project(':base').sourceSets.main.java
+}
+
 processResources {
 	inputs.property "version", project.version
 
 	filesMatching("fabric.mod.json") {
 		expand "version": inputs.properties.version
 	}
-}
 
-task fatJar(type: net.fabricmc.loom.task.RemapJarTask) {
-	input.set(rootProject.tasks.named('fatJar').flatMap { it.archiveFile })
-	archiveBaseName = project.archives_base_name
-}
-
-task devFatJar(type: net.fabricmc.loom.task.RemapJarTask) {
-	input.set(rootProject.tasks.named('devFatJar').flatMap { it.archiveFile })
-	archiveBaseName = "Dev${project.archives_base_name}"
+	from project(':base').sourceSets.main.resources
 }
