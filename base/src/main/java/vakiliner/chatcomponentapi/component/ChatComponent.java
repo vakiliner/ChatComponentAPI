@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
@@ -319,5 +320,16 @@ public abstract class ChatComponent {
 
 	public ChatComponentWithLegacyText withLegacyText(String legacyText) {
 		return new ChatComponentWithLegacyText(this, legacyText);
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof ChatComponent)) {
+			return false;
+		} else {
+			ChatComponent other = (ChatComponent) obj;
+			return Objects.equals(this.parent, other.parent) && Objects.equals(this.color, other.color) && Objects.equals(this.bold, other.bold) && Objects.equals(this.italic, other.italic) && Objects.equals(this.underlined, other.underlined) && Objects.equals(this.strikethrough, other.strikethrough) && Objects.equals(this.obfuscated, other.obfuscated) && Objects.equals(this.insertion, other.insertion) && Objects.equals(this.clickEvent, other.clickEvent) && Objects.equals(this.hoverEvent, other.hoverEvent) && Objects.equals(this.extra, other.extra);
+		}
 	}
 }

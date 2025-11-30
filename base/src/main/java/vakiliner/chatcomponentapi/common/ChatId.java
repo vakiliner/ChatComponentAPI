@@ -23,6 +23,17 @@ public class ChatId {
 		return this.value;
 	}
 
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof ChatId)) {
+			return false;
+		} else {
+			ChatId other = (ChatId) obj;
+			return this.namespace.equals(other.namespace) && this.value.equals(other.value);
+		}
+	}
+
 	public String toString() {
 		return this.namespace + ':' + this.value;
 	}
