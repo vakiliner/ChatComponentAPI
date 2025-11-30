@@ -9,3 +9,23 @@ dependencies {
 	implementation project(':paper')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
+
+compileJava {
+	source project(':base').sourceSets.main.java
+	source project(':craftbukkit').sourceSets.main.java
+	source project(':spigot').sourceSets.main.java
+	source project(':paper').sourceSets.main.java
+}
+
+processResources {
+	inputs.property "version", project.version
+
+	filesMatching("plugin.yml") {
+		expand "version": inputs.properties.version
+	}
+
+	from project(':base').sourceSets.main.resources
+	from project(':craftbukkit').sourceSets.main.resources
+	from project(':spigot').sourceSets.main.resources
+	from project(':paper').sourceSets.main.resources
+}
