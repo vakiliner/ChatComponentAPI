@@ -43,10 +43,16 @@ dependencies {
 	minecraft group: 'net.minecraftforge', name: 'forge', version: "${minecraft_version}-${forge_version}"
 }
 
-tasks.named('processResources', ProcessResources).configure {
+compileJava {
+	source project(':base').sourceSets.main.java
+}
+
+processResources {
 	inputs.property "version", project.version
 
 	filesMatching('META-INF/mods.toml') {
 		expand "version": inputs.properties.version
 	}
+
+	from project(':base').sourceSets.main.resources
 }
