@@ -12,7 +12,7 @@ dependencies {
 }
 
 compileJava {
-	source project(':base').sourceSets.main.java
+	source project(':base').tasks.named('compileJava')
 }
 
 processResources {
@@ -22,5 +22,5 @@ processResources {
 		expand "version": inputs.properties.version
 	}
 
-	from project(':base').sourceSets.main.resources
+	from project(':base').tasks.named('processResources')
 }
