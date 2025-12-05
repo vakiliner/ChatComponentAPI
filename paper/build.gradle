@@ -11,7 +11,7 @@ dependencies {
 }
 
 compileJava {
-	source project(':spigot').tasks.named('compileJava')
+	source project(':spigot').tasks.getByName('compileJava').source
 }
 
 processResources {

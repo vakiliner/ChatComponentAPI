@@ -26,7 +26,7 @@ dependencies {
 }
 
 compileJava {
-	source project(':craftbukkit').tasks.named('compileJava')
+	source project(':craftbukkit').tasks.getByName('compileJava').source
 }
 
 processResources {

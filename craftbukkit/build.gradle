@@ -9,7 +9,7 @@ dependencies {
 }
 
 compileJava {
-	source project(':bukkit').tasks.named('compileJava')
+	source project(':bukkit').tasks.getByName('compileJava').source
 }
 
 processResources {
