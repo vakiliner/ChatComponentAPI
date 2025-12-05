@@ -8,3 +8,11 @@ dependencies {
 	implementation project(':spigot')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
+
+compileJava {
+	source project(':spigot').tasks.getByName('compileJava').source
+}
+
+processResources {
+	from project(':spigot').tasks.named('processResources')
+}

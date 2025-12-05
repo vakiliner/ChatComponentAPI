@@ -3,20 +3,9 @@ plugins {
 }
 
 allprojects {
-	version = project.version
-}
-
-subprojects {
 	apply plugin: 'java'
 
+	version = project.version
 	sourceCompatibility = JavaVersion.VERSION_1_8
 	targetCompatibility = JavaVersion.VERSION_1_8
-}
-
-task fatJar(type: Jar) {
-	archiveBaseName = project.archives_base_name
-	from subprojects.collect { project ->
-		project.sourceSets.main.output
-	}
-	dependsOn subprojects.collect { it.tasks.named('jar') }
 }
