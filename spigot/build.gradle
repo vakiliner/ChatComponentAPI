@@ -23,3 +23,11 @@ dependencies {
 	compileOnly group: 'net.md-5', name: 'bungeecord-chat', version: project.bungeecord_version
 	// compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
+
+compileJava {
+	source project(':craftbukkit').tasks.named('compileJava')
+}
+
+processResources {
+	from project(':craftbukkit').tasks.named('processResources')
+}

@@ -6,3 +6,11 @@ dependencies {
 	implementation project(':base')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
+
+compileJava {
+	source project(':bukkit').tasks.named('compileJava')
+}
+
+processResources {
+	from project(':bukkit').tasks.named('processResources')
+}
