@@ -4,14 +4,19 @@ plugins {
 
 dependencies {
 	implementation project(':base')
-	implementation project(':bukkit')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
 compileJava {
-	source project(':bukkit').tasks.getByName('compileJava').source
+	source project(':base').tasks.getByName('compileJava').source
 }
 
 processResources {
-	from project(':bukkit').tasks.named('processResources')
+	inputs.property "version", project.version
+
+	filesMatching("plugin.yml") {
+		expand "version": inputs.properties.version
+	}
+
+	from project(':base').tasks.named('processResources')
 }
