@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	implementation project(':base')
+	implementation project(':bukkit')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 

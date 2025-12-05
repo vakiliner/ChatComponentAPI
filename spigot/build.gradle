@@ -17,6 +17,7 @@ repositories {
 
 dependencies {
 	implementation project(':base')
+	implementation project(':bukkit')
 	implementation project(':craftbukkit')
 	compileOnly group: 'com.google.code.gson', name: 'gson', version: project.gson_version
 	compileOnly group: 'org.spigotmc', name: 'spigot-api', version: project.spigot_version

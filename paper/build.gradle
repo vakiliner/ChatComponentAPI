@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
 	implementation project(':base')
+	implementation project(':bukkit')
 	implementation project(':craftbukkit')
 	implementation project(':spigot')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
