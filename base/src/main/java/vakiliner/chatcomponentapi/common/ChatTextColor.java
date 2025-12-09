@@ -17,7 +17,7 @@ public class ChatTextColor {
 	public static ChatTextColor color(int color, ChatTextFormat asFormat) {
 		int truncatedValue = color & 0xFFFFFF;
 		ChatNamedColor named = ChatNamedColor.getByValue(truncatedValue);
-		return named != null ? named : new ChatTextColor(color, asFormat);
+		return named != null ? named : new ChatTextColor(truncatedValue, asFormat);
 	}
 
 	public static ChatTextColor color(int red, int green, int blue, ChatTextFormat asFormat) {
