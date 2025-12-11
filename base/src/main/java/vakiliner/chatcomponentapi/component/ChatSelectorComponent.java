@@ -7,14 +7,6 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 public class ChatSelectorComponent extends ChatComponent {
 	private String selector;
 
-	public ChatSelectorComponent() {
-		this("");
-	}
-
-	public ChatSelectorComponent(ChatTextColor color) {
-		this("", color);
-	}
-
 	public ChatSelectorComponent(String selector) {
 		this.selector = Objects.requireNonNull(selector);
 	}
