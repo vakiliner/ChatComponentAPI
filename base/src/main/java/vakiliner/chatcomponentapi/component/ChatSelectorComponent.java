@@ -8,26 +8,6 @@ public class ChatSelectorComponent extends ChatComponent {
 	private String selector;
 	private ChatComponent separator;
 
-	@Deprecated
-	public ChatSelectorComponent() {
-		this("");
-	}
-
-	@Deprecated
-	public ChatSelectorComponent(ChatComponent separator) {
-		this("", separator);
-	}
-
-	@Deprecated
-	public ChatSelectorComponent(ChatTextColor color) {
-		this("", color);
-	}
-
-	@Deprecated
-	public ChatSelectorComponent(ChatComponent separator, ChatTextColor color) {
-		this("", separator, color);
-	}
-
 	public ChatSelectorComponent(String selector) {
 		this.selector = Objects.requireNonNull(selector);
 	}
