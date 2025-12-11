@@ -8,6 +8,14 @@ public class ChatSelectorComponent extends ChatComponent {
 	private String selector;
 	private ChatComponent separator;
 
+	public ChatSelectorComponent() {
+		this("");
+	}
+
+	public ChatSelectorComponent(ChatTextColor color) {
+		this("", color);
+	}
+
 	public ChatSelectorComponent(String selector) {
 		this.selector = Objects.requireNonNull(selector);
 	}
