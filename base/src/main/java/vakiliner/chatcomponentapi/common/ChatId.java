@@ -1,5 +1,7 @@
 package vakiliner.chatcomponentapi.common;
 
+import java.util.Objects;
+
 public class ChatId {
 	private final String namespace;
 	private final String value;
@@ -11,8 +13,8 @@ public class ChatId {
 	}
 
 	public ChatId(String namespace, String value) {
-		this.namespace = namespace;
-		this.value = value;
+		this.namespace = Objects.requireNonNull(namespace);
+		this.value = Objects.requireNonNull(value);
 	}
 
 	public String getNamespace() {
