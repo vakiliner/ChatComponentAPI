@@ -1,6 +1,5 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
-import java.lang.reflect.Method;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -17,21 +16,8 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class BukkitParser extends BaseParser {
-	protected static final boolean sendMessageWithUUID;
-
-	static {
-		Class<CommandSender> clazz = CommandSender.class;
-		Method method;
-		try {
-			method = clazz.getMethod("sendMessage", UUID.class, String.class);
-		} catch (NoSuchMethodException | SecurityException err) {
-			method = null;
-		}
-		sendMessageWithUUID = method != null;
-	}
-
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
-		if (sendMessageWithUUID && type == ChatMessageType.CHAT) {
+		if (type == ChatMessageType.CHAT) {
 			sender.sendMessage(uuid, component.toLegacyText());
 		} else {
 			sender.sendMessage(component.toLegacyText());
