@@ -6,6 +6,7 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 
 public class ChatSelectorComponent extends ChatComponent {
 	private String selector;
+	private ChatComponent separator;
 
 	public ChatSelectorComponent() {
 		this("");
@@ -19,14 +20,26 @@ public class ChatSelectorComponent extends ChatComponent {
 		this.selector = Objects.requireNonNull(selector);
 	}
 
+	public ChatSelectorComponent(String selector, ChatComponent separator) {
+		this.selector = Objects.requireNonNull(selector);
+		this.separator = separator;
+	}
+
 	public ChatSelectorComponent(String selector, ChatTextColor color) {
 		super(color);
 		this.selector = Objects.requireNonNull(selector);
 	}
 
+	public ChatSelectorComponent(String selector, ChatComponent separator, ChatTextColor color) {
+		super(color);
+		this.selector = Objects.requireNonNull(selector);
+		this.separator = separator;
+	}
+
 	public ChatSelectorComponent(ChatSelectorComponent component) {
 		super(component);
 		this.selector = component.selector;
+		this.separator = component.separator;
 	}
 
 	public ChatSelectorComponent clone() {
@@ -37,8 +50,16 @@ public class ChatSelectorComponent extends ChatComponent {
 		return this.selector;
 	}
 
+	public ChatComponent getSeparator() {
+		return this.separator;
+	}
+
 	public void setSelector(String selector) {
 		this.selector = Objects.requireNonNull(selector);
+	}
+
+	public void setSeparator(ChatComponent separator) {
+		this.separator = separator;
 	}
 
 	protected String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
@@ -52,7 +73,7 @@ public class ChatSelectorComponent extends ChatComponent {
 			return false;
 		} else  {
 			ChatSelectorComponent other = (ChatSelectorComponent) obj;
-			return super.equals(other) && this.selector.equals(other.selector);
+			return super.equals(other) && this.selector.equals(other.selector) && Objects.equals(this.separator, other.separator);
 		}
 	}
 }
