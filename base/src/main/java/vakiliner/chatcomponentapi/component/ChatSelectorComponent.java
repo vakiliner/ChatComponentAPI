@@ -7,14 +7,6 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 public class ChatSelectorComponent extends ChatComponent {
 	private String selector;
 
-	public ChatSelectorComponent() {
-		this("");
-	}
-
-	public ChatSelectorComponent(ChatTextColor color) {
-		this("", color);
-	}
-
 	public ChatSelectorComponent(String selector) {
 		this.selector = Objects.requireNonNull(selector);
 	}
@@ -43,5 +35,16 @@ public class ChatSelectorComponent extends ChatComponent {
 
 	protected String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
 		return this.selector;
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		} else if (!(obj instanceof ChatSelectorComponent)) {
+			return false;
+		} else  {
+			ChatSelectorComponent other = (ChatSelectorComponent) obj;
+			return super.equals(other) && this.selector.equals(other.selector);
+		}
 	}
 }
