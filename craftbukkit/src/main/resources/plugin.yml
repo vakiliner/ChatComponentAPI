@@ -1,0 +1,8 @@
+name: ChatComponentAPI
+version: ${version}
+main: vakiliner.chatcomponentapi.ChatComponentAPIBukkitLoader
+description: ChatComponentAPI для ChatModerator
+author: VAKiliner
+website: https://github.com/vakiliner/ChatComponentAPI
+api-version: '1.16'
+load: STARTUP

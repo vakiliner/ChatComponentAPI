@@ -1,0 +1,15 @@
+modLoader="javafml"
+loaderVersion="[32,)"
+license="CC0-1.0"
+issueTrackerURL="https://github.com/vakiliner/ChatComponentAPI/issues"
+
+[[mods]]
+modId="chatcomponentapi"
+version="${version}"
+displayName="ChatComponentAPI"
+authors="VAKiliner"
+description='''
+ChatComponentAPI для ChatModerator
+'''
+displayURL="https://github.com/vakiliner/ChatComponentAPI"
+updateJSONURL="https://raw.githubusercontent.com/vakiliner/ChatComponentAPI/refs/heads/main/update.json"
