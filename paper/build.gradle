@@ -1,0 +1,18 @@
+plugins {
+	id 'application'
+}
+
+dependencies {
+	implementation project(':base')
+	implementation project(':craftbukkit')
+	implementation project(':spigot')
+	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+}
+
+compileJava {
+	source project(':spigot').tasks.getByName('compileJava').source
+}
+
+processResources {
+	from project(':spigot').tasks.named('processResources')
+}
