@@ -42,7 +42,7 @@ public class BukkitParser extends BaseParser {
 
 	public ChatOfflinePlayer toChatOfflinePlayer(OfflinePlayer player) {
 		if (player instanceof Player) {
-			return this.toChatPlayer(((Player) player));
+			return this.toChatPlayer((Player) player);
 		}
 		return player != null ? new BukkitChatOfflinePlayer(this, player) : null;
 	}

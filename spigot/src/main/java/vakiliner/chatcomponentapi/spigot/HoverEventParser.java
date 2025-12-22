@@ -18,7 +18,7 @@ class HoverEventParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <V> ChatHoverEvent<?> spigot(HoverEvent event) {
+	public <V> ChatHoverEvent<V> spigot(HoverEvent event) {
 		return event != null ? new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(event.getAction().name().toLowerCase()), (V) spigotContent2(event.getContents().get(0))) : null;
 	}
 
