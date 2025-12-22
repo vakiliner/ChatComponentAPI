@@ -14,7 +14,7 @@ compileJava {
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("plugin.yml") {
+	filesMatching('plugin.yml') {
 		expand "version": inputs.properties.version
 	}
 

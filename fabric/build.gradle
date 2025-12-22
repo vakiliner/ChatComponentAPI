@@ -8,7 +8,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation group: 'net.fabricmc', name: 'fabric-loader', version: project.loader_version
 
-	modImplementation fabricApi.module("fabric-command-api-v1", "0.42.0+1.16")
+	modImplementation fabricApi.module('fabric-command-api-v1', project.fabric_api)
 }
 
 compileJava {
@@ -18,7 +18,7 @@ compileJava {
 processResources {
 	inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
+	filesMatching('fabric.mod.json') {
 		expand "version": inputs.properties.version
 	}
 
