@@ -28,7 +28,7 @@
 		"java": ">=8"
 	},
 	"breaks": {
-		"chatmoderator": "<0.1.3-beta5"
+		"chatmoderator": "<=0.1.3-beta6"
 	},
 	"custom": {
 		"modmenu": {
