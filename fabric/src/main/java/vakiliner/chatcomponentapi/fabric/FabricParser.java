@@ -46,6 +46,10 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleMixin;
 
 public class FabricParser extends BaseParser {
+	public boolean supportsSeparatorInSelector() {
+		return false;
+	}
+
 	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
 		if (commandSource instanceof ServerPlayer) {
