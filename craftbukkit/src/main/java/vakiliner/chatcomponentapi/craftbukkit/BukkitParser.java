@@ -16,6 +16,10 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class BukkitParser extends BaseParser {
+	public boolean supportsSeparatorInSelector() {
+		return false;
+	}
+
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (type == ChatMessageType.CHAT) {
 			sender.sendMessage(uuid, component.toLegacyText());

@@ -44,6 +44,10 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.forge.mixin.StyleMixin;
 
 public class ForgeParser extends BaseParser {
+	public boolean supportsSeparatorInSelector() {
+		return false;
+	}
+
 	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (commandSource instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) commandSource;
