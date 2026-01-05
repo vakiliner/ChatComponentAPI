@@ -57,6 +57,10 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
+		player.connection.disconnect(forge(reason));
+	}
+
 	public static ITextComponent forge(ChatComponent raw) {
 		final TextComponent component;
 		if (raw instanceof ChatComponentWithLegacyText) {

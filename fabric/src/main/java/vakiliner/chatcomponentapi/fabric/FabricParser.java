@@ -59,6 +59,10 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
+	public void kickPlayer(ServerPlayer player, ChatComponent reason) {
+		player.connection.disconnect(fabric(reason));
+	}
+
 	public static Component fabric(ChatComponent raw) {
 		final BaseComponent component;
 		if (raw instanceof ChatComponentWithLegacyText) {

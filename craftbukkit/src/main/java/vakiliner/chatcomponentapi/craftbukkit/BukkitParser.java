@@ -28,6 +28,10 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
+	public void kickPlayer(Player player, ChatComponent reason) {
+		player.kickPlayer(reason != null ? reason.toLegacyText() : null);
+	}
+
 	public static ChatColor bukkit(ChatTextFormat color) {
 		return color != null ? ChatColor.getByChar(color.getChar()) : null;
 	}

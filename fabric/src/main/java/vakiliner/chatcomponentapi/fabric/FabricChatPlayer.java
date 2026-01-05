@@ -28,6 +28,10 @@ public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPla
 		return ChatGameMode.getByValue(this.player.gameMode.getGameModeForPlayer().getId());
 	}
 
+	public void kick(ChatComponent reason) {
+		this.parser.kickPlayer(this.player, reason);
+	}
+
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.sendMessage(this.player, component, type, uuid);
 	}

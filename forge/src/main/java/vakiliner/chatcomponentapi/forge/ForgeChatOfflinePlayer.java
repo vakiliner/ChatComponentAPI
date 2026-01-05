@@ -34,6 +34,10 @@ public class ForgeChatOfflinePlayer implements ChatOfflinePlayer {
 		return this.server.getPlayerList().isOp(this.gameProfile);
 	}
 
+	public boolean isOnline() {
+		return this.server.getPlayerList().getPlayer(this.getUniqueId()) != null;
+	}
+
 	public ChatTeam getTeam() {
 		return this.parser.toChatTeam(this.server.getScoreboard().getPlayerTeam(this.getName()));
 	}

@@ -32,6 +32,10 @@ public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 		return this.player.isOp();
 	}
 
+	public boolean isOnline() {
+		return this.player.isOnline();
+	}
+
 	public ChatTeam getTeam() {
 		return this.parser.toChatTeam(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(this.getName()));
 	}

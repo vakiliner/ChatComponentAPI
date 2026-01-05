@@ -26,6 +26,10 @@ public class BukkitChatPlayer extends BukkitChatOfflinePlayer implements ChatPla
 		return ChatGameMode.getByValue(this.getPlayer().getGameMode().getValue());
 	}
 
+	public void kick(ChatComponent reason) {
+		this.parser.kickPlayer(this.getPlayer(), reason);
+	}
+
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.sendMessage(this.getPlayer(), component, type, uuid);
 	}

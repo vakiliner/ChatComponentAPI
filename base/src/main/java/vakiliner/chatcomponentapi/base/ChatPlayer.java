@@ -8,6 +8,12 @@ public interface ChatPlayer extends ChatOfflinePlayer, ChatCommandSender {
 
 	ChatGameMode getGameMode();
 
+	default void kick() {
+		this.kick(null);
+	}
+
+	void kick(ChatComponent reason);
+
 	default boolean isConsole() {
 		return false;
 	}
