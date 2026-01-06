@@ -12,7 +12,7 @@
 		"issues": "https://github.com/vakiliner/ChatComponentAPI/issues",
 		"sources": "https://github.com/vakiliner/ChatComponentAPI"
 	},
-	"license": "Apache-2.0",
+	"license": "${license}",
 	"icon": "icon.png",
 	"environment": "*",
 	"entrypoints": {
