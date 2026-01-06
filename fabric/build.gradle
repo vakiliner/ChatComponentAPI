@@ -16,10 +16,14 @@ compileJava {
 }
 
 processResources {
-	inputs.property "version", project.version
+	var replaceProperties = [
+		version: project.version,
+		license: project.license,
+	]
+	inputs.properties replaceProperties
 
 	filesMatching('fabric.mod.json') {
-		expand "version": inputs.properties.version
+		expand replaceProperties
 	}
 
 	from project(':base').tasks.named('processResources')
