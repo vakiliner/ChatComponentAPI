@@ -15,10 +15,10 @@ subprojects {
 	archivesBaseName = "${project.archives_base_name}-${project.display_name}"
 
 	jar {
-		from "../LICENSE"
+		from '../LICENSE'
 	}
 }
 
 jar {
-	from "LICENSE"
+	from 'LICENSE'
 }
