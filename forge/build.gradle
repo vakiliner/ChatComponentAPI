@@ -15,7 +15,7 @@ minecraft {
 			property 'forge.logging.console.level', 'debug'
 
 			mods {
-				"chatcomponentapi" {
+				chatcomponentapi {
 					source sourceSets.main
 				}
 			}
@@ -41,6 +41,14 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
 	implementation project(':base')
 	minecraft group: 'net.minecraftforge', name: 'forge', version: "${project.minecraft_version}-${project.forge_version}"
+}
+
+jar {
+	manifest {
+		attributes([
+			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
+		])
+	}
 }
 
 compileJava {
