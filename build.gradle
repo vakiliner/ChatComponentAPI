@@ -10,5 +10,7 @@ allprojects {
 }
 
 subprojects {
+	apply plugin: 'java'
+
 	archivesBaseName = "${project.archives_base_name}-${project.display_name}"
 }
