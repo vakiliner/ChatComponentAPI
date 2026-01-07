@@ -46,7 +46,7 @@ dependencies {
 jar {
 	manifest {
 		attributes([
-			'MixinConfigs': 'chatcomponentapi.mixins.forge.json'
+			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
 		])
 	}
 }
