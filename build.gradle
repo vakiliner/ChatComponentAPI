@@ -13,4 +13,12 @@ subprojects {
 	apply plugin: 'java'
 
 	archivesBaseName = "${project.archives_base_name}-${project.display_name}"
+
+	jar {
+		from '../LICENSE'
+	}
+}
+
+jar {
+	from 'LICENSE'
 }
