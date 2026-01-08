@@ -20,7 +20,7 @@ public enum ChatTextFormat {
 	LIGHT_PURPLE('d'),
 	YELLOW('e'),
 	WHITE('f'),
-	MAGIC('k', true),
+	OBFUSCATED('k', true),
 	BOLD('l', true),
 	STRIKETHROUGH('m', true),
 	UNDERLINE('n', true),
@@ -29,6 +29,7 @@ public enum ChatTextFormat {
 
 	public static final char COLOR_CHAR = '§';
 	private static final Map<Character, ChatTextFormat> BY_CHAR = Maps.newHashMap();
+	private static final Map<String, ChatTextFormat> BY_NAME = Maps.newHashMap();
 	private final char code;
 	private final boolean isFormat;
 	private final String string;
@@ -47,6 +48,10 @@ public enum ChatTextFormat {
 		return this.code;
 	}
 
+	public String getName() {
+		return this.name().toLowerCase();
+	}
+
 	public String toString() {
 		return this.string;
 	}
@@ -63,9 +68,14 @@ public enum ChatTextFormat {
 		return BY_CHAR.get(code);
 	}
 
+	public static ChatTextFormat getByName(String name) {
+		return BY_NAME.get(name);
+	}
+
 	static {
 		for (ChatTextFormat color : values()) {
 			BY_CHAR.put(color.code, color);
+			BY_NAME.put(color.getName(), color);
 		}
 	}
 }
