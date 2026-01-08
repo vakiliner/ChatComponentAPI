@@ -10,8 +10,14 @@ dependencies {
 }
 
 jar {
-	from(zipTree(project(':spigot').tasks.getByName('jar').archiveFile)) {
+	var task = project(':spigot').tasks.getByName('jar')
+
+	from(zipTree(task.archiveFile)) {
 		exclude 'LICENSE'
 		exclude 'vakiliner/chatcomponentapi/ChatComponentAPIBukkitLoader.class'
+	}
+
+	manifest {
+		from task.manifest
 	}
 }

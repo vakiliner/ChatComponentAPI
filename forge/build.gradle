@@ -56,11 +56,15 @@ processResources {
 }
 
 jar {
-	from(zipTree(project(':base').tasks.getByName('jar').archiveFile)) {
+	var task = project(':base').tasks.getByName('jar')
+
+	from(zipTree(task.archiveFile)) {
 		exclude 'LICENSE'
 	}
 
 	manifest {
+		from task.manifest
+
 		attributes([
 			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
 		])
