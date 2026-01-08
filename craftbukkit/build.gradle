@@ -7,16 +7,16 @@ dependencies {
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
-compileJava {
-	source project(':base').tasks.getByName('compileJava').source
-}
-
 processResources {
 	inputs.property "version", project.version
 
 	filesMatching('plugin.yml') {
 		expand "version": inputs.properties.version
 	}
+}
 
-	from project(':base').tasks.named('processResources')
+jar {
+	from(zipTree(project(':base').tasks.getByName('jar').archiveFile)) {
+		exclude 'LICENSE'
+	}
 }

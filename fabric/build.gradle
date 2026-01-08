@@ -11,10 +11,6 @@ dependencies {
 	modImplementation fabricApi.module('fabric-command-api-v1', project.fabric_api)
 }
 
-compileJava {
-	source project(':base').tasks.getByName('compileJava').source
-}
-
 processResources {
 	var replaceProperties = [
 		version: project.version,
@@ -25,6 +21,10 @@ processResources {
 	filesMatching('fabric.mod.json') {
 		expand replaceProperties
 	}
+}
 
-	from project(':base').tasks.named('processResources')
+jar {
+	from(zipTree(project(':base').tasks.getByName('jar').archiveFile)) {
+		exclude 'LICENSE'
+	}
 }

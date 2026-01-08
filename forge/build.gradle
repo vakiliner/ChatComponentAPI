@@ -43,18 +43,6 @@ dependencies {
 	minecraft group: 'net.minecraftforge', name: 'forge', version: "${project.minecraft_version}-${project.forge_version}"
 }
 
-jar {
-	manifest {
-		attributes([
-			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
-		])
-	}
-}
-
-compileJava {
-	source project(':base').tasks.getByName('compileJava').source
-}
-
 processResources {
 	var replaceProperties = [
 		version: project.version,
@@ -65,6 +53,16 @@ processResources {
 	filesMatching('META-INF/mods.toml') {
 		expand replaceProperties
 	}
+}
 
-	from project(':base').tasks.named('processResources')
+jar {
+	from(zipTree(project(':base').tasks.getByName('jar').archiveFile)) {
+		exclude 'LICENSE'
+	}
+
+	manifest {
+		attributes([
+			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
+		])
+	}
 }

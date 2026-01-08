@@ -24,10 +24,9 @@ dependencies {
 	// compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
-compileJava {
-	source project(':craftbukkit').tasks.getByName('compileJava').source
-}
-
-processResources {
-	from project(':craftbukkit').tasks.named('processResources')
+jar {
+	from(zipTree(project(':craftbukkit').tasks.getByName('jar').archiveFile)) {
+		exclude 'LICENSE'
+		exclude 'vakiliner/chatcomponentapi/ChatComponentAPIBukkitLoader.class'
+	}
 }
