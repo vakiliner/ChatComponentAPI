@@ -7,7 +7,6 @@ public class ChatComponentAPIBukkitLoader extends JavaPlugin {
 	public static final BukkitParser PARSER;
 
 	static {
-		BukkitParser impl = new BukkitParser();
-		PARSER = impl;
+		PARSER = new BukkitParser();
 	}
 }
