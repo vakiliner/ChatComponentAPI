@@ -9,10 +9,15 @@ dependencies {
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
-compileJava {
-	source project(':spigot').tasks.getByName('compileJava').source
-}
+jar {
+	var task = project(':spigot').tasks.getByName('jar')
 
-processResources {
-	from project(':spigot').tasks.named('processResources')
+	from(zipTree(task.archiveFile)) {
+		exclude 'LICENSE'
+		exclude 'vakiliner/chatcomponentapi/ChatComponentAPIBukkitLoader.class'
+	}
+
+	manifest {
+		from task.manifest
+	}
 }
