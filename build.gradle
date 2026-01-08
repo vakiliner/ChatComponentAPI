@@ -22,9 +22,9 @@ subprojects {
 jar {
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
+	var paper = project(':paper').tasks.getByName('jar')
 	var fabric = project(':fabric').tasks.getByName('jar')
 	var forge = project(':forge').tasks.getByName('jar')
-	var paper = project(':paper').tasks.getByName('jar')
 
 	from(zipTree(paper.archiveFile)) {
 		exclude 'LICENSE'
