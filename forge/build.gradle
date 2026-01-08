@@ -1,5 +1,6 @@
 plugins {
 	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+	id 'org.spongepowered.mixin' version '0.7.+'
 }
 
 minecraft {
@@ -39,6 +40,11 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
 	implementation project(':base')
 	minecraft group: 'net.minecraftforge', name: 'forge', version: "${project.minecraft_version}-${project.forge_version}"
+	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+}
+
+mixin {
+	add sourceSets.main, 'ChatComponentAPI-forge-refmap.json'
 }
 
 processResources {

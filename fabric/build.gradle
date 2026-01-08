@@ -11,6 +11,12 @@ dependencies {
 	modImplementation fabricApi.module('fabric-command-api-v1', project.fabric_api)
 }
 
+loom {
+	mixin {
+		defaultRefmapName = 'ChatComponentAPI-fabric-refmap.json'
+	}
+}
+
 processResources {
 	var replaceProperties = [
 		version: project.version,

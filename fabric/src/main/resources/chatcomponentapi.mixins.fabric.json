@@ -8,6 +8,5 @@
 	],
 	"injectors": {
 		"defaultRequire": 1
-	},
-	"refmap": "ChatComponentAPI-fabric-refmap.json"
+	}
 }
