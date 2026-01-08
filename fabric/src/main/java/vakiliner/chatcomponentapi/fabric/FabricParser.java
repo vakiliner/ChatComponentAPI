@@ -24,6 +24,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.PlayerList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.PlayerTeam;
 import vakiliner.chatcomponentapi.base.BaseParser;
@@ -58,6 +59,11 @@ public class FabricParser extends BaseParser {
 		} else {
 			commandSource.sendMessage(fabric(component, commandSource instanceof MinecraftServer), uuid);
 		}
+	}
+
+	@Deprecated
+	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
+		playerList.broadcastMessage(fabric(component), fabric(type), uuid);
 	}
 
 	public static Component fabric(ChatComponent raw) {
