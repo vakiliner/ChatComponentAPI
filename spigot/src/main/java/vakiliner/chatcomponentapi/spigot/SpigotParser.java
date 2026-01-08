@@ -19,9 +19,7 @@ import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
-import vakiliner.chatcomponentapi.common.ChatNamedColor;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
-import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
@@ -78,8 +76,7 @@ public class SpigotParser extends BukkitParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse BaseComponent from " + raw.getClass());
 		}
-		ChatTextColor color = raw.getColorRaw();
-		if (color != null) component.setColor(spigot(color.asFormat()));
+		component.setColor(spigot(raw.getColorRaw()));
 		component.setBold(raw.isBoldRaw());
 		component.setItalic(raw.isItalicRaw());
 		component.setUnderlined(raw.isUnderlinedRaw());
@@ -110,7 +107,7 @@ public class SpigotParser extends BukkitParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		chatComponent.setColor(ChatNamedColor.getByFormat(spigot(raw.getColorRaw())));
+		chatComponent.setColor(spigot(raw.getColorRaw()));
 		chatComponent.setBold(raw.isBoldRaw());
 		chatComponent.setItalic(raw.isItalicRaw());
 		chatComponent.setUnderlined(raw.isUnderlinedRaw());
@@ -191,11 +188,11 @@ public class SpigotParser extends BukkitParser {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
 	}
 
-	public static ChatColor spigot(ChatTextFormat color) {
-		return color != null ? ChatColor.getByChar(color.getChar()) : null;
+	public static ChatColor spigot(ChatTextColor color) {
+		return color != null ? ChatColor.of(color.toString()) : null;
 	}
 
-	public static ChatTextFormat spigot(ChatColor color) {
-		return color != null ? ChatTextFormat.getByName(color.getName()) : null;
+	public static ChatTextColor spigot(ChatColor color) {
+		return color != null ? ChatTextColor.of(color.getName()) : null;
 	}
 }
