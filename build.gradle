@@ -1,5 +1,5 @@
 plugins {
-	id 'application'
+	id 'java'
 }
 
 allprojects {
@@ -10,5 +10,37 @@ allprojects {
 }
 
 subprojects {
-	archivesBaseName = "${project.archives_base_name}-${project.display_name}"
+	apply plugin: 'java'
+
+	base {
+		archivesName = "${project.archives_base_name}-${project.display_name}"
+	}
+
+	jar {
+		from '../LICENSE'
+	}
+}
+
+jar {
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	var paper = project(':paper').tasks.getByName('jar')
+	var fabric = project(':fabric').tasks.getByName('jar')
+	var forge = project(':forge').tasks.getByName('jar')
+
+	from(zipTree(paper.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(fabric.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(forge.archiveFile)) {
+		exclude 'LICENSE'
+	}
+
+	manifest {
+		from paper.manifest
+		from fabric.manifest
+		from forge.manifest
+	}
 }

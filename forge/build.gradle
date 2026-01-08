@@ -1,11 +1,10 @@
 plugins {
 	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+	id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
 	mappings channel: mapping_channel, version: minecraft_version
-	copyIdeResources = true
 
 	runs {
 		configureEach {
@@ -15,7 +14,7 @@ minecraft {
 			property 'forge.logging.console.level', 'debug'
 
 			mods {
-				"chatcomponentapi" {
+				chatcomponentapi {
 					source sourceSets.main
 				}
 			}
@@ -41,18 +40,37 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 dependencies {
 	implementation project(':base')
 	minecraft group: 'net.minecraftforge', name: 'forge', version: "${project.minecraft_version}-${project.forge_version}"
+	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
-compileJava {
-	source project(':base').tasks.getByName('compileJava').source
+mixin {
+	add sourceSets.main, 'ChatComponentAPI-forge-refmap.json'
 }
 
 processResources {
-	inputs.property "version", project.version
+	var replaceProperties = [
+		version: project.version,
+		license: project.license,
+	]
+	inputs.properties replaceProperties
 
 	filesMatching('META-INF/mods.toml') {
-		expand "version": inputs.properties.version
+		expand replaceProperties
+	}
+}
+
+jar {
+	var task = project(':base').tasks.getByName('jar')
+
+	from(zipTree(task.archiveFile)) {
+		exclude 'LICENSE'
 	}
 
-	from project(':base').tasks.named('processResources')
+	manifest {
+		from task.manifest
+
+		attributes([
+			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
+		])
+	}
 }

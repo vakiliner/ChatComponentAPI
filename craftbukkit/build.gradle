@@ -1,14 +1,10 @@
 plugins {
-	id 'application'
+	id 'java'
 }
 
 dependencies {
 	implementation project(':base')
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
-}
-
-compileJava {
-	source project(':base').tasks.getByName('compileJava').source
 }
 
 processResources {
@@ -17,6 +13,16 @@ processResources {
 	filesMatching('plugin.yml') {
 		expand "version": inputs.properties.version
 	}
+}
 
-	from project(':base').tasks.named('processResources')
+jar {
+	var task = project(':base').tasks.getByName('jar')
+
+	from(zipTree(task.archiveFile)) {
+		exclude 'LICENSE'
+	}
+
+	manifest {
+		from task.manifest
+	}
 }

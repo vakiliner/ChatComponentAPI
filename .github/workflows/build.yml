@@ -2,8 +2,8 @@ name: Java CI with Gradle
 on: [pull_request]
 
 jobs:
-  base:
-    name: Build Base
+  build:
+    name: Build
     runs-on: ubuntu-24.04
     steps:
       - name: checkout repository
@@ -18,58 +18,4 @@ jobs:
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: build
-        run: ./gradlew base:build
-  bukkit:
-    name: Build Bukkit
-    runs-on: ubuntu-24.04
-    needs: base
-    steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: build
-        run: ./gradlew paper:build
-  fabric:
-    name: Build Fabric
-    runs-on: ubuntu-24.04
-    needs: base
-    steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: build
-        run: ./gradlew fabric:build
-  forge:
-    name: Build Forge
-    runs-on: ubuntu-24.04
-    needs: base
-    steps:
-      - name: checkout repository
-        uses: actions/checkout@v4
-      - name: validate gradle wrapper
-        uses: gradle/actions/wrapper-validation@v4
-      - name: setup jdk
-        uses: actions/setup-java@v4
-        with:
-          java-version: '21'
-          distribution: 'microsoft'
-      - name: make gradle wrapper executable
-        run: chmod +x ./gradlew
-      - name: build
-        run: ./gradlew forge:build
+        run: ./gradlew build

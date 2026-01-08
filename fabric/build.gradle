@@ -11,16 +11,32 @@ dependencies {
 	modImplementation fabricApi.module('fabric-command-api-v1', project.fabric_api)
 }
 
-compileJava {
-	source project(':base').tasks.getByName('compileJava').source
+loom {
+	mixin {
+		defaultRefmapName = 'ChatComponentAPI-fabric-refmap.json'
+	}
 }
 
 processResources {
-	inputs.property "version", project.version
+	var replaceProperties = [
+		version: project.version,
+		license: project.license,
+	]
+	inputs.properties replaceProperties
 
 	filesMatching('fabric.mod.json') {
-		expand "version": inputs.properties.version
+		expand replaceProperties
+	}
+}
+
+jar {
+	var task = project(':base').tasks.getByName('jar')
+
+	from(zipTree(task.archiveFile)) {
+		exclude 'LICENSE'
 	}
 
-	from project(':base').tasks.named('processResources')
+	manifest {
+		from task.manifest
+	}
 }
