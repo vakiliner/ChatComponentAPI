@@ -86,7 +86,7 @@ public class SpigotParser extends BukkitParser {
 		component.setHoverEvent(spigot(raw.getHoverEvent()));
 		List<ChatComponent> children = raw.getExtra();
 		if (children != null) {
-			component.setExtra(children.stream().map(((c) -> spigot(c, isConsole))).collect(Collectors.toList()));
+			component.setExtra(children.stream().map((c) -> spigot(c, isConsole)).collect(Collectors.toList()));
 		}
 		return component;
 	}
