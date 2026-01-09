@@ -27,11 +27,11 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.sendMessage(sender, component.toLegacyText(), type, uuid);
+		this.sendMessage(sender, component.toLegacyText(), type == ChatMessageType.CHAT, uuid);
 	}
 
-	private void sendMessage(CommandSender sender, String message, ChatMessageType type, UUID uuid) {
-		if (type == ChatMessageType.CHAT) {
+	private void sendMessage(CommandSender sender, String message, boolean chat, UUID uuid) {
+		if (chat) {
 			sender.sendMessage(uuid, message);
 		} else {
 			sender.sendMessage(message);
@@ -51,8 +51,9 @@ public class BukkitParser extends BaseParser {
 
 	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, ChatMessageType chatMessageType, UUID uuid) {
 		String message = chatComponent.toLegacyText();
+		boolean chat = chatMessageType == ChatMessageType.CHAT;
 		for (CommandSender recipient : recipients) {
-			this.sendMessage(recipient, message, chatMessageType, uuid);
+			this.sendMessage(recipient, message, chat, uuid);
 		}
 	}
 
