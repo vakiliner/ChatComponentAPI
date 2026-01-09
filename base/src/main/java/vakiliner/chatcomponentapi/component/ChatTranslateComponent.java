@@ -19,11 +19,22 @@ public class ChatTranslateComponent extends ChatComponent {
 		this(legacyText, key, Arrays.asList(with));
 	}
 
+	public ChatTranslateComponent(String legacyText, String key, ChatStyle style, ChatComponent... with) {
+		this(legacyText, key, style, Arrays.asList(with));
+	}
+
 	public ChatTranslateComponent(String legacyText, String key, ChatTextColor color, ChatComponent... with) {
 		this(legacyText, key, color, Arrays.asList(with));
 	}
 
 	public ChatTranslateComponent(String legacyText, String key, Collection<ChatComponent> with) {
+		this.key = Objects.requireNonNull(key);
+		this.with.addAll(with);
+		this.legacyText = legacyText;
+	}
+
+	public ChatTranslateComponent(String legacyText, String key, ChatStyle style, Collection<ChatComponent> with) {
+		super(style);
 		this.key = Objects.requireNonNull(key);
 		this.with.addAll(with);
 		this.legacyText = legacyText;

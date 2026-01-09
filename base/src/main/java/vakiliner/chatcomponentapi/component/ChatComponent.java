@@ -3,7 +3,6 @@ package vakiliner.chatcomponentapi.component;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -16,34 +15,23 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 
 public abstract class ChatComponent {
 	private ChatComponent parent;
-	protected ChatTextColor color;
-	protected Boolean bold;
-	protected Boolean italic;
-	protected Boolean underlined;
-	protected Boolean strikethrough;
-	protected Boolean obfuscated;
-	protected String insertion;
-	protected ChatClickEvent clickEvent;
-	protected ChatHoverEvent<?> hoverEvent;
+	protected ChatStyle style;
 	protected List<ChatComponent> extra;
 
 	public ChatComponent() {
+		this.style = ChatStyle.EMPTY;
 	}
 
 	public ChatComponent(ChatTextColor color) {
-		this.color = color;
+		this.style = ChatStyle.EMPTY.withColor(color);
+	}
+
+	public ChatComponent(ChatStyle style) {
+		this.style = Objects.requireNonNull(style);
 	}
 
 	protected ChatComponent(ChatComponent component) {
-		this.color = component.color;
-		this.bold = component.bold;
-		this.italic = component.italic;
-		this.underlined = component.underlined;
-		this.strikethrough = component.strikethrough;
-		this.obfuscated = component.obfuscated;
-		this.insertion = component.insertion;
-		this.clickEvent = component.clickEvent;
-		this.hoverEvent = component.hoverEvent;
+		this.style = component.style;
 		List<ChatComponent> extra = component.extra;
 		if (extra != null) for (ChatComponent chatComponent : extra) {
 			this.append(chatComponent.clone());
@@ -111,40 +99,53 @@ public abstract class ChatComponent {
 
 	protected abstract String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats);
 
+	public ChatStyle getStyle() {
+		return this.style;
+	}
+
+	@Deprecated
 	public ChatTextColor getColorRaw() {
-		return this.color;
+		return this.style.getColor();
 	}
 
+	@Deprecated
 	public Boolean isBoldRaw() {
-		return this.bold;
+		return this.style.getBold();
 	}
 
+	@Deprecated
 	public Boolean isItalicRaw() {
-		return this.italic;
+		return this.style.getItalic();
 	}
 
+	@Deprecated
 	public Boolean isUnderlinedRaw() {
-		return this.underlined;
+		return this.style.getUnderlined();
 	}
 
+	@Deprecated
 	public Boolean isStrikethroughRaw() {
-		return this.strikethrough;
+		return this.style.getStrikethrough();
 	}
 
+	@Deprecated
 	public Boolean isObfuscatedRaw() {
-		return this.obfuscated;
+		return this.style.getObfuscated();
 	}
 
+	@Deprecated
 	public String getInsertion() {
-		return this.insertion;
+		return this.style.getInsertion();
 	}
 
+	@Deprecated
 	public ChatClickEvent getClickEvent() {
-		return this.clickEvent;
+		return this.style.getClickEvent();
 	}
 
+	@Deprecated
 	public ChatHoverEvent<?> getHoverEvent() {
-		return this.hoverEvent;
+		return this.style.getHoverEvent();
 	}
 
 	public List<ChatComponent> getExtra() {
@@ -212,59 +213,62 @@ public abstract class ChatComponent {
 		}
 	}
 
+	@Deprecated
 	public Boolean getFormatRaw(ChatComponentFormat format) {
-		switch (format) {
-			case BOLD: return this.isBoldRaw();
-			case ITALIC: return this.isItalicRaw();
-			case UNDERLINED: return this.isUnderlinedRaw();
-			case STRIKETHROUGH: return this.isStrikethroughRaw();
-			case OBFUSCATED: return this.isObfuscatedRaw();
-			default: throw new IllegalArgumentException("Invalid ChatComponentFormat");
-		}
+		return this.style.getFormat(format);
 	}
 
 	public Map<ChatComponentFormat, Boolean> getFormatsRaw() {
-		Map<ChatComponentFormat, Boolean> map = new HashMap<>();
-		for (ChatComponentFormat format : ChatComponentFormat.values()) {
-			map.put(format, this.getFormatRaw(format));
-		}
-		return map;
+		return this.style.getFormats();
 	}
 
+	public void setStyle(ChatStyle style) {
+		this.style = Objects.requireNonNull(style);
+	}
+
+	@Deprecated
 	public void setColor(ChatTextColor color) {
-		this.color = color;
+		this.setStyle(this.style.withColor(color));
 	}
 
+	@Deprecated
 	public void setBold(Boolean bold) {
-		this.bold = bold;
+		this.setStyle(this.style.withBold(bold));
 	}
 
+	@Deprecated
 	public void setItalic(Boolean italic) {
-		this.italic = italic;
+		this.setStyle(this.style.withItalic(italic));
 	}
 
+	@Deprecated
 	public void setUnderlined(Boolean underlined) {
-		this.underlined = underlined;
+		this.setStyle(this.style.withUnderlined(underlined));
 	}
 
+	@Deprecated
 	public void setStrikethrough(Boolean strikethrough) {
-		this.strikethrough = strikethrough;
+		this.setStyle(this.style.withStrikethrough(strikethrough));
 	}
 
+	@Deprecated
 	public void setObfuscated(Boolean obfuscated) {
-		this.obfuscated = obfuscated;
+		this.setStyle(this.style.withObfuscated(obfuscated));
 	}
 
+	@Deprecated
 	public void setInsertion(String insertion) {
-		this.insertion = insertion;
+		this.setStyle(this.style.withInsertion(insertion));
 	}
 
+	@Deprecated
 	public void setClickEvent(ChatClickEvent clickEvent) {
-		this.clickEvent = clickEvent;
+		this.setStyle(this.style.withClickEvent(clickEvent));
 	}
 
+	@Deprecated
 	public void setHoverEvent(ChatHoverEvent<?> hoverEvent) {
-		this.hoverEvent = hoverEvent;
+		this.setStyle(this.style.withHoverEvent(hoverEvent));
 	}
 
 	public void setExtra(Collection<ChatComponent> children) {
@@ -275,31 +279,14 @@ public abstract class ChatComponent {
 		}
 	}
 
+	@Deprecated
 	public void setFormat(ChatComponentFormat format, Boolean isSet) {
-		switch (format) {
-			case BOLD:
-				this.setBold(isSet);
-				break;
-			case ITALIC:
-				this.setItalic(isSet);
-				break;
-			case UNDERLINED:
-				this.setUnderlined(isSet);
-				break;
-			case STRIKETHROUGH:
-				this.setStrikethrough(isSet);
-				break;
-			case OBFUSCATED:
-				this.setObfuscated(isSet);
-				break;
-			default: throw new IllegalArgumentException("Invalid ChatComponentFormat");
-		}
+		this.setStyle(this.style.withFormat(format, isSet));
 	}
 
+	@Deprecated
 	public void setFormats(Map<ChatComponentFormat, Boolean> map) {
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : map.entrySet()) {
-			this.setFormat(entry.getKey(), entry.getValue());
-		}
+		this.setStyle(this.style.withFormats(map));
 	}
 
 	protected synchronized void setParent(ChatComponent parent) {
@@ -343,7 +330,7 @@ public abstract class ChatComponent {
 			return false;
 		} else {
 			ChatComponent other = (ChatComponent) obj;
-			return Objects.equals(this.parent, other.parent) && Objects.equals(this.color, other.color) && Objects.equals(this.bold, other.bold) && Objects.equals(this.italic, other.italic) && Objects.equals(this.underlined, other.underlined) && Objects.equals(this.strikethrough, other.strikethrough) && Objects.equals(this.obfuscated, other.obfuscated) && Objects.equals(this.insertion, other.insertion) && Objects.equals(this.clickEvent, other.clickEvent) && Objects.equals(this.hoverEvent, other.hoverEvent) && Objects.equals(this.extra, other.extra);
+			return Objects.equals(this.parent, other.parent) && this.style.equals(other.style) && Objects.equals(this.extra, other.extra);
 		}
 	}
 }

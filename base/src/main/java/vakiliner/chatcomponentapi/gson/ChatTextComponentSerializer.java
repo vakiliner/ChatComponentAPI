@@ -18,8 +18,7 @@ public class ChatTextComponentSerializer extends AbstractChatComponentSerializer
 
 	public ChatTextComponent deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject object = element.getAsJsonObject();
-		ChatTextComponent component = new ChatTextComponent(object.get("text").getAsString());
-		super.deserialize(component, object, context);
-		return component;
+		String text = object.get("text").getAsString();
+		return super.deserialize((style) -> new ChatTextComponent(text, style), object, context);
 	}
 }
