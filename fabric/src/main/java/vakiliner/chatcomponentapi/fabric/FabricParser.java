@@ -31,6 +31,8 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
@@ -61,7 +63,6 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
-	@Deprecated
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		playerList.broadcastMessage(fabric(component), fabric(type), uuid);
 	}
@@ -254,5 +255,13 @@ public class FabricParser extends BaseParser {
 
 	public ChatTeam toChatTeam(PlayerTeam team) {
 		return team != null ? new FabricChatTeam(this, team) : null;
+	}
+
+	public ChatServer toChatServer(MinecraftServer server) {
+		return server != null ? new FabricChatServer(this, server) : null;
+	}
+
+	public ChatPlayerList toChatPlayerList(PlayerList playerList) {
+		return playerList != null ? new FabricChatPlayerList(this, playerList) : null;
 	}
 }
