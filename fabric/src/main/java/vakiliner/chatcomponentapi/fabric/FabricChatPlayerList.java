@@ -2,7 +2,6 @@ package vakiliner.chatcomponentapi.fabric;
 
 import java.util.Objects;
 import java.util.UUID;
-
 import net.minecraft.server.players.PlayerList;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
