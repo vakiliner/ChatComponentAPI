@@ -120,6 +120,7 @@ public class PaperParser extends SpigotParser {
 				builder.decoration(paper(entry.getKey()), isSetted);
 			}
 		}
+		builder.insertion(chatStyle.getInsertion());
 		builder.clickEvent(paper(chatStyle.getClickEvent()));
 		builder.hoverEvent(paper(chatStyle.getHoverEvent()));
 		builder.font(paper(chatStyle.getFont()));
@@ -136,6 +137,7 @@ public class PaperParser extends SpigotParser {
 				builder.withFormat(paper(entry.getKey()), isSetted == TextDecoration.State.TRUE);
 			}
 		}
+		builder.withInsertion(style.insertion());
 		builder.withClickEvent(paper(style.clickEvent()));
 		builder.withHoverEvent(paper(style.hoverEvent()));
 		builder.withFont(paper(style.font()));

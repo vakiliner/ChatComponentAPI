@@ -137,6 +137,7 @@ public class FabricParser extends BaseParser {
 		builder.withStrikethrough(((StyleMixin) style).getStrikethrough());
 		builder.withObfuscated(((StyleMixin) style).getObfuscated());
 		builder.withClickEvent(fabric(style.getClickEvent()));
+		builder.withInsertion(style.getInsertion());
 		builder.withHoverEvent(fabric(style.getHoverEvent()));
 		builder.withFont(fabric(style.getFont()));
 		return builder.build();
