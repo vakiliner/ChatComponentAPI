@@ -13,7 +13,7 @@ public class ChatSelectorComponent extends ChatComponent {
 	}
 
 	public ChatSelectorComponent(String selector, ChatComponent separator) {
-		this.selector = Objects.requireNonNull(selector);
+		this(selector);
 		this.separator = separator;
 	}
 
@@ -34,8 +34,7 @@ public class ChatSelectorComponent extends ChatComponent {
 	}
 
 	public ChatSelectorComponent(String selector, ChatComponent separator, ChatTextColor color) {
-		super(color);
-		this.selector = Objects.requireNonNull(selector);
+		this(selector, color);
 		this.separator = separator;
 	}
 
