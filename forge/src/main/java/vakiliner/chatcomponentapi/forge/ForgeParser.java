@@ -40,6 +40,7 @@ import vakiliner.chatcomponentapi.component.ChatComponentFormat;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.forge.mixin.StyleMixin;
@@ -82,7 +83,7 @@ public class ForgeParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ITextComponent from " + raw.getClass());
 		}
-		component.setStyle(forgeStyle(raw));
+		component.setStyle(forge(raw.getStyle()));
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
 			component.append(forge(chatComponent, isConsole));
@@ -103,17 +104,28 @@ public class ForgeParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		Style style = raw.getStyle();
-		chatComponent.setColor(forge(style.getColor()));
-		chatComponent.setBold(((StyleMixin) style).getBold());
-		chatComponent.setItalic(((StyleMixin) style).getItalic());
-		chatComponent.setStrikethrough(((StyleMixin) style).getStrikethrough());
-		chatComponent.setUnderlined(((StyleMixin) style).getUnderlined());
-		chatComponent.setObfuscated(((StyleMixin) style).getObfuscated());
-		chatComponent.setClickEvent(forge(style.getClickEvent()));
-		chatComponent.setHoverEvent(forge(style.getHoverEvent()));
+		chatComponent.setStyle(forge(raw.getStyle()));
 		chatComponent.setExtra(raw.getSiblings().stream().map(ForgeParser::forge).collect(Collectors.toList()));
 		return chatComponent;
+	}
+
+	public static Style forge(ChatStyle chatStyle) {
+		return chatStyle != null ? StyleMixin.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont())) : null;
+	}
+
+	public static ChatStyle forge(Style style) {
+		if (style == null) return null;
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		builder.withColor(forge(style.getColor()));
+		builder.withBold(((StyleMixin) style).getBold());
+		builder.withItalic(((StyleMixin) style).getItalic());
+		builder.withUnderlined(((StyleMixin) style).getUnderlined());
+		builder.withStrikethrough(((StyleMixin) style).getStrikethrough());
+		builder.withObfuscated(((StyleMixin) style).getObfuscated());
+		builder.withClickEvent(forge(style.getClickEvent()));
+		builder.withHoverEvent(forge(style.getHoverEvent()));
+		builder.withFont(forge(style.getFont()));
+		return builder.build();
 	}
 
 	public static ClickEvent forge(ChatClickEvent event) {
@@ -189,6 +201,7 @@ public class ForgeParser extends BaseParser {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
 	}
 
+	@Deprecated
 	public static Style forgeStyle(ChatComponent component) {
 		Objects.requireNonNull(component);
 		Style style = Style.EMPTY;
