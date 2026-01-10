@@ -87,6 +87,7 @@ public class SpigotParser extends BukkitParser {
 		component.setObfuscated(chatStyle.getObfuscated());
 		component.setClickEvent(spigot(chatStyle.getClickEvent()));
 		component.setHoverEvent(spigot(chatStyle.getHoverEvent()));
+		component.setFont(chatStyle.getFont().toString());
 		List<ChatComponent> children = raw.getExtra();
 		if (children != null) {
 			component.setExtra(children.stream().map((c) -> spigot(c, isConsole)).collect(Collectors.toList()));
@@ -195,6 +196,7 @@ public class SpigotParser extends BukkitParser {
 		builder.withObfuscated(component.isObfuscatedRaw());
 		builder.withClickEvent(spigot(component.getClickEvent()));
 		builder.withHoverEvent(spigot(component.getHoverEvent()));
+		builder.withFont(ChatId.parse(component.getFont()));
 		return builder.build();
 	}
 

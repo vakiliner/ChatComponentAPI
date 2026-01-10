@@ -122,6 +122,7 @@ public class PaperParser extends SpigotParser {
 		}
 		builder.clickEvent(paper(chatStyle.getClickEvent()));
 		builder.hoverEvent(paper(chatStyle.getHoverEvent()));
+		builder.font(paper(chatStyle.getFont()));
 		return builder.build();
 	}
 
