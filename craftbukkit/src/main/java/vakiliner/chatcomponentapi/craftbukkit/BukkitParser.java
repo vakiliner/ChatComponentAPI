@@ -92,6 +92,6 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public ChatPlayerList toChatPlayerList(Server server) {
-		return server != null ? new BukkitChatPlayerList(this, server) : null;
+		return server != null ? new BukkitChatServer(this, server) : null;
 	}
 }

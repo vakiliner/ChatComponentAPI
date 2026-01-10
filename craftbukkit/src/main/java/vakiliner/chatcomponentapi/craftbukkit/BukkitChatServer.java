@@ -1,11 +1,14 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
 import java.util.Objects;
+import java.util.UUID;
 import org.bukkit.Server;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
+import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.component.ChatComponent;
 
-public class BukkitChatServer implements ChatServer {
+public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	private final BukkitParser parser;
 	private final Server server;
 
@@ -19,6 +22,10 @@ public class BukkitChatServer implements ChatServer {
 	}
 
 	public ChatPlayerList getPlayerList() {
-		return this.parser.toChatPlayerList(this.server);
+		return this;
+	}
+
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.broadcastMessage(this.server, component, type, uuid);
 	}
 }
