@@ -28,8 +28,7 @@ public class ChatSelectorComponent extends ChatComponent {
 	}
 
 	public ChatSelectorComponent(String selector, ChatComponent separator, ChatStyle style) {
-		super(style);
-		this.selector = Objects.requireNonNull(selector);
+		this(selector, style);
 		this.separator = separator;
 	}
 
