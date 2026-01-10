@@ -19,7 +19,7 @@ public class ChatStyle {
 	private final ChatHoverEvent<?> hoverEvent;
 	private final ChatId font;
 
-	private ChatStyle(ChatTextColor color,Boolean bold,Boolean italic,Boolean underlined,Boolean strikethrough,Boolean obfuscated,String insertion,ChatClickEvent clickEvent,ChatHoverEvent<?> hoverEvent, ChatId font) {
+	private ChatStyle(ChatTextColor color, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, String insertion, ChatClickEvent clickEvent, ChatHoverEvent<?> hoverEvent, ChatId font) {
 		this.color = color;
 		this.bold = bold;
 		this.italic = italic;
