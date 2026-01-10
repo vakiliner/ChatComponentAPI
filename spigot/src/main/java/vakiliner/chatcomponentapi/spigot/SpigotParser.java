@@ -44,7 +44,6 @@ public class SpigotParser extends BukkitParser {
 				player.spigot().sendMessage(type, component);
 			}
 		} else {
-			boolean isConsole = sender instanceof ConsoleCommandSender;
 			if (uuid != null) {
 				sender.spigot().sendMessage(uuid, component);
 			} else {
