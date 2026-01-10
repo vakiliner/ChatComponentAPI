@@ -182,11 +182,7 @@ public class ChatStyle {
 	}
 
 	public ChatStyle withFormats(Map<ChatComponentFormat, Boolean> map) {
-		Builder builder = this.toBuilder();
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : map.entrySet()) {
-			builder = builder.withFormat(entry.getKey(), entry.getValue());
-		}
-		return builder.build();
+		return this.toBuilder().withFormats(map).build();
 	}
 
 	public boolean equals(Object obj) {
@@ -297,6 +293,13 @@ public class ChatStyle {
 				case OBFUSCATED: return this.withObfuscated(value);
 				default: throw new IllegalArgumentException("Invalid ChatComponentFormat");
 			}
+		}
+
+		public Builder withFormats(Map<ChatComponentFormat, Boolean> map) {
+			for (Map.Entry<ChatComponentFormat, Boolean> entry : map.entrySet()) {
+				this.withFormat(entry.getKey(), entry.getValue());
+			}
+			return this;
 		}
 
 		public ChatStyle build() {
