@@ -103,6 +103,13 @@ public abstract class ChatComponent {
 		return this.style;
 	}
 
+	public ChatStyle getFinalStyle() {
+		ChatComponent parent = this.parent;
+		ChatStyle style = this.style;
+		if (parent == null) return style;
+		return style.applyTo(parent.getFinalStyle());
+	}
+
 	@Deprecated
 	public ChatTextColor getColorRaw() {
 		return this.style.getColor();
@@ -153,64 +160,34 @@ public abstract class ChatComponent {
 		return extra != null ? Collections.unmodifiableList(extra) : null;
 	}
 
+	@Deprecated
 	public ChatTextColor getColor() {
-		ChatTextColor color = this.getColorRaw();
-		if (color != null) {
-			return color;
-		} else {
-			ChatComponent parent = this.parent;
-			return parent != null ? parent.getColor() : ChatNamedColor.RESET;
-		}
+		return this.getFinalStyle().getColor();
 	}
 
+	@Deprecated
 	public boolean isBold() {
-		Boolean bold = this.isBoldRaw();
-		if (bold != null) {
-			return bold;
-		} else {
-			ChatComponent parent = this.parent;
-			return parent != null && parent.isBold();
-		}
+		return this.getFinalStyle().getBold();
 	}
 
+	@Deprecated
 	public boolean isItalic() {
-		Boolean italic = this.isItalicRaw();
-		if (italic != null) {
-			return italic;
-		} else {
-			ChatComponent parent = this.parent;
-			return parent != null && parent.isItalic();
-		}
+		return this.getFinalStyle().getItalic();
 	}
 
+	@Deprecated
 	public boolean isUnderlined() {
-		Boolean underlined = this.isUnderlinedRaw();
-		if (underlined != null) {
-			return underlined;
-		} else {
-			ChatComponent parent = this.parent;
-			return parent != null && parent.isUnderlined();
-		}
+		return this.getFinalStyle().getUnderlined();
 	}
 
+	@Deprecated
 	public boolean isStrikethrough() {
-		Boolean strikethrough = this.isStrikethroughRaw();
-		if (strikethrough != null) {
-			return strikethrough;
-		} else {
-			ChatComponent parent = this.parent;
-			return parent != null && parent.isStrikethrough();
-		}
+		return this.getFinalStyle().getStrikethrough();
 	}
 
+	@Deprecated
 	public boolean isObfuscated() {
-		Boolean obfuscated = this.isObfuscatedRaw();
-		if (obfuscated != null) {
-			return obfuscated;
-		} else {
-			ChatComponent parent = this.parent;
-			return parent != null && parent.isObfuscated();
-		}
+		return this.getFinalStyle().getObfuscated();
 	}
 
 	@Deprecated

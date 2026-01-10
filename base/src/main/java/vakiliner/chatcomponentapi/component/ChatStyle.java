@@ -185,6 +185,25 @@ public class ChatStyle {
 		return this.toBuilder().withFormats(map).build();
 	}
 
+	public ChatStyle applyTo(ChatStyle style) {
+		if (this == EMPTY) {
+			return style;
+		} else if (style == EMPTY) {
+			return this;
+		} else return new ChatStyle(
+			this.color != null ? this.color : style.color,
+			this.bold != null ? this.bold : style.bold,
+			this.italic != null ? this.italic : style.italic,
+			this.underlined != null ? this.underlined : style.underlined,
+			this.strikethrough != null ? this.strikethrough : style.strikethrough,
+			this.obfuscated != null ? this.obfuscated : style.obfuscated,
+			this.insertion != null ? this.insertion : style.insertion,
+			this.clickEvent != null ? this.clickEvent : style.clickEvent,
+			this.hoverEvent != null ? this.hoverEvent : style.hoverEvent,
+			this.font != null ? this.font : style.font
+		);
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
