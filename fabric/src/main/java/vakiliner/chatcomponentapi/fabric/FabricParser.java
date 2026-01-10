@@ -94,7 +94,7 @@ public class FabricParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse Component from " + raw.getClass());
 		}
-		component.setStyle(fabricStyle(raw));
+		component.setStyle(fabric(raw.getStyle()));
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
 			component.append(fabric(chatComponent, isConsole));
