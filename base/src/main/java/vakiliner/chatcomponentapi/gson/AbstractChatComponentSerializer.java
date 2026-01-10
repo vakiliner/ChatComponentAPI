@@ -42,15 +42,15 @@ public abstract class AbstractChatComponentSerializer<Component extends ChatComp
 
 	public <T extends Component> T deserialize(Function<ChatStyle, T> function, JsonObject object, JsonDeserializationContext context) throws JsonParseException {
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		if (object.has("color")) builder = builder.withColor(ChatTextColor.of(object.get("color").getAsString()));
-		if (object.has("bold")) builder = builder.withBold(object.get("bold").getAsBoolean());
-		if (object.has("italic")) builder = builder.withItalic(object.get("italic").getAsBoolean());
-		if (object.has("underlined")) builder = builder.withUnderlined(object.get("underlined").getAsBoolean());
-		if (object.has("strikethrough")) builder = builder.withStrikethrough(object.get("strikethrough").getAsBoolean());
-		if (object.has("obfuscated")) builder = builder.withObfuscated(object.get("obfuscated").getAsBoolean());
-		if (object.has("insertion")) builder = builder.withInsertion(object.get("insertion").getAsString());
-		if (object.has("clickEvent")) builder = builder.withClickEvent(context.deserialize(object.get("clickEvent"), ChatClickEvent.class));
-		if (object.has("hoverEvent")) builder = builder.withHoverEvent(context.deserialize(object.get("hoverEvent"), ChatHoverEvent.class));
+		if (object.has("color")) builder.withColor(ChatTextColor.of(object.get("color").getAsString()));
+		if (object.has("bold")) builder.withBold(object.get("bold").getAsBoolean());
+		if (object.has("italic")) builder.withItalic(object.get("italic").getAsBoolean());
+		if (object.has("underlined")) builder.withUnderlined(object.get("underlined").getAsBoolean());
+		if (object.has("strikethrough")) builder.withStrikethrough(object.get("strikethrough").getAsBoolean());
+		if (object.has("obfuscated")) builder.withObfuscated(object.get("obfuscated").getAsBoolean());
+		if (object.has("insertion")) builder.withInsertion(object.get("insertion").getAsString());
+		if (object.has("clickEvent")) builder.withClickEvent(context.deserialize(object.get("clickEvent"), ChatClickEvent.class));
+		if (object.has("hoverEvent")) builder.withHoverEvent(context.deserialize(object.get("hoverEvent"), ChatHoverEvent.class));
 		T component = function.apply(builder.build());
 		if (object.has("extra")) component.setExtra(Arrays.asList(context.deserialize(object.get("extra"), ChatComponent[].class)));
 		return component;
