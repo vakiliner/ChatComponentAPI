@@ -43,6 +43,7 @@ import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleMixin;
@@ -117,17 +118,28 @@ public class FabricParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		Style style = raw.getStyle();
-		chatComponent.setColor(fabric(style.getColor()));
-		chatComponent.setBold(((StyleMixin) style).getBold());
-		chatComponent.setItalic(((StyleMixin) style).getItalic());
-		chatComponent.setStrikethrough(((StyleMixin) style).getStrikethrough());
-		chatComponent.setUnderlined(((StyleMixin) style).getUnderlined());
-		chatComponent.setObfuscated(((StyleMixin) style).getObfuscated());
-		chatComponent.setClickEvent(fabric(style.getClickEvent()));
-		chatComponent.setHoverEvent(fabric(style.getHoverEvent()));
+		chatComponent.setStyle(fabric(raw.getStyle()));
 		chatComponent.setExtra(raw.getSiblings().stream().map(FabricParser::fabric).collect(Collectors.toList()));
 		return chatComponent;
+	}
+
+	public static Style fabric(ChatStyle chatStyle) {
+		return chatStyle != null ? StyleMixin.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont())) : null;
+	}
+
+	public static ChatStyle fabric(Style style) {
+		if (style == null) return null;
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		builder.withColor(fabric(style.getColor()));
+		builder.withBold(((StyleMixin) style).getBold());
+		builder.withItalic(((StyleMixin) style).getItalic());
+		builder.withUnderlined(((StyleMixin) style).getUnderlined());
+		builder.withStrikethrough(((StyleMixin) style).getStrikethrough());
+		builder.withObfuscated(((StyleMixin) style).getObfuscated());
+		builder.withClickEvent(fabric(style.getClickEvent()));
+		builder.withHoverEvent(fabric(style.getHoverEvent()));
+		builder.withFont(fabric(style.getFont()));
+		return builder.build();
 	}
 
 	public static ClickEvent fabric(ChatClickEvent event) {
@@ -166,6 +178,7 @@ public class FabricParser extends BaseParser {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
 	}
 
+	@Deprecated
 	public static Style fabricStyle(ChatComponent component) {
 		Objects.requireNonNull(component);
 		Style style = Style.EMPTY;
