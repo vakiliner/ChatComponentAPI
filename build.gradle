@@ -22,11 +22,15 @@ subprojects {
 }
 
 jar {
+	evaluationDependsOn(':paper')
+	evaluationDependsOn(':fabric')
+	evaluationDependsOn(':forge')
+
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
 	var paper = project(':paper').tasks.getByName('jar')
-	var fabric = project(':fabric').tasks.getByName('jar')
-	var forge = project(':forge').tasks.getByName('jar')
+	var fabric = project(':fabric').tasks.getByName('remapJar')
+	var forge = project(':forge').tasks.getByName('reobfJar')
 
 	from(zipTree(paper.archiveFile)) {
 		exclude 'LICENSE'
