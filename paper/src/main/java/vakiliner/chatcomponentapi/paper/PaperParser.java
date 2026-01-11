@@ -111,6 +111,7 @@ public class PaperParser extends SpigotParser {
 
 	public static Style paper(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
+		if (chatStyle == ChatStyle.EMPTY) return Style.empty();
 		Style.Builder builder = Style.style();
 		builder.color(paper(chatStyle.getColor()));
 		for (Map.Entry<ChatComponentFormat, Boolean> entry : chatStyle.getFormats().entrySet()) {
@@ -128,6 +129,7 @@ public class PaperParser extends SpigotParser {
 
 	public static ChatStyle paper(Style style) {
 		if (style == null) return null;
+		if (style.isEmpty()) return ChatStyle.EMPTY;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
 		builder.withColor(paper(style.color()));
 		for (Map.Entry<TextDecoration, TextDecoration.State> entry : style.decorations().entrySet()) {
