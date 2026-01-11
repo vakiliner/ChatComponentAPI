@@ -15,6 +15,7 @@ import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Util;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
@@ -77,25 +78,25 @@ public class ChatComponentAPIForgeLoader {
 	}
 
 	public static void startTests() {
-		test("Parse text component", () -> {
+		test("Parse ChatTextComponent", () -> {
 			ChatComponent input = new ChatTextComponent("123");
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
-		test("Parse translatable component", () -> {
+		test("Parse ChatTranslateComponent", () -> {
 			ChatComponent input = new ChatTranslateComponent(null, "123");
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
-		test("Parse selector component", () -> {
+		test("Parse ChatSelectorComponent", () -> {
 			ChatComponent input = new ChatSelectorComponent("123");
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
-		test("Parse text component with style", () -> {
+		test("Parse ChatTextComponent with style", () -> {
 			ChatTextComponent input = new ChatTextComponent("Hey");
 			input.setBold(true);
 			input.setItalic(false);
@@ -106,7 +107,7 @@ public class ChatComponentAPIForgeLoader {
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
-		test("Parse click event", () -> {
+		test("Parse ChatClickEvent", () -> {
 			for (ChatClickEvent.Action action : ChatClickEvent.Action.values()) {
 				ChatClickEvent input = new ChatClickEvent(action, "/chatcomponentapi test");
 				ClickEvent test = ForgeParser.forge(input);
@@ -115,7 +116,7 @@ public class ChatComponentAPIForgeLoader {
 			}
 			return true;
 		});
-		test("Parse hover event", () -> {
+		test("Parse ChatHoverEvent", () -> {
 			ChatHoverEvent<?>[] input = { new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("123")), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, new ChatHoverEvent.ShowEntity(ChatId.parse("creeper"), UUID.randomUUID(), new ChatTextComponent("Hello"))), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, new ChatHoverEvent.ShowItem(ChatId.parse("dirt"), 15)) };
 			ChatHoverEvent<?>[] output = new ChatHoverEvent[input.length];
 			for (int i = 0; i < input.length; i++) {
@@ -124,13 +125,13 @@ public class ChatComponentAPIForgeLoader {
 			}
 			return Arrays.equals(input, output);
 		});
-		test("Parse resource location", () -> {
+		test("Parse ChatId", () -> {
 			ChatId input = new ChatId("chatcomponentapi", "id");
 			ResourceLocation test = ForgeParser.forge(input);
 			ChatId output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
-		test("Parse chat type", () -> {
+		test("Parse ChatMessageType", () -> {
 			ChatMessageType[] input = { ChatMessageType.CHAT, ChatMessageType.SYSTEM };
 			ChatMessageType[] output = new ChatMessageType[input.length];
 			for (int i = 0; i < input.length; i++) {
@@ -139,7 +140,7 @@ public class ChatComponentAPIForgeLoader {
 			}
 			return Arrays.equals(input, output);
 		});
-		test("Parse text component with click & hover events", () -> {
+		test("Parse ChatTextComponent with click & hover events", () -> {
 			ChatComponent input = new ChatTextComponent("Hello");
 			input.setClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test"));
 			input.setHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world")));
@@ -147,7 +148,7 @@ public class ChatComponentAPIForgeLoader {
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
-		test("Parse chat formatting", () -> {
+		test("Parse ChatTextFormat", () -> {
 			ChatTextFormat[] input = ChatTextFormat.values();
 			ChatTextFormat[] output = new ChatTextFormat[input.length];
 			for (int i = 0; i < input.length; i++) {
@@ -156,7 +157,7 @@ public class ChatComponentAPIForgeLoader {
 			}
 			return Arrays.equals(input, output);
 		});
-		test("Parse chat colors", () -> {
+		test("Parse ChatTextColor", () -> {
 			List<ChatNamedColor> rawInput = Arrays.asList(ChatTextFormat.values()).stream().filter((f) -> !f.isFormat()).map(ChatNamedColor::getByFormat).collect(Collectors.toList());
 			ChatTextColor[] input = rawInput.toArray(new ChatTextColor[rawInput.size()]);
 			ChatTextColor[] output = new ChatTextColor[input.length];
@@ -179,19 +180,18 @@ public class ChatComponentAPIForgeLoader {
 		test("Send message", () -> {
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"));
 		});
-		test("Send message with message type", () -> {
+		test("Send message with ChatMessageType", () -> {
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, null);
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, null);
 		});
-		test("Send message with uuid", () -> {
+		test("Send message with ChatMessageType & UUID", () -> {
 			ChatPlayer chatPlayer = chatCommandSender instanceof ChatPlayer ? (ChatPlayer) chatCommandSender : null;
-			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : null;
+			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : Util.NIL_UUID;
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, uuid);
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, uuid);
 		});
 	}
 
-	@SuppressWarnings("unused")
 	private static boolean test(String name, Runnable runnable) {
 		return test(name, () -> {
 			runnable.run();
