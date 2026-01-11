@@ -121,11 +121,13 @@ public class FabricParser extends BaseParser {
 	}
 
 	public static Style fabric(ChatStyle chatStyle) {
+		if (chatStyle.isEmpty()) return Style.EMPTY;
 		return chatStyle != null ? StyleMixin.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont())) : null;
 	}
 
 	public static ChatStyle fabric(Style style) {
 		if (style == null) return null;
+		if (style.isEmpty()) return ChatStyle.EMPTY;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
 		builder.withColor(fabric(style.getColor()));
 		builder.withBold(((StyleMixin) style).getBold());
