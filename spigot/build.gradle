@@ -29,7 +29,6 @@ jar {
 
 	from(zipTree(task.archiveFile)) {
 		exclude 'LICENSE'
-		exclude 'vakiliner/chatcomponentapi/ChatComponentAPIBukkitLoader.class'
 	}
 
 	manifest {

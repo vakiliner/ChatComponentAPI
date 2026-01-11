@@ -16,7 +16,7 @@ processResources {
 }
 
 jar {
-	var task = project(':base').tasks.getByName('jar')
+	var task = project(':bukkit').tasks.getByName('jar')
 
 	from(zipTree(task.archiveFile)) {
 		exclude 'LICENSE'
