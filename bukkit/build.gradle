@@ -4,7 +4,6 @@ plugins {
 
 dependencies {
 	implementation project(':base')
-	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
 processResources {
