@@ -307,7 +307,10 @@ public abstract class ChatComponent {
 			return false;
 		} else {
 			ChatComponent other = (ChatComponent) obj;
-			return Objects.equals(this.parent, other.parent) && this.style.equals(other.style) && Objects.equals(this.extra, other.extra);
+			return (Objects.equals(this.parent, other.parent)
+				 && this.style.equals(other.style)
+				 && (this.extra == other.extra || (this.extra == null || this.extra.isEmpty() ? other.extra == null || other.extra.isEmpty() : this.extra.equals(other.extra)))
+			);
 		}
 	}
 }
