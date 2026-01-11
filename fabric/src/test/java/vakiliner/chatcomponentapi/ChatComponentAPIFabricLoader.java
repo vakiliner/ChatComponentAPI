@@ -154,6 +154,17 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			ChatComponentWithLegacyText chatComponentWithLegacyText = chatComponent.withLegacyComponent(legacyComponent);
 			return chatComponentWithLegacyText.toLegacyText().equals(legacyComponent.toLegacyText()) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
+		test("Looping ChatComponent extra", () -> {
+			ChatComponent component1 = new ChatTextComponent("123");
+			ChatComponent component2 = new ChatTextComponent("456");
+			component1.append(component2);
+			try {
+				component2.append(component1);
+			} catch (Throwable err) {
+				component2.append(component1.clone());
+			}
+			component1.clone();
+		});
 	}
 
 	public static void startTests(CommandSource commandSource) {
