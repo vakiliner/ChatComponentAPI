@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
@@ -14,16 +16,15 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 
 public abstract class ChatComponent {
-	private ChatComponent parent;
 	protected ChatStyle style;
 	protected List<ChatComponent> extra;
 
 	public ChatComponent() {
-		this.style = ChatStyle.EMPTY;
+		this(ChatStyle.EMPTY);
 	}
 
 	public ChatComponent(ChatTextColor color) {
-		this.style = ChatStyle.EMPTY.withColor(color);
+		this(ChatStyle.EMPTY.withColor(color));
 	}
 
 	public ChatComponent(ChatStyle style) {
@@ -32,10 +33,7 @@ public abstract class ChatComponent {
 
 	protected ChatComponent(ChatComponent component) {
 		this.style = component.style;
-		List<ChatComponent> extra = component.extra;
-		if (extra != null) for (ChatComponent chatComponent : extra) {
-			this.append(chatComponent.clone());
-		}
+		this.extra = component.extra;
 	}
 
 	public abstract ChatComponent clone();
@@ -103,13 +101,6 @@ public abstract class ChatComponent {
 		return this.style;
 	}
 
-	public ChatStyle getFinalStyle() {
-		ChatComponent parent = this.parent;
-		ChatStyle style = this.style;
-		if (parent == null) return style;
-		return style.applyTo(parent.getFinalStyle());
-	}
-
 	@Deprecated
 	public ChatTextColor getColorRaw() {
 		return this.style.getColor();
@@ -158,36 +149,6 @@ public abstract class ChatComponent {
 	public List<ChatComponent> getExtra() {
 		List<ChatComponent> extra = this.extra;
 		return extra != null ? Collections.unmodifiableList(extra) : null;
-	}
-
-	@Deprecated
-	public ChatTextColor getColor() {
-		return this.getFinalStyle().getColor();
-	}
-
-	@Deprecated
-	public boolean isBold() {
-		return this.getFinalStyle().getBold();
-	}
-
-	@Deprecated
-	public boolean isItalic() {
-		return this.getFinalStyle().getItalic();
-	}
-
-	@Deprecated
-	public boolean isUnderlined() {
-		return this.getFinalStyle().getUnderlined();
-	}
-
-	@Deprecated
-	public boolean isStrikethrough() {
-		return this.getFinalStyle().getStrikethrough();
-	}
-
-	@Deprecated
-	public boolean isObfuscated() {
-		return this.getFinalStyle().getObfuscated();
 	}
 
 	@Deprecated
@@ -266,22 +227,32 @@ public abstract class ChatComponent {
 		this.setStyle(this.style.withFormats(map));
 	}
 
-	protected synchronized void setParent(ChatComponent parent) {
-		if (this.parent != null) throw new IllegalArgumentException("Component already has parent");
-		this.parent = Objects.requireNonNull(parent);
-	}
-
-	public void append(ChatComponent component) {
-		if (component == this) throw new IllegalArgumentException("This component cannot be added");
-		if (component.parent != null) throw new IllegalArgumentException("Component already has parent");
+	protected void unsafeAppend(ChatComponent component) {
 		List<ChatComponent> extra = this.extra;
 		if (extra == null) synchronized (this) {
 			if ((extra = this.extra) == null) {
 				extra = this.extra = new ArrayList<>();
 			}
 		}
-		component.setParent(this);
 		extra.add(component);
+	}
+
+	public void append(ChatComponent component) {
+		if (component == this) throw new IllegalArgumentException("This component cannot be added");
+		List<ChatComponent> extra = component.extra;
+		if (extra != null) {
+			Set<ChatComponent> set = new HashSet<>();
+			Queue<ChatComponent> queue = new LinkedList<>(extra);
+			ChatComponent check = null;
+			while ((check = queue.poll()) != null) {
+				if (set.contains(check)) continue;
+				if (check == this) throw new IllegalArgumentException("Components are looping, try cloning the component before appending");
+				List<ChatComponent> e = check.extra;
+				if (e != null) queue.addAll(e);
+				set.add(check);
+			}
+		}
+		this.unsafeAppend(component);
 	}
 
 	public ChatComponentWithLegacyText withLegacyComponent(Supplier<ChatComponent> getLegacyComponent) {
@@ -307,10 +278,7 @@ public abstract class ChatComponent {
 			return false;
 		} else {
 			ChatComponent other = (ChatComponent) obj;
-			return (Objects.equals(this.parent, other.parent)
-				 && this.style.equals(other.style)
-				 && (this.extra == other.extra || (this.extra == null || this.extra.isEmpty() ? other.extra == null || other.extra.isEmpty() : this.extra.equals(other.extra)))
-			);
+			return this.style.equals(other.style) && (this.extra == other.extra || (this.extra == null || this.extra.isEmpty() ? other.extra == null || other.extra.isEmpty() : this.extra.equals(other.extra)));
 		}
 	}
 }
