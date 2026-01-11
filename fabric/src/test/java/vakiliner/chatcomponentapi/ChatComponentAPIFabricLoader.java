@@ -20,6 +20,7 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
@@ -34,6 +35,7 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.FabricParser;
@@ -88,17 +90,6 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			ChatComponent output = FabricParser.fabric(test);
 			return input.equals(output);
 		});
-		test("Parse ChatTextComponent with style", () -> {
-			ChatTextComponent input = new ChatTextComponent("Hey");
-			input.setBold(true);
-			// input.setItalic(false);
-			input.setUnderlined(true);
-			// input.setStrikethrough(false);
-			input.setObfuscated(true);
-			Component test = FabricParser.fabric(input);
-			ChatComponent output = FabricParser.fabric(test);
-			return input.equals(output);
-		});
 		test("Parse ChatClickEvent", () -> {
 			for (ChatClickEvent.Action action : ChatClickEvent.Action.values()) {
 				ChatClickEvent input = new ChatClickEvent(action, "/chatcomponentapi test");
@@ -132,14 +123,6 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			}
 			return Arrays.equals(input, output);
 		});
-		test("Parse ChatTextComponent with click & hover events", () -> {
-			ChatComponent input = new ChatTextComponent("Hello");
-			input.setClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test"));
-			input.setHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world")));
-			Component test = FabricParser.fabric(input);
-			ChatComponent output = FabricParser.fabric(test);
-			return input.equals(output);
-		});
 		test("Parse ChatTextFormat", () -> {
 			ChatTextFormat[] input = ChatTextFormat.values();
 			ChatTextFormat[] output = new ChatTextFormat[input.length];
@@ -158,6 +141,12 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 				output[i] = FabricParser.fabric(test);
 			}
 			return Arrays.equals(input, output);
+		});
+		test("Parse ChatStyle", () -> {
+			ChatStyle input = ChatStyle.newBuilder().withColor(ChatNamedColor.GRAY).withBold(true).withItalic(false).withUnderlined(null).withStrikethrough(false).withObfuscated(true).withInsertion("Test").withFont(ChatId.parse("default")).withClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test")).withHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world"))).build();
+			Style test = FabricParser.fabric(input);
+			ChatStyle output = FabricParser.fabric(test);
+			return input.equals(output);
 		});
 		test("ChatComponentWithLegacyText", () -> {
 			ChatTextComponent legacyComponent = new ChatTextComponent("legacy");

@@ -15,6 +15,11 @@ public class ChatTextComponent extends ChatComponent {
 		this.text = Objects.requireNonNull(text);
 	}
 
+	public ChatTextComponent(String text, ChatStyle style) {
+		super(style);
+		this.text = Objects.requireNonNull(text);
+	}
+
 	public ChatTextComponent(String text, ChatTextColor color) {
 		super(color);
 		this.text = Objects.requireNonNull(text);

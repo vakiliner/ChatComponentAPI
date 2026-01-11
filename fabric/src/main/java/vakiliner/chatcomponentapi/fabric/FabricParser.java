@@ -2,8 +2,6 @@ package vakiliner.chatcomponentapi.fabric;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
@@ -38,11 +36,11 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
-import vakiliner.chatcomponentapi.component.ChatComponentFormat;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleMixin;
@@ -93,7 +91,7 @@ public class FabricParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse Component from " + raw.getClass());
 		}
-		component.setStyle(fabricStyle(raw));
+		component.setStyle(fabric(raw.getStyle()));
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
 			component.append(fabric(chatComponent, isConsole));
@@ -117,17 +115,29 @@ public class FabricParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		Style style = raw.getStyle();
-		chatComponent.setColor(fabric(style.getColor()));
-		chatComponent.setBold(((StyleMixin) style).getBold());
-		chatComponent.setItalic(((StyleMixin) style).getItalic());
-		chatComponent.setStrikethrough(((StyleMixin) style).getStrikethrough());
-		chatComponent.setUnderlined(((StyleMixin) style).getUnderlined());
-		chatComponent.setObfuscated(((StyleMixin) style).getObfuscated());
-		chatComponent.setClickEvent(fabric(style.getClickEvent()));
-		chatComponent.setHoverEvent(fabric(style.getHoverEvent()));
+		chatComponent.setStyle(fabric(raw.getStyle()));
 		chatComponent.setExtra(raw.getSiblings().stream().map(FabricParser::fabric).collect(Collectors.toList()));
 		return chatComponent;
+	}
+
+	public static Style fabric(ChatStyle chatStyle) {
+		return chatStyle != null ? StyleMixin.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont())) : null;
+	}
+
+	public static ChatStyle fabric(Style style) {
+		if (style == null) return null;
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		builder.withColor(fabric(style.getColor()));
+		builder.withBold(((StyleMixin) style).getBold());
+		builder.withItalic(((StyleMixin) style).getItalic());
+		builder.withUnderlined(((StyleMixin) style).getUnderlined());
+		builder.withStrikethrough(((StyleMixin) style).getStrikethrough());
+		builder.withObfuscated(((StyleMixin) style).getObfuscated());
+		builder.withClickEvent(fabric(style.getClickEvent()));
+		builder.withInsertion(style.getInsertion());
+		builder.withHoverEvent(fabric(style.getHoverEvent()));
+		builder.withFont(fabric(((StyleMixin) style).getFont()));
+		return builder.build();
 	}
 
 	public static ClickEvent fabric(ChatClickEvent event) {
@@ -164,26 +174,6 @@ public class FabricParser extends BaseParser {
 
 	public static ChatMessageType fabric(ChatType type) {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
-	}
-
-	public static Style fabricStyle(ChatComponent component) {
-		Objects.requireNonNull(component);
-		Style style = Style.EMPTY;
-		TextColor color = fabric(component.getColorRaw());
-		if (color != null) {
-			style = style.withColor(color);
-		}
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : component.getFormatsRaw().entrySet()) {
-			Boolean isSetted = entry.getValue();
-			if (isSetted != null && isSetted) {
-				style = style.applyFormat(FabricParser.fabric(entry.getKey().asTextFormat()));
-			}
-		}
-		ChatClickEvent clickEvent = component.getClickEvent();
-		if (clickEvent != null) style = style.withClickEvent(FabricParser.fabric(clickEvent));
-		ChatHoverEvent<?> hoverEvent = component.getHoverEvent();
-		if (hoverEvent != null) style = style.withHoverEvent(FabricParser.fabric(hoverEvent));
-		return style;
 	}
 
 	public static ChatFormatting fabric(ChatTextFormat format) {

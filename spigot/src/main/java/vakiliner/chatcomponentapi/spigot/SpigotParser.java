@@ -1,6 +1,7 @@
 package vakiliner.chatcomponentapi.spigot;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,7 @@ import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.craftbukkit.BukkitParser;
@@ -76,14 +78,17 @@ public class SpigotParser extends BukkitParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse BaseComponent from " + raw.getClass());
 		}
-		component.setColor(spigot(raw.getColorRaw()));
-		component.setBold(raw.isBoldRaw());
-		component.setItalic(raw.isItalicRaw());
-		component.setUnderlined(raw.isUnderlinedRaw());
-		component.setStrikethrough(raw.isStrikethroughRaw());
-		component.setObfuscated(raw.isObfuscatedRaw());
-		component.setClickEvent(spigot(raw.getClickEvent()));
-		component.setHoverEvent(spigot(raw.getHoverEvent()));
+		ChatStyle chatStyle = raw.getStyle();
+		component.setColor(spigot(chatStyle.getColor()));
+		component.setBold(chatStyle.getBold());
+		component.setItalic(chatStyle.getItalic());
+		component.setUnderlined(chatStyle.getUnderlined());
+		component.setStrikethrough(chatStyle.getStrikethrough());
+		component.setObfuscated(chatStyle.getObfuscated());
+		component.setInsertion(chatStyle.getInsertion());
+		component.setClickEvent(spigot(chatStyle.getClickEvent()));
+		component.setHoverEvent(spigot(chatStyle.getHoverEvent()));
+		component.setFont(chatStyle.getFont().toString());
 		List<ChatComponent> children = raw.getExtra();
 		if (children != null) {
 			component.setExtra(children.stream().map((c) -> spigot(c, isConsole)).collect(Collectors.toList()));
@@ -107,14 +112,7 @@ public class SpigotParser extends BukkitParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		chatComponent.setColor(spigot(raw.getColorRaw()));
-		chatComponent.setBold(raw.isBoldRaw());
-		chatComponent.setItalic(raw.isItalicRaw());
-		chatComponent.setUnderlined(raw.isUnderlinedRaw());
-		chatComponent.setStrikethrough(raw.isStrikethroughRaw());
-		chatComponent.setObfuscated(raw.isObfuscatedRaw());
-		chatComponent.setClickEvent(spigot(raw.getClickEvent()));
-		chatComponent.setHoverEvent(spigot(raw.getHoverEvent()));
+		chatComponent.setStyle(spigotStyle(raw));
 		List<BaseComponent> extra = raw.getExtra();
 		if (extra != null) {
 			chatComponent.setExtra(extra.stream().map(SpigotParser::spigot).collect(Collectors.toList()));
@@ -186,6 +184,22 @@ public class SpigotParser extends BukkitParser {
 
 	public static ChatMessageType spigot(net.md_5.bungee.api.ChatMessageType type) {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
+	}
+
+	protected static ChatStyle spigotStyle(BaseComponent component) {
+		Objects.requireNonNull(component);
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		builder.withColor(spigot(component.getColorRaw()));
+		builder.withBold(component.isBoldRaw());
+		builder.withItalic(component.isItalicRaw());
+		builder.withUnderlined(component.isUnderlinedRaw());
+		builder.withStrikethrough(component.isStrikethroughRaw());
+		builder.withObfuscated(component.isObfuscatedRaw());
+		builder.withInsertion(component.getInsertion());
+		builder.withClickEvent(spigot(component.getClickEvent()));
+		builder.withHoverEvent(spigot(component.getHoverEvent()));
+		builder.withFont(ChatId.parse(component.getFont()));
+		return builder.build();
 	}
 
 	public static ChatColor spigot(ChatTextColor color) {

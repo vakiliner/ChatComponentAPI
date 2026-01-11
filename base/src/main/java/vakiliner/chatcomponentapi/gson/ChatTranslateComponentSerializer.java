@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.gson;
 
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.List;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -20,9 +21,13 @@ public class ChatTranslateComponentSerializer extends AbstractChatComponentSeria
 
 	public ChatTranslateComponent deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
 		JsonObject object = element.getAsJsonObject();
-		ChatTranslateComponent component = new ChatTranslateComponent(null, object.get("translate").getAsString());
-		if (object.has("with")) component.setWith(Arrays.asList(context.deserialize(object.get("extra"), ChatComponent[].class)));
-		super.deserialize(component, object, context);
-		return component;
+		String translate = object.get("translate").getAsString();
+		List<ChatComponent> with;
+		if (object.has("with")) {
+			with = Arrays.asList(context.deserialize(object.get("extra"), ChatComponent[].class));
+		} else {
+			with = null;
+		}
+		return super.deserialize((style) -> new ChatTranslateComponent(null, translate, style, with), object, context);
 	}
 }
