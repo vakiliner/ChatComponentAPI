@@ -40,3 +40,11 @@ jar {
 		from task.manifest
 	}
 }
+
+task remapDevJar(type: net.fabricmc.loom.task.RemapJarTask) {
+	var task = project.tasks.getByName('devJar')
+	archiveBaseName = "Dev${project.base.archivesName.get()}"
+	input.set(task.archiveFile)
+}
+
+devJar.finalizedBy remapDevJar
