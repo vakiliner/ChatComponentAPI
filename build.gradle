@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 }
 
-var paper = project(':paper')
+var bukkit = project(':paper')
 var fabric = project(':fabric')
 var forge = project(':forge')
 
@@ -38,13 +38,13 @@ subprojects {
 }
 
 jar {
-	evaluationDependsOn(paper.getName())
+	evaluationDependsOn(bukkit.getName())
 	evaluationDependsOn(fabric.getName())
 	evaluationDependsOn(forge.getName())
 
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-	var paperJar = paper.tasks.getByName('jar')
+	var paperJar = bukkit.tasks.getByName('jar')
 	var fabricJar = fabric.tasks.getByName('jar')
 	var fabricRemapJar = fabric.tasks.getByName('remapJar')
 	var forgeJar = forge.tasks.getByName('jar')
@@ -67,14 +67,14 @@ jar {
 }
 
 task devJar(type: Jar) {
-	evaluationDependsOn(paper.getName())
+	evaluationDependsOn(bukkit.getName())
 	evaluationDependsOn(fabric.getName())
 	evaluationDependsOn(forge.getName())
 
 	archiveBaseName = "Dev${project.base.archivesName.get()}"
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-	var paperJar = paper.tasks.getByName('devJar')
+	var paperJar = bukkit.tasks.getByName('devJar')
 	var fabricJar = fabric.tasks.getByName('devJar')
 	var fabricRemapJar = fabric.tasks.getByName('remapDevJar')
 	var forgeJar = forge.tasks.getByName('devJar')
