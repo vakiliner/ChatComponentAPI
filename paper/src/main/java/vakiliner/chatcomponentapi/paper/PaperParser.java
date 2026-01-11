@@ -3,7 +3,6 @@ package vakiliner.chatcomponentapi.paper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
@@ -210,25 +209,6 @@ public class PaperParser extends SpigotParser {
 
 	public static ChatMessageType paper(MessageType type) {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
-	}
-
-	@Deprecated
-	public static Style paperStyle(ChatComponent component) {
-		Objects.requireNonNull(component);
-		Style.Builder builder = Style.style();
-		ChatTextColor color = component.getColor();
-		if (color != null) {
-			builder.color(paper(color));
-		}
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : component.getFormatsRaw().entrySet()) {
-			Boolean isSetted = entry.getValue();
-			if (isSetted != null) {
-				builder.decoration(paper(entry.getKey()), isSetted);
-			}
-		}
-		builder.clickEvent(paper(component.getClickEvent()));
-		builder.hoverEvent(paper(component.getHoverEvent()));
-		return builder.build();
 	}
 
 	public static NamedTextColor paper(ChatNamedColor color) {

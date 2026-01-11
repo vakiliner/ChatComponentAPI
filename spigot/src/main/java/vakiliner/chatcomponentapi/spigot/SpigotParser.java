@@ -186,7 +186,7 @@ public class SpigotParser extends BukkitParser {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
 	}
 
-	public static ChatStyle spigotStyle(BaseComponent component) {
+	protected static ChatStyle spigotStyle(BaseComponent component) {
 		Objects.requireNonNull(component);
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
 		builder.withColor(spigot(component.getColorRaw()));

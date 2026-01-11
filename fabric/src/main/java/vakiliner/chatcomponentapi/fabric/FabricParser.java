@@ -2,8 +2,6 @@ package vakiliner.chatcomponentapi.fabric;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
@@ -38,7 +36,6 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
-import vakiliner.chatcomponentapi.component.ChatComponentFormat;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
@@ -177,27 +174,6 @@ public class FabricParser extends BaseParser {
 
 	public static ChatMessageType fabric(ChatType type) {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
-	}
-
-	@Deprecated
-	public static Style fabricStyle(ChatComponent component) {
-		Objects.requireNonNull(component);
-		Style style = Style.EMPTY;
-		TextColor color = fabric(component.getColorRaw());
-		if (color != null) {
-			style = style.withColor(color);
-		}
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : component.getFormatsRaw().entrySet()) {
-			Boolean isSetted = entry.getValue();
-			if (isSetted != null && isSetted) {
-				style = style.applyFormat(FabricParser.fabric(entry.getKey().asTextFormat()));
-			}
-		}
-		ChatClickEvent clickEvent = component.getClickEvent();
-		if (clickEvent != null) style = style.withClickEvent(FabricParser.fabric(clickEvent));
-		ChatHoverEvent<?> hoverEvent = component.getHoverEvent();
-		if (hoverEvent != null) style = style.withHoverEvent(FabricParser.fabric(hoverEvent));
-		return style;
 	}
 
 	public static ChatFormatting fabric(ChatTextFormat format) {
