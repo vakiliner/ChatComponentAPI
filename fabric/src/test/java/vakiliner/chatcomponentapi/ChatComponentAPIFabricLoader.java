@@ -183,17 +183,6 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 		});
 	}
 
-	private static int startTests(Runnable runnable) {
-		LOGGER.info("Tests started");
-		runnable.run();
-		int tests = testCount;
-		int fails = failCount;
-		LOGGER.info("Fails " + fails + '/' + testCount);
-		ERRORS.forEach(Throwable::printStackTrace);
-		clearTests();
-		return fails > 0 ? -1 : tests;
-	}
-
 	private static boolean test(String name, Runnable runnable) {
 		return test(name, () -> {
 			runnable.run();
@@ -221,6 +210,17 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			ERRORS.add(new RuntimeException("Test failed: " + name, error));
 		}
 		return success;
+	}
+
+	private static int startTests(Runnable runnable) {
+		LOGGER.info("Tests started");
+		runnable.run();
+		int tests = testCount;
+		int fails = failCount;
+		LOGGER.info("Fails " + fails + '/' + testCount);
+		ERRORS.forEach(Throwable::printStackTrace);
+		clearTests();
+		return fails > 0 ? -1 : tests;
 	}
 
 	private static void clearTests() {
