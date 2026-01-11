@@ -21,11 +21,7 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
-		if (type == ChatMessageType.CHAT) {
-			sender.sendMessage(uuid, component.toLegacyText());
-		} else {
-			sender.sendMessage(component.toLegacyText());
-		}
+		sender.sendMessage(component.toLegacyText());
 	}
 
 	public static ChatColor bukkit(ChatTextFormat color) {

@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 }
 
-var bukkit = project(':paper')
+var bukkit = project(':spigot')
 var fabric = project(':fabric')
 var forge = project(':forge')
 

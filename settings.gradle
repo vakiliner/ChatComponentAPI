@@ -16,6 +16,5 @@ pluginManagement {
 include 'base'
 include 'craftbukkit'
 include 'spigot'
-include 'paper'
 include 'fabric'
 include 'forge'
