@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.Supplier;
-import vakiliner.chatcomponentapi.common.ChatNamedColor;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 
@@ -51,7 +50,7 @@ public abstract class ChatComponent {
 	public abstract ChatComponent clone(boolean cloneExtra);
 
 	public String toLegacyText() {
-		return this.toLegacyText(ChatNamedColor.RESET, Collections.emptySet());
+		return this.toLegacyText(null, Collections.emptySet());
 	}
 
 	protected String toLegacyText(final ChatTextColor parentColor, final Set<ChatComponentFormat> parentFormats) {
@@ -59,7 +58,7 @@ public abstract class ChatComponent {
 		Set<ChatComponentFormat> formats = new HashSet<>(parentFormats);
 		ChatTextColor color = this.getColorRaw();
 		if (color == null) color = parentColor;
-		boolean reset = !color.equals(parentColor);
+		boolean reset = !Objects.equals(color, parentColor);
 		for (Map.Entry<ChatComponentFormat, Boolean> entry : this.getFormatsRaw().entrySet()) {
 			Boolean isSet = entry.getValue();
 			if (isSet != null) {
@@ -72,7 +71,7 @@ public abstract class ChatComponent {
 		}
 		formats = Collections.unmodifiableSet(formats);
 		if (reset) {
-			ChatTextFormat textFormat = color.asFormat();
+			ChatTextFormat textFormat = color != null ? color.asFormat() : ChatTextFormat.RESET;
 			if (textFormat == null) textFormat = ChatTextFormat.RESET;
 			text.append(textFormat);
 			for (ChatComponentFormat format : formats) {
@@ -88,14 +87,14 @@ public abstract class ChatComponent {
 		if (extra != null) for (ChatComponent component : extra) {
 			text.append(component.toLegacyText(color, formats));
 		}
-		if (!(reset = !color.equals(parentColor))) for (ChatComponentFormat format : formats) {
+		if (!(reset = !Objects.equals(color, parentColor))) for (ChatComponentFormat format : formats) {
 			if (!parentFormats.contains(format)) {
 				reset = true;
 				break;
 			}
 		}
 		if (reset) {
-			text.append(parentColor.asFormat());
+			text.append(parentColor != null ? parentColor.asFormat() : ChatTextFormat.RESET);
 			for (ChatComponentFormat format : parentFormats) {
 				text.append(format);
 			}

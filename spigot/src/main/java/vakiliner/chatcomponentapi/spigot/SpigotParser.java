@@ -207,6 +207,8 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static ChatTextColor spigot(ChatColor color) {
-		return color != null ? ChatTextColor.of(color.getName()) : null;
+		if (color == null) return null;
+		if (color.getColor() == null) throw new IllegalArgumentException("ChatColor has no color");
+		return ChatTextColor.of(color.getName());
 	}
 }

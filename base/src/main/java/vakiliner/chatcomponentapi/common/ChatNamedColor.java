@@ -22,7 +22,6 @@ public class ChatNamedColor extends ChatTextColor {
 	public static final ChatNamedColor LIGHT_PURPLE = new ChatNamedColor(ChatTextFormat.LIGHT_PURPLE, 16733695);
 	public static final ChatNamedColor YELLOW = new ChatNamedColor(ChatTextFormat.YELLOW, 16777045);
 	public static final ChatNamedColor WHITE = new ChatNamedColor(ChatTextFormat.WHITE, 16777215);
-	public static final ChatNamedColor RESET = new ChatNamedColor(ChatTextFormat.RESET, -1);
 
 	private ChatNamedColor(ChatTextFormat format, int color) {
 		super(format, color);
