@@ -136,6 +136,10 @@ public abstract class ChatComponentModified extends ChatComponent {
 		this.component.setFormat(format, isSet);
 	}
 
+	protected void unsafeAppend(ChatComponent component) {
+		this.component.unsafeAppend(component);
+	}
+
 	public void append(ChatComponent component) {
 		this.component.append(component);
 	}

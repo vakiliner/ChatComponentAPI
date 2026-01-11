@@ -31,12 +31,24 @@ public abstract class ChatComponent {
 		this.style = Objects.requireNonNull(style);
 	}
 
-	protected ChatComponent(ChatComponent component) {
+	protected ChatComponent(ChatComponent component, boolean cloneExtra) {
 		this.style = component.style;
-		this.extra = component.extra;
+		if (cloneExtra) {
+			List<ChatComponent> clone = component.extra;
+			if (clone != null) {
+				List<ChatComponent> extra = this.extra = new ArrayList<>();
+				clone.forEach((c) -> extra.add(c.clone(true)));
+			}
+		} else {
+			this.extra = component.extra;
+		}
 	}
 
-	public abstract ChatComponent clone();
+	public ChatComponent clone() {
+		return this.clone(true);
+	}
+
+	public abstract ChatComponent clone(boolean cloneExtra);
 
 	public String toLegacyText() {
 		return this.toLegacyText(ChatNamedColor.RESET, Collections.emptySet());

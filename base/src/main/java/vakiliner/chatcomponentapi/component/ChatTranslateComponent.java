@@ -47,15 +47,15 @@ public class ChatTranslateComponent extends ChatComponent {
 		this.legacyText = legacyText;
 	}
 
-	public ChatTranslateComponent(ChatTranslateComponent component) {
-		super(component);
+	public ChatTranslateComponent(ChatTranslateComponent component, boolean cloneExtra) {
+		super(component, cloneExtra);
 		this.key = component.key;
 		this.with.addAll(component.with);
 		this.legacyText = component.legacyText;
 	}
 
-	public ChatTranslateComponent clone() {
-		return new ChatTranslateComponent(this);
+	public ChatTranslateComponent clone(boolean cloneExtra) {
+		return new ChatTranslateComponent(this, cloneExtra);
 	}
 
 	public String getKey() {

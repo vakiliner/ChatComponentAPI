@@ -38,7 +38,7 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 		}
 	}
 
-	public ChatComponent clone() {
+	public ChatComponent clone(boolean cloneExtra) {
 		return new ChatComponentWithLegacyText(this);
 	}
 
