@@ -61,6 +61,10 @@ public class ChatStyle {
 		return new ChatStyle(this);
 	}
 
+	public boolean isEmpty() {
+		return this == EMPTY;
+	}
+
 	public ChatTextColor getColor() {
 		return this.color;
 	}

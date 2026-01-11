@@ -107,7 +107,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public static Style forge(ChatStyle chatStyle) {
-		if (chatStyle == ChatStyle.EMPTY) return Style.EMPTY;
+		if (chatStyle.isEmpty()) return Style.EMPTY;
 		return chatStyle != null ? StyleMixin.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont())) : null;
 	}
 

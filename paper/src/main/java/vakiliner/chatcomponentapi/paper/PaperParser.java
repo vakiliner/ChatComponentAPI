@@ -111,7 +111,7 @@ public class PaperParser extends SpigotParser {
 
 	public static Style paper(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
-		if (chatStyle == ChatStyle.EMPTY) return Style.empty();
+		if (chatStyle.isEmpty()) return Style.empty();
 		Style.Builder builder = Style.style();
 		builder.color(paper(chatStyle.getColor()));
 		for (Map.Entry<ChatComponentFormat, Boolean> entry : chatStyle.getFormats().entrySet()) {
