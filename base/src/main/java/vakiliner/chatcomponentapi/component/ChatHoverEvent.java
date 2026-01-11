@@ -4,7 +4,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import com.google.common.collect.Maps;
-import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.gson.APIGson;
 
@@ -86,15 +85,9 @@ public class ChatHoverEvent<V> {
 		private final UUID uuid;
 		private final ChatComponent name;
 
-		public ShowEntity(ChatOfflinePlayer player) {
-			this.type = new ChatId("minecraft", "player");
-			this.uuid = player.getUniqueId();
-			this.name = new ChatTextComponent(player.getName());
-		}
-
 		public ShowEntity(ChatId type, UUID uuid, ChatComponent name) {
-			this.type = type;
-			this.uuid = uuid;
+			this.type = Objects.requireNonNull(type);
+			this.uuid = Objects.requireNonNull(uuid);
 			this.name = name;
 		}
 
@@ -109,14 +102,25 @@ public class ChatHoverEvent<V> {
 		public ChatComponent getName() {
 			return this.name;
 		}
+
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			} else if (obj instanceof ShowEntity) {
+				ShowEntity other = (ShowEntity) obj;
+				return this.type.equals(other.type) && this.uuid.equals(other.uuid) && Objects.equals(this.name, other.name);
+			} else {
+				return false;
+			}
+		}
 	}
 
 	public static class ShowItem {
 		private final ChatId item;
-		private final Integer count;
+		private final int count;
 
-		public ShowItem(ChatId item, Integer count) {
-			this.item = item;
+		public ShowItem(ChatId item, int count) {
+			this.item = Objects.requireNonNull(item);
 			this.count = count;
 		}
 
@@ -124,8 +128,19 @@ public class ChatHoverEvent<V> {
 			return this.item;
 		}
 
-		public Integer getCount() {
+		public int getCount() {
 			return this.count;
+		}
+
+		public boolean equals(Object obj) {
+			if (obj == this) {
+				return true;
+			} else if (obj instanceof ShowItem) {
+				ShowItem other = (ShowItem) obj;
+				return this.item.equals(other.item) && this.count == other.count;
+			} else {
+				return false;
+			}
 		}
 	}
 }
