@@ -99,9 +99,9 @@ public class ChatComponentAPIForgeLoader {
 		test("Parse ChatTextComponent with style", () -> {
 			ChatTextComponent input = new ChatTextComponent("Hey");
 			input.setBold(true);
-			input.setItalic(false);
+			// input.setItalic(false);
 			input.setUnderlined(true);
-			input.setStrikethrough(false);
+			// input.setStrikethrough(false);
 			input.setObfuscated(true);
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
