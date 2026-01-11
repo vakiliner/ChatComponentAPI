@@ -25,13 +25,13 @@ public class ChatTextComponent extends ChatComponent {
 		this.text = Objects.requireNonNull(text);
 	}
 
-	public ChatTextComponent(ChatTextComponent component) {
-		super(component);
+	public ChatTextComponent(ChatTextComponent component, boolean cloneExtra) {
+		super(component, cloneExtra);
 		this.text = component.text;
 	}
 
-	public ChatTextComponent clone() {
-		return new ChatTextComponent(this);
+	public ChatTextComponent clone(boolean cloneExtra) {
+		return new ChatTextComponent(this, cloneExtra);
 	}
 
 	public String getText() {

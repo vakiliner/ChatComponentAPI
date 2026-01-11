@@ -15,12 +15,10 @@ public abstract class ChatComponentModified extends ChatComponent {
 			throw new IllegalArgumentException(component.getClass().getSimpleName() + " cannot be used as a component");
 		}
 		this.component = Objects.requireNonNull(component);
-		this.component.setParent(this);
 	}
 
 	protected ChatComponentModified(ChatComponentModified component) {
-		this.component = component.component.clone();
-		this.component.setParent(this);
+		this.component = component.component;
 	}
 
 	public final ChatComponent getComponent() {
@@ -136,6 +134,10 @@ public abstract class ChatComponentModified extends ChatComponent {
 	@Deprecated
 	public void setFormat(ChatComponentFormat format, Boolean isSet) {
 		this.component.setFormat(format, isSet);
+	}
+
+	protected void unsafeAppend(ChatComponent component) {
+		this.component.unsafeAppend(component);
 	}
 
 	public void append(ChatComponent component) {
