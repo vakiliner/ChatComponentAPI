@@ -91,9 +91,9 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 		test("Parse ChatTextComponent with style", () -> {
 			ChatTextComponent input = new ChatTextComponent("Hey");
 			input.setBold(true);
-			// input.setItalic(false);
+			input.setItalic(false);
 			input.setUnderlined(true);
-			// input.setStrikethrough(false);
+			input.setStrikethrough(false);
 			input.setObfuscated(true);
 			Component test = FabricParser.fabric(input);
 			ChatComponent output = FabricParser.fabric(test);
