@@ -139,7 +139,7 @@ public class FabricParser extends BaseParser {
 		builder.withClickEvent(fabric(style.getClickEvent()));
 		builder.withInsertion(style.getInsertion());
 		builder.withHoverEvent(fabric(style.getHoverEvent()));
-		builder.withFont(fabric(style.getFont()));
+		builder.withFont(fabric(((StyleMixin) style).getFont()));
 		return builder.build();
 	}
 

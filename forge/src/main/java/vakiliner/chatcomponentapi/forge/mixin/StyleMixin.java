@@ -30,4 +30,7 @@ public interface StyleMixin {
 
 	@Accessor("obfuscated")
 	Boolean getObfuscated();
+
+	@Accessor("font")
+	ResourceLocation getFont();
 }

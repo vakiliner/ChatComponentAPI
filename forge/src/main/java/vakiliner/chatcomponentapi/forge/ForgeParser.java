@@ -125,7 +125,7 @@ public class ForgeParser extends BaseParser {
 		builder.withInsertion(style.getInsertion());
 		builder.withClickEvent(forge(style.getClickEvent()));
 		builder.withHoverEvent(forge(style.getHoverEvent()));
-		builder.withFont(forge(style.getFont()));
+		builder.withFont(forge(((StyleMixin) style).getFont()));
 		return builder.build();
 	}
 
