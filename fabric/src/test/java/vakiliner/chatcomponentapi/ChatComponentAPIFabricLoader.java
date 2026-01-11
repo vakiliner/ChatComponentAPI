@@ -150,7 +150,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			return Arrays.equals(input, output);
 		});
 		test("Parse ChatTextColor", () -> {
-			List<ChatNamedColor> rawInput = Arrays.asList(ChatTextFormat.values()).stream().filter((f) -> !f.isFormat()).map(ChatNamedColor::getByFormat).collect(Collectors.toList());
+			List<ChatNamedColor> rawInput = Arrays.asList(ChatTextFormat.values()).stream().filter(ChatTextFormat::isColor).map(ChatNamedColor::getByFormat).collect(Collectors.toList());
 			ChatTextColor[] input = rawInput.toArray(new ChatTextColor[rawInput.size()]);
 			ChatTextColor[] output = new ChatTextColor[input.length];
 			for (int i = 0; i < input.length; i++) {
