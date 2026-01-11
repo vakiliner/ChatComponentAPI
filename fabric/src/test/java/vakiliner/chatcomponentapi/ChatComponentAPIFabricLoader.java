@@ -19,26 +19,22 @@ import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.SelectorComponent;
-import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
+import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
+import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
+import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.FabricParser;
 
 public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegistrationCallback {
@@ -74,94 +70,99 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 
 	public static void startTests() {
 		test("Parse text component", () -> {
-			Component input = new TextComponent("123");
-			ChatComponent test = FabricParser.fabric(input);
-			Component output = FabricParser.fabric(test);
+			ChatComponent input = new ChatTextComponent("123");
+			Component test = FabricParser.fabric(input);
+			ChatComponent output = FabricParser.fabric(test);
 			return input.equals(output);
 		});
 		test("Parse translatable component", () -> {
-			Component input = new TranslatableComponent("123");
-			ChatComponent test = FabricParser.fabric(input);
-			Component output = FabricParser.fabric(test);
+			ChatComponent input = new ChatTranslateComponent(null, "123");
+			Component test = FabricParser.fabric(input);
+			ChatComponent output = FabricParser.fabric(test);
 			return input.equals(output);
 		});
 		test("Parse selector component", () -> {
-			Component input = new SelectorComponent("123");
-			ChatComponent test = FabricParser.fabric(input);
-			Component output = FabricParser.fabric(test);
+			ChatComponent input = new ChatSelectorComponent("123");
+			Component test = FabricParser.fabric(input);
+			ChatComponent output = FabricParser.fabric(test);
 			return input.equals(output);
 		});
 		test("Parse text component with style", () -> {
-			Component input = new TextComponent("Hey").withStyle(Style.EMPTY.withBold(true).withItalic(false).withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test")));
-			ChatComponent test = FabricParser.fabric(input);
-			Component output = FabricParser.fabric(test);
-			return input.equals(output);
-		});
-		test("Parse text component with style hover event", () -> {
-			Component input = new TextComponent("Hello").withStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("world"))));
-			ChatComponent test = FabricParser.fabric(input);
-			Component output = FabricParser.fabric(test);
+			ChatTextComponent input = new ChatTextComponent("Hey");
+			input.setBold(true);
+			input.setItalic(false);
+			input.setUnderlined(true);
+			input.setStrikethrough(false);
+			input.setObfuscated(true);
+			Component test = FabricParser.fabric(input);
+			ChatComponent output = FabricParser.fabric(test);
 			return input.equals(output);
 		});
 		test("Parse click event", () -> {
-			for (ClickEvent.Action action : ClickEvent.Action.values()) {
-				ClickEvent input = new ClickEvent(action, "/chatcomponentapi test");
-				ChatClickEvent test = FabricParser.fabric(input);
-				ClickEvent output = FabricParser.fabric(test);
-				if (!input.equals(output)) {
-					return false;
-				}
+			for (ChatClickEvent.Action action : ChatClickEvent.Action.values()) {
+				ChatClickEvent input = new ChatClickEvent(action, "/chatcomponentapi test");
+				ClickEvent test = FabricParser.fabric(input);
+				ChatClickEvent output = FabricParser.fabric(test);
+				if (!input.equals(output)) return false;
 			}
 			return true;
 		});
 		test("Parse hover event", () -> {
-			HoverEvent[] input = { new HoverEvent(HoverEvent.Action.SHOW_TEXT, new TextComponent("123")), new HoverEvent(HoverEvent.Action.SHOW_ENTITY, new HoverEvent.EntityTooltipInfo(EntityType.CREEPER, UUID.randomUUID(), new TextComponent("Hello"))), new HoverEvent(HoverEvent.Action.SHOW_ITEM, new HoverEvent.ItemStackInfo(new ItemStack(Items.DIRT, 15))) };
-			HoverEvent[] output = new HoverEvent[input.length];
+			ChatHoverEvent<?>[] input = { new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("123")), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, new ChatHoverEvent.ShowEntity(ChatId.parse("creeper"), UUID.randomUUID(), new ChatTextComponent("Hello"))), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, new ChatHoverEvent.ShowItem(ChatId.parse("dirt"), 15)) };
+			ChatHoverEvent<?>[] output = new ChatHoverEvent[input.length];
 			for (int i = 0; i < input.length; i++) {
-				ChatHoverEvent<?> test = FabricParser.fabric(input[i]);
+				HoverEvent test = FabricParser.fabric(input[i]);
 				output[i] = FabricParser.fabric(test);
 			}
 			return Arrays.equals(input, output);
 		});
 		test("Parse resource location", () -> {
-			ResourceLocation input = new ResourceLocation("chatcomponentapi", "id");
-			ChatId test = FabricParser.fabric(input);
-			ResourceLocation output = FabricParser.fabric(test);
+			ChatId input = new ChatId("chatcomponentapi", "id");
+			ResourceLocation test = FabricParser.fabric(input);
+			ChatId output = FabricParser.fabric(test);
 			return input.equals(output);
 		});
 		test("Parse chat type", () -> {
-			ChatType[] input = { ChatType.CHAT, ChatType.SYSTEM };
-			ChatType[] output = new ChatType[input.length];
+			ChatMessageType[] input = { ChatMessageType.CHAT, ChatMessageType.SYSTEM };
+			ChatMessageType[] output = new ChatMessageType[input.length];
 			for (int i = 0; i < input.length; i++) {
-				ChatMessageType test = FabricParser.fabric(input[i]);
+				ChatType test = FabricParser.fabric(input[i]);
 				output[i] = FabricParser.fabric(test);
 			}
 			return Arrays.equals(input, output);
 		});
+		test("Parse text component with click & hover events", () -> {
+			ChatComponent input = new ChatTextComponent("Hello");
+			input.setClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test"));
+			input.setHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world")));
+			Component test = FabricParser.fabric(input);
+			ChatComponent output = FabricParser.fabric(test);
+			return input.equals(output);
+		});
 		test("Parse chat formatting", () -> {
-			ChatFormatting[] input = ChatFormatting.values();
-			ChatFormatting[] output = new ChatFormatting[input.length];
+			ChatTextFormat[] input = ChatTextFormat.values();
+			ChatTextFormat[] output = new ChatTextFormat[input.length];
 			for (int i = 0; i < input.length; i++) {
-				ChatTextFormat test = FabricParser.fabric(input[i]);
+				ChatFormatting test = FabricParser.fabric(input[i]);
 				output[i] = FabricParser.fabric(test);
 			}
 			return Arrays.equals(input, output);
 		});
 		test("Parse chat colors", () -> {
-			List<TextColor> rawInput = Arrays.asList(ChatFormatting.values()).stream().filter((f) -> !f.isFormat()).map(TextColor::fromLegacyFormat).collect(Collectors.toList());
-			TextColor[] input = rawInput.toArray(new TextColor[rawInput.size()]);
-			TextColor[] output = new TextColor[input.length];
+			List<ChatNamedColor> rawInput = Arrays.asList(ChatTextFormat.values()).stream().filter((f) -> !f.isFormat()).map(ChatNamedColor::getByFormat).collect(Collectors.toList());
+			ChatTextColor[] input = rawInput.toArray(new ChatTextColor[rawInput.size()]);
+			ChatTextColor[] output = new ChatTextColor[input.length];
 			for (int i = 0; i < input.length; i++) {
-				ChatNamedColor test = (ChatNamedColor) FabricParser.fabric(input[i]);
+				TextColor test = FabricParser.fabric(input[i]);
 				output[i] = FabricParser.fabric(test);
 			}
 			return Arrays.equals(input, output);
 		});
 		test("ChatComponentWithLegacyText", () -> {
-			String legacyText = "legacy";
+			ChatTextComponent legacyComponent = new ChatTextComponent("legacy");
 			ChatComponent chatComponent = new ChatTextComponent("123");
-			ChatComponentWithLegacyText chatComponentWithLegacyText = chatComponent.withLegacyText(legacyText);
-			return chatComponentWithLegacyText.toLegacyText().equals(legacyText) && chatComponentWithLegacyText.getComponent() == chatComponent;
+			ChatComponentWithLegacyText chatComponentWithLegacyText = chatComponent.withLegacyComponent(legacyComponent);
+			return chatComponentWithLegacyText.toLegacyText().equals(legacyComponent.toLegacyText()) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
 	}
 
