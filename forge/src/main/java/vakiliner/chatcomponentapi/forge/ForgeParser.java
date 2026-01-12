@@ -47,6 +47,10 @@ public class ForgeParser extends BaseParser {
 		return false;
 	}
 
+	public boolean supportsFontInStyle() {
+		return true;
+	}
+
 	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (commandSource instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) commandSource;
@@ -115,17 +119,18 @@ public class ForgeParser extends BaseParser {
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
+		StyleMixin mixin = (StyleMixin) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(style.getColor()));
-		builder.withBold(((StyleMixin) style).getBold());
-		builder.withItalic(((StyleMixin) style).getItalic());
-		builder.withUnderlined(((StyleMixin) style).getUnderlined());
-		builder.withStrikethrough(((StyleMixin) style).getStrikethrough());
-		builder.withObfuscated(((StyleMixin) style).getObfuscated());
-		builder.withInsertion(style.getInsertion());
-		builder.withClickEvent(forge(style.getClickEvent()));
-		builder.withHoverEvent(forge(style.getHoverEvent()));
-		builder.withFont(forge(((StyleMixin) style).getFont()));
+		builder.withColor(forge(mixin.getColor()));
+		builder.withBold(mixin.getBold());
+		builder.withItalic(mixin.getItalic());
+		builder.withUnderlined(mixin.getUnderlined());
+		builder.withStrikethrough(mixin.getStrikethrough());
+		builder.withObfuscated(mixin.getObfuscated());
+		builder.withClickEvent(forge(mixin.getClickEvent()));
+		builder.withHoverEvent(forge(mixin.getHoverEvent()));
+		builder.withInsertion(mixin.getInsertion());
+		builder.withFont(forge(mixin.getFont()));
 		return builder.build();
 	}
 

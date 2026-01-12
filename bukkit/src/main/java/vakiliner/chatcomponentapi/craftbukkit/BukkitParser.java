@@ -6,4 +6,8 @@ public class BukkitParser extends BaseParser {
 	public boolean supportsSeparatorInSelector() {
 		throw new UnsupportedOperationException();
 	}
+
+	public boolean supportsFontInStyle() {
+		throw new UnsupportedOperationException();
+	}
 }
