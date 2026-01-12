@@ -82,6 +82,10 @@ public class ForgeParser extends BaseParser {
 		return false;
 	}
 
+	public boolean supportsFontInStyle() {
+		return true;
+	}
+
 	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (commandSource instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) commandSource;
@@ -156,9 +160,9 @@ public class ForgeParser extends BaseParser {
 		if (style.isEmpty()) return ChatStyle.EMPTY;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
 		builder.withColor(forge(style.getColor()));
-		builder.withInsertion(style.getInsertion());
 		builder.withClickEvent(forge(style.getClickEvent()));
 		builder.withHoverEvent(forge(style.getHoverEvent()));
+		builder.withInsertion(style.getInsertion());
 		try {
 			builder.withBold((Boolean) STYLE_BOLD.get(style));
 			builder.withItalic((Boolean) STYLE_ITALIC.get(style));
