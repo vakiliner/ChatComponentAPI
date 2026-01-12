@@ -16,6 +16,9 @@ public interface StyleMixin {
 		throw new AssertionError();
 	}
 
+	@Accessor("color")
+	TextColor getColor();
+
 	@Accessor("bold")
 	Boolean getBold();
 
@@ -30,6 +33,15 @@ public interface StyleMixin {
 
 	@Accessor("obfuscated")
 	Boolean getObfuscated();
+
+	@Accessor("clickEvent")
+	ClickEvent getClickEvent();
+
+	@Accessor("hoverEvent")
+	HoverEvent getHoverEvent();
+
+	@Accessor("insertion")
+	String getInsertion();
 
 	@Accessor("font")
 	ResourceLocation getFont();

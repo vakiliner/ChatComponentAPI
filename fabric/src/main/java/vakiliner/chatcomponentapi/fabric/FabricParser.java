@@ -50,6 +50,10 @@ public class FabricParser extends BaseParser {
 		return false;
 	}
 
+	public boolean supportsFontInStyle() {
+		return true;
+	}
+
 	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
 		if (commandSource instanceof ServerPlayer) {
@@ -129,17 +133,18 @@ public class FabricParser extends BaseParser {
 	public static ChatStyle fabric(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
+		StyleMixin mixin = (StyleMixin) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
 		builder.withColor(fabric(style.getColor()));
-		builder.withBold(((StyleMixin) style).getBold());
-		builder.withItalic(((StyleMixin) style).getItalic());
-		builder.withUnderlined(((StyleMixin) style).getUnderlined());
-		builder.withStrikethrough(((StyleMixin) style).getStrikethrough());
-		builder.withObfuscated(((StyleMixin) style).getObfuscated());
+		builder.withBold(mixin.getBold());
+		builder.withItalic(mixin.getItalic());
+		builder.withUnderlined(mixin.getUnderlined());
+		builder.withStrikethrough(mixin.getStrikethrough());
+		builder.withObfuscated(mixin.getObfuscated());
 		builder.withClickEvent(fabric(style.getClickEvent()));
+		builder.withHoverEvent(fabric(mixin.getHoverEvent()));
 		builder.withInsertion(style.getInsertion());
-		builder.withHoverEvent(fabric(style.getHoverEvent()));
-		builder.withFont(fabric(((StyleMixin) style).getFont()));
+		builder.withFont(fabric(mixin.getFont()));
 		return builder.build();
 	}
 
