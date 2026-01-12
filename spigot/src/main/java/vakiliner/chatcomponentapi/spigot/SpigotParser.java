@@ -85,9 +85,9 @@ public class SpigotParser extends BukkitParser {
 		component.setUnderlined(chatStyle.getUnderlined());
 		component.setStrikethrough(chatStyle.getStrikethrough());
 		component.setObfuscated(chatStyle.getObfuscated());
-		component.setInsertion(chatStyle.getInsertion());
 		component.setClickEvent(spigot(chatStyle.getClickEvent()));
 		component.setHoverEvent(spigot(chatStyle.getHoverEvent()));
+		component.setInsertion(chatStyle.getInsertion());
 		component.setFont(chatStyle.getFont().toString());
 		List<ChatComponent> children = raw.getExtra();
 		if (children != null) {
@@ -195,9 +195,9 @@ public class SpigotParser extends BukkitParser {
 		builder.withUnderlined(component.isUnderlinedRaw());
 		builder.withStrikethrough(component.isStrikethroughRaw());
 		builder.withObfuscated(component.isObfuscatedRaw());
-		builder.withInsertion(component.getInsertion());
 		builder.withClickEvent(spigot(component.getClickEvent()));
 		builder.withHoverEvent(spigot(component.getHoverEvent()));
+		builder.withInsertion(component.getInsertion());
 		builder.withFont(ChatId.parse(component.getFont()));
 		return builder.build();
 	}
