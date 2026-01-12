@@ -14,21 +14,21 @@ public class ChatStyle {
 	private final Boolean underlined;
 	private final Boolean strikethrough;
 	private final Boolean obfuscated;
-	private final String insertion;
 	private final ChatClickEvent clickEvent;
 	private final ChatHoverEvent<?> hoverEvent;
+	private final String insertion;
 	private final ChatId font;
 
-	private ChatStyle(ChatTextColor color, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, String insertion, ChatClickEvent clickEvent, ChatHoverEvent<?> hoverEvent, ChatId font) {
+	private ChatStyle(ChatTextColor color, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, ChatClickEvent clickEvent, ChatHoverEvent<?> hoverEvent, String insertion, ChatId font) {
 		this.color = color;
 		this.bold = bold;
 		this.italic = italic;
 		this.underlined = underlined;
 		this.strikethrough = strikethrough;
 		this.obfuscated = obfuscated;
-		this.insertion = insertion;
 		this.clickEvent = clickEvent;
 		this.hoverEvent = hoverEvent;
+		this.insertion = insertion;
 		this.font = font;
 	}
 
@@ -39,9 +39,9 @@ public class ChatStyle {
 		this.underlined = style.underlined;
 		this.strikethrough = style.strikethrough;
 		this.obfuscated = style.obfuscated;
-		this.insertion = style.insertion;
 		this.clickEvent = style.clickEvent;
 		this.hoverEvent = style.hoverEvent;
+		this.insertion = style.insertion;
 		this.font = style.font;
 	}
 
@@ -89,10 +89,6 @@ public class ChatStyle {
 		return this.obfuscated;
 	}
 
-	public String getInsertion() {
-		return this.insertion;
-	}
-
 	public ChatClickEvent getClickEvent() {
 		return this.clickEvent;
 	}
@@ -101,58 +97,62 @@ public class ChatStyle {
 		return this.hoverEvent;
 	}
 
+	public String getInsertion() {
+		return this.insertion;
+	}
+
 	public ChatId getFont() {
 		return this.font;
 	}
 
 	public ChatStyle withColor(ChatTextColor color) {
 		if (Objects.equals(this.color, color)) return this;
-		return new ChatStyle(color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withBold(Boolean bold) {
 		if (Objects.equals(this.bold, bold)) return this;
-		return new ChatStyle(this.color, bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withItalic(Boolean italic) {
 		if (Objects.equals(this.italic, italic)) return this;
-		return new ChatStyle(this.color, this.bold, italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withUnderlined(Boolean underlined) {
 		if (Objects.equals(this.underlined, underlined)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withStrikethrough(Boolean strikethrough) {
 		if (Objects.equals(this.strikethrough, strikethrough)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, this.underlined, strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withObfuscated(Boolean obfuscated) {
 		if (Objects.equals(this.obfuscated, obfuscated)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
-	}
-
-	public ChatStyle withInsertion(String insertion) {
-		if (Objects.equals(this.insertion, insertion)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, insertion, this.clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withClickEvent(ChatClickEvent clickEvent) {
 		if (Objects.equals(this.clickEvent, clickEvent)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, clickEvent, this.hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withHoverEvent(ChatHoverEvent<?> hoverEvent) {
 		if (Objects.equals(this.hoverEvent, hoverEvent)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, hoverEvent, this.font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
+	}
+
+	public ChatStyle withInsertion(String insertion) {
+		if (Objects.equals(this.insertion, insertion)) return this;
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public ChatStyle withFont(ChatId font) {
 		if (Objects.equals(this.font, font)) return this;
-		return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, font);
+		return new ChatStyle(color, bold, italic, underlined, strikethrough, obfuscated, clickEvent, hoverEvent, insertion, font);
 	}
 
 	public Boolean getFormat(ChatComponentFormat format) {
@@ -201,9 +201,9 @@ public class ChatStyle {
 			this.underlined != null ? this.underlined : style.underlined,
 			this.strikethrough != null ? this.strikethrough : style.strikethrough,
 			this.obfuscated != null ? this.obfuscated : style.obfuscated,
-			this.insertion != null ? this.insertion : style.insertion,
 			this.clickEvent != null ? this.clickEvent : style.clickEvent,
 			this.hoverEvent != null ? this.hoverEvent : style.hoverEvent,
+			this.insertion != null ? this.insertion : style.insertion,
 			this.font != null ? this.font : style.font
 		);
 	}
@@ -287,11 +287,6 @@ public class ChatStyle {
 			return this;
 		}
 
-		public Builder withInsertion(String insertion) {
-			this.insertion = insertion;
-			return this;
-		}
-
 		public Builder withClickEvent(ChatClickEvent clickEvent) {
 			this.clickEvent = clickEvent;
 			return this;
@@ -299,6 +294,11 @@ public class ChatStyle {
 
 		public Builder withHoverEvent(ChatHoverEvent<?> hoverEvent) {
 			this.hoverEvent = hoverEvent;
+			return this;
+		}
+
+		public Builder withInsertion(String insertion) {
+			this.insertion = insertion;
 			return this;
 		}
 
@@ -326,7 +326,7 @@ public class ChatStyle {
 		}
 
 		public ChatStyle build() {
-			return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.insertion, this.clickEvent, this.hoverEvent, this.font);
+			return new ChatStyle(this.color, this.bold, this.italic, this.underlined, this.strikethrough, this.obfuscated, this.clickEvent, this.hoverEvent, this.insertion, this.font);
 		}
 	}
 }
