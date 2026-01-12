@@ -166,7 +166,7 @@ public class ForgeParser extends BaseParser {
 			return new HoverEvent.EntityHover(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName()));
 		} else if (raw instanceof ChatHoverEvent.ShowItem) {
 			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemHover(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount()));
+			return new HoverEvent.ItemHover(new ItemStack(Registry.ITEM.get(forge(content.getId())), content.getCount()));
 		} else {
 			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
 		}

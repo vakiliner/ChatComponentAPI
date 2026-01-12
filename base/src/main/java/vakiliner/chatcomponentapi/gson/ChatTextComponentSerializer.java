@@ -10,13 +10,15 @@ import vakiliner.chatcomponentapi.component.ChatTextComponent;
 
 public class ChatTextComponentSerializer extends AbstractChatComponentSerializer<ChatTextComponent> {
 	public JsonElement serialize(ChatTextComponent component, Type type, JsonSerializationContext context) {
-		JsonObject object = new JsonObject();
-		super.serialize(object, component, context);
+		JsonObject object = super.serialize(component, context);
 		object.addProperty("text", component.getText());
 		return object;
 	}
 
 	public ChatTextComponent deserialize(JsonElement element, Type type, JsonDeserializationContext context) throws JsonParseException {
+		if (element.isJsonPrimitive()) {
+			return new ChatTextComponent(element.getAsString());
+		}
 		JsonObject object = element.getAsJsonObject();
 		String text = object.get("text").getAsString();
 		return super.deserialize((style) -> new ChatTextComponent(text, style), object, context);

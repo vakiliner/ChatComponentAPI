@@ -3,6 +3,7 @@ package vakiliner.chatcomponentapi.common;
 import java.util.Objects;
 
 public class ChatId {
+	public static final String MINECRAFT = "minecraft";
 	private final String namespace;
 	private final String value;
 
@@ -35,7 +36,7 @@ public class ChatId {
 	}
 
 	public static ChatId parse(String string) {
-		return parse(string, "minecraft");
+		return parse(string, MINECRAFT);
 	}
 
 	public static ChatId parse(String string, String defaultNamespace) {

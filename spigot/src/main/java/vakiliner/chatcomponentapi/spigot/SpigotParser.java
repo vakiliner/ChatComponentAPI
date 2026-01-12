@@ -148,7 +148,7 @@ public class SpigotParser extends BukkitParser {
 			return new Entity(content.getType().toString(), content.getUniqueId().toString(), SpigotParser.spigot(content.getName()));
 		} else if (raw instanceof ChatHoverEvent.ShowItem) {
 			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new Item(content.getItem().toString(), content.getCount(), null);
+			return new Item(content.getId().toString(), content.getCount(), null);
 		} else {
 			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
 		}

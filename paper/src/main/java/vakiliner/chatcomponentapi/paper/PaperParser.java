@@ -174,7 +174,7 @@ public class PaperParser extends SpigotParser {
 			return HoverEvent.ShowEntity.of(paper(content.getType()), content.getUniqueId(), paper(content.getName()));
 		} else if (raw instanceof ChatHoverEvent.ShowItem) {
 			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return HoverEvent.ShowItem.of(paper(content.getItem()), content.getCount());
+			return HoverEvent.ShowItem.of(paper(content.getId()), content.getCount());
 		} else {
 			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
 		}

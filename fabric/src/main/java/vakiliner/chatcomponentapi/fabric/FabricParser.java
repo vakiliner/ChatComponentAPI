@@ -203,7 +203,7 @@ public class FabricParser extends BaseParser {
 			return new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(FabricParser.fabric(content.getType())), content.getUniqueId(), FabricParser.fabric(content.getName()));
 		} else if (raw instanceof ChatHoverEvent.ShowItem) {
 			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(FabricParser.fabric(content.getItem())), content.getCount()));
+			return new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(FabricParser.fabric(content.getId())), content.getCount()));
 		} else {
 			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
 		}

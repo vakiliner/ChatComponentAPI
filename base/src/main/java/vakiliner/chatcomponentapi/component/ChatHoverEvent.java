@@ -116,16 +116,20 @@ public class ChatHoverEvent<V> {
 	}
 
 	public static class ShowItem {
-		private final ChatId item;
+		private final ChatId id;
 		private final int count;
 
-		public ShowItem(ChatId item, int count) {
-			this.item = Objects.requireNonNull(item);
+		public ShowItem(ChatId id) {
+			this(id, 1);
+		}
+
+		public ShowItem(ChatId id, int count) {
+			this.id = Objects.requireNonNull(id);
 			this.count = count;
 		}
 
-		public ChatId getItem() {
-			return this.item;
+		public ChatId getId() {
+			return this.id;
 		}
 
 		public int getCount() {
@@ -137,7 +141,7 @@ public class ChatHoverEvent<V> {
 				return true;
 			} else if (obj instanceof ShowItem) {
 				ShowItem other = (ShowItem) obj;
-				return this.item.equals(other.item) && this.count == other.count;
+				return this.id.equals(other.id) && this.count == other.count;
 			} else {
 				return false;
 			}
