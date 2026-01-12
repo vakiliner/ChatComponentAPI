@@ -22,11 +22,11 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.common.ChatId;
@@ -59,8 +59,8 @@ public class ChatComponentAPIForgeLoader {
 	}
 
 	@SubscribeEvent
-	public void onRegisterCommands(RegisterCommandsEvent event) {
-		CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
+	public void onRegisterCommands(FMLServerStartingEvent event) {
+		CommandDispatcher<CommandSource> dispatcher = event.getCommandDispatcher();
 		dispatcher.register(testCommand());
 	}
 
