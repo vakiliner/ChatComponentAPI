@@ -60,7 +60,7 @@ public class ChatComponentAPIForgeLoader {
 
 	@SubscribeEvent
 	public void onRegisterCommands(FMLServerStartingEvent event) {
-		CommandDispatcher<CommandSource> dispatcher = event.getCommandDispatcher();
+		CommandDispatcher<CommandSource> dispatcher = event.getServer().getCommands().getDispatcher();
 		dispatcher.register(testCommand());
 	}
 
