@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.component;
 
 import java.util.Objects;
 import java.util.Set;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 
@@ -85,5 +86,13 @@ public class ChatSelectorComponent extends ChatComponent {
 		if (separator != null) {
 			object.add("separator", ChatComponent.serialize(separator));
 		}
+	}
+
+	public static ChatSelectorComponent deserialize(JsonElement element) {
+		JsonObject object = element.getAsJsonObject();
+		JsonElement rawSeparator = object.get("separator");
+		String selector = object.get("selector").getAsString();
+		ChatComponent separator = rawSeparator != null ? ChatComponent.deserialize(rawSeparator) : null;
+		return ChatComponent.deserialize((style) -> new ChatSelectorComponent(selector, separator, style), object);
 	}
 }
