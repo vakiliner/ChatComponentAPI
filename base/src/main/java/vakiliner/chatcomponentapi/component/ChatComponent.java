@@ -10,11 +10,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 
-public abstract class ChatComponent {
+public abstract class ChatComponent implements ChatHoverEvent.IContent {
 	protected ChatStyle style;
 	protected List<ChatComponent> extra;
 
@@ -290,6 +294,55 @@ public abstract class ChatComponent {
 		} else {
 			ChatComponent other = (ChatComponent) obj;
 			return this.style.equals(other.style) && (this.extra == other.extra || (this.extra == null || this.extra.isEmpty() ? other.extra == null || other.extra.isEmpty() : this.extra.equals(other.extra)));
+		}
+	}
+
+	public JsonElement serialize() {
+		return serialize(this);
+	}
+
+	protected abstract void serialize(JsonObject object);
+
+	public static JsonElement serialize(ChatComponent component) {
+		JsonObject object = ChatStyle.serialize(component.style, new JsonObject());
+		List<ChatComponent> extra = component.extra;
+		if (extra != null && !extra.isEmpty()) {
+			JsonArray array = new JsonArray();
+			extra.forEach((c) -> array.add(ChatComponent.serialize(c)));
+			object.add("extra", array);
+		}
+		component.serialize(object);
+		return object;
+	}
+
+	protected static <Component extends ChatComponent> Component deserialize(Function<ChatStyle, Component> function, JsonObject object) {
+		ChatStyle style = ChatStyle.deserialize(object);
+		Component component = function.apply(style);
+		JsonElement extra = object.get("extra");
+		if (extra != null) {
+			JsonArray array = extra.getAsJsonArray();
+			array.forEach((c) -> component.unsafeAppend(ChatComponent.deserialize(c)));
+		}
+		return component;
+	}
+
+	public static ChatComponent deserialize(JsonElement element) {
+		return getDeserializer(element).apply(element);
+	}
+
+	private static Function<JsonElement, ChatComponent> getDeserializer(JsonElement element) {
+		if (element.isJsonPrimitive()) {
+			return ChatTextComponent::deserialize;
+		}
+		JsonObject object = element.getAsJsonObject();
+		if (object.has("text")) {
+			return ChatTextComponent::deserialize;
+		} else if (object.has("translate")) {
+			return ChatTranslateComponent::deserialize;
+		} else if (object.has("selector")) {
+			return ChatSelectorComponent::deserialize;
+		} else {
+			return null;
 		}
 	}
 }

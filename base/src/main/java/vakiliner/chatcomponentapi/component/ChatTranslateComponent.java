@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.util.Utils;
 
@@ -100,6 +102,16 @@ public class ChatTranslateComponent extends ChatComponent {
 		} else  {
 			ChatTranslateComponent other = (ChatTranslateComponent) obj;
 			return super.equals(other) && this.key.equals(other.key) && Objects.equals(this.legacyText, other.legacyText) && this.with.equals(other.with);
+		}
+	}
+
+	protected void serialize(JsonObject object) {
+		object.addProperty("translate", this.key);
+		List<ChatComponent> with = this.with;
+		if (!with.isEmpty()) {
+			JsonArray array = new JsonArray();
+			with.forEach((c) -> array.add(ChatComponent.serialize(c)));
+			object.add("with", array);
 		}
 	}
 }

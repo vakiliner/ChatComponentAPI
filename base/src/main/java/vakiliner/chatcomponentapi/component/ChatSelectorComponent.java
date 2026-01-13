@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.component;
 
 import java.util.Objects;
 import java.util.Set;
+import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 
 public class ChatSelectorComponent extends ChatComponent {
@@ -75,6 +76,14 @@ public class ChatSelectorComponent extends ChatComponent {
 		} else  {
 			ChatSelectorComponent other = (ChatSelectorComponent) obj;
 			return super.equals(other) && this.selector.equals(other.selector) && Objects.equals(this.separator, other.separator);
+		}
+	}
+
+	protected void serialize(JsonObject object) {
+		object.addProperty("selector", this.selector);
+		ChatComponent separator = this.separator;
+		if (separator != null) {
+			object.add("separator", ChatComponent.serialize(separator));
 		}
 	}
 }
