@@ -190,11 +190,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			if (type != null) object.addProperty("type", type.toString());
 			if (id != null) object.addProperty("id", id.toString());
 			if (name != null) {
-				if (!old) {
-					object.add("name", ChatComponent.serialize(name));
-				} else {
-					object.add("name", ChatTextComponent.serialize(new ChatTextComponent(ChatComponent.serialize(name).toString())));
-				}
+				object.add("name", !old ? ChatComponent.serialize(name) : ChatTextComponent.serialize(new ChatTextComponent(ChatComponent.serialize(name).toString())));
 			}
 			return object;
 		}
