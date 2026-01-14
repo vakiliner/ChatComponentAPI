@@ -190,7 +190,11 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			if (type != null) object.addProperty("type", type.toString());
 			if (id != null) object.addProperty("id", id.toString());
 			if (name != null) {
-				object.add("name", !old ? ChatComponent.serialize(name) : ChatTextComponent.serialize(new ChatTextComponent(ChatComponent.serialize(name).toString())));
+				if (!old) {
+					object.add("name", ChatComponent.serialize(name));
+				} else {
+					object.addProperty("name", ChatComponent.serialize(name).toString());
+				}
 			}
 			return object;
 		}
@@ -203,7 +207,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			JsonObject object = element.getAsJsonObject();
 			JsonElement rawName = object.get("name");
 			if (old) {
-				rawName = new Gson().toJsonTree(ChatTextComponent.deserialize(rawName).getText());
+				rawName = new Gson().toJsonTree(rawName.getAsString());
 			}
 			ChatId type = ChatId.parse(object.get("type").getAsString());
 			UUID id = UUID.fromString(object.get("id").getAsString());
