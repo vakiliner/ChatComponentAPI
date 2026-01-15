@@ -2,6 +2,10 @@ plugins {
 	id 'java'
 }
 
+var bukkit = project(':paper')
+var fabric = project(':fabric')
+var forge = project(':forge')
+
 allprojects {
 	apply plugin: 'java'
 
@@ -19,28 +23,75 @@ subprojects {
 	jar {
 		from '../LICENSE'
 	}
+
+	task devJar(type: Jar) {
+		var task = tasks.getByName('jar')
+		archiveFileName = "Dev${task.archiveFileName.get()}"
+		destinationDirectory = task.destinationDirectory
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+		from project.sourceSets.test.output
+		from zipTree(task.archiveFile)
+		manifest {
+			from task.manifest
+		}
+	}
 }
 
 jar {
+	evaluationDependsOn(bukkit.getName())
+	evaluationDependsOn(fabric.getName())
+	evaluationDependsOn(forge.getName())
+
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-	var paper = project(':paper').tasks.getByName('jar')
-	var fabric = project(':fabric').tasks.getByName('jar')
-	var forge = project(':forge').tasks.getByName('jar')
+	var paperJar = bukkit.tasks.getByName('jar')
+	var fabricJar = fabric.tasks.getByName('jar')
+	var fabricRemapJar = fabric.tasks.getByName('remapJar')
+	var forgeJar = forge.tasks.getByName('jar')
 
-	from(zipTree(paper.archiveFile)) {
+	from(zipTree(paperJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
-	from(zipTree(fabric.archiveFile)) {
+	from(zipTree(fabricRemapJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
-	from(zipTree(forge.archiveFile)) {
+	from(zipTree(forgeJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
 
 	manifest {
-		from paper.manifest
-		from fabric.manifest
-		from forge.manifest
+		from paperJar.manifest
+		from fabricJar.manifest
+		from forgeJar.manifest
+	}
+}
+
+task devJar(type: Jar) {
+	evaluationDependsOn(bukkit.getName())
+	evaluationDependsOn(fabric.getName())
+	evaluationDependsOn(forge.getName())
+
+	archiveBaseName = "Dev${project.base.archivesName.get()}"
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	var paperJar = bukkit.tasks.getByName('devJar')
+	var fabricJar = fabric.tasks.getByName('devJar')
+	var fabricRemapJar = fabric.tasks.getByName('remapDevJar')
+	var forgeJar = forge.tasks.getByName('devJar')
+
+	from(zipTree(paperJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(fabricRemapJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(forgeJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+
+	manifest {
+		from paperJar.manifest
+		from fabricJar.manifest
+		from forgeJar.manifest
 	}
 }

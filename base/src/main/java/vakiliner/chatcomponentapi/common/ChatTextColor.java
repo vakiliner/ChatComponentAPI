@@ -4,14 +4,9 @@ public class ChatTextColor {
 	protected final int value;
 	protected final ChatTextFormat asFormat;
 
-	private ChatTextColor(int value, ChatTextFormat asFormat) {
+	protected ChatTextColor(int value, ChatTextFormat asFormat) {
 		this.value = value & 0xFFFFFF;
 		this.asFormat = asFormat;
-	}
-
-	protected ChatTextColor(ChatTextFormat format, int value) {
-		this.asFormat = format;
-		this.value = value;
 	}
 
 	public static ChatTextColor color(int color, ChatTextFormat asFormat) {
@@ -64,6 +59,6 @@ public class ChatTextColor {
 	}
 
 	public String toString() {
-		return this.asFormat.toString();
+		return String.format("#%06X", this.value);
 	}
 }

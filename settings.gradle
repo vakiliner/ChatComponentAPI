@@ -14,6 +14,7 @@ pluginManagement {
 }
 
 include 'base'
+include 'bukkit'
 include 'craftbukkit'
 include 'spigot'
 include 'paper'

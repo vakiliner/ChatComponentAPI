@@ -2,8 +2,6 @@ package vakiliner.chatcomponentapi.forge;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
@@ -36,9 +34,10 @@ import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
-import vakiliner.chatcomponentapi.component.ChatComponentFormat;
+import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.forge.mixin.StyleMixin;
@@ -48,12 +47,16 @@ public class ForgeParser extends BaseParser {
 		return false;
 	}
 
+	public boolean supportsFontInStyle() {
+		return true;
+	}
+
 	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (commandSource instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) commandSource;
 			player.sendMessage(forge(component), forge(type), uuid != null ? uuid : Util.NIL_UUID);
 		} else {
-			commandSource.sendMessage(forge(component), uuid != null ? uuid : Util.NIL_UUID);
+			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer), uuid != null ? uuid : Util.NIL_UUID);
 		}
 	}
 
@@ -62,9 +65,17 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public static ITextComponent forge(ChatComponent raw) {
+		return forge(raw, false);
+	}
+
+	public static ITextComponent forge(ChatComponent raw, boolean isConsole) {
 		final TextComponent component;
-		if (raw instanceof ChatComponentWithLegacyText) {
-			raw = ((ChatComponentWithLegacyText) raw).getComponent();
+		if (raw instanceof ChatComponentModified) {
+			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
+				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
+			} else {
+				raw = ((ChatComponentModified) raw).getComponent();
+			}
 		}
 		if (raw == null) {
 			return null;
@@ -73,14 +84,14 @@ public class ForgeParser extends BaseParser {
 			component = new StringTextComponent(chatComponent.getText());
 		} else if (raw instanceof ChatTranslateComponent) {
 			ChatTranslateComponent chatComponent = (ChatTranslateComponent) raw;
-			component = new TranslationTextComponent(chatComponent.getKey(), chatComponent.getWith().stream().map(ForgeParser::forge).toArray());
+			component = new TranslationTextComponent(chatComponent.getKey(), chatComponent.getWith().stream().map((c) -> forge(c, isConsole)).toArray());
 		} else {
 			throw new IllegalArgumentException("Could not parse ITextComponent from " + raw.getClass());
 		}
-		component.setStyle(forgeStyle(raw));
+		component.setStyle(forge(raw.getStyle()));
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
-			component.append(forge(chatComponent));
+			component.append(forge(chatComponent, isConsole));
 		}
 		return component;
 	}
@@ -98,17 +109,33 @@ public class ForgeParser extends BaseParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		Style style = raw.getStyle();
-		chatComponent.setColor(forgeColor(style.getColor()));
-		chatComponent.setBold(((StyleMixin) style).getBold());
-		chatComponent.setItalic(((StyleMixin) style).getItalic());
-		chatComponent.setStrikethrough(((StyleMixin) style).getStrikethrough());
-		chatComponent.setUnderlined(((StyleMixin) style).getUnderlined());
-		chatComponent.setObfuscated(((StyleMixin) style).getObfuscated());
-		chatComponent.setClickEvent(forge(style.getClickEvent()));
-		chatComponent.setHoverEvent(forge(style.getHoverEvent()));
+		chatComponent.setStyle(forge(raw.getStyle()));
 		chatComponent.setExtra(raw.getSiblings().stream().map(ForgeParser::forge).collect(Collectors.toList()));
 		return chatComponent;
+	}
+
+	public static Style forge(ChatStyle chatStyle) {
+		if (chatStyle == null) return null;
+		if (chatStyle.isEmpty()) return Style.EMPTY;
+		return StyleMixin.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+	}
+
+	public static ChatStyle forge(Style style) {
+		if (style == null) return null;
+		if (style.isEmpty()) return ChatStyle.EMPTY;
+		StyleMixin mixin = (StyleMixin) style;
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		builder.withColor(forge(mixin.getColor()));
+		builder.withBold(mixin.getBold());
+		builder.withItalic(mixin.getItalic());
+		builder.withUnderlined(mixin.getUnderlined());
+		builder.withStrikethrough(mixin.getStrikethrough());
+		builder.withObfuscated(mixin.getObfuscated());
+		builder.withClickEvent(forge(mixin.getClickEvent()));
+		builder.withHoverEvent(forge(mixin.getHoverEvent()));
+		builder.withInsertion(mixin.getInsertion());
+		builder.withFont(forge(mixin.getFont()));
+		return builder.build();
 	}
 
 	public static ClickEvent forge(ChatClickEvent event) {
@@ -125,7 +152,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V> ChatHoverEvent<V> forge(HoverEvent event) {
+	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> forge(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action<?> action = event.getAction();
 		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) forgeContent2(event.getValue(action)));
@@ -184,40 +211,20 @@ public class ForgeParser extends BaseParser {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
 	}
 
-	public static Style forgeStyle(ChatComponent component) {
-		Objects.requireNonNull(component);
-		Style style = Style.EMPTY;
-		Color color = forgeColor(component.getColorRaw());
-		if (color != null) {
-			style = style.withColor(color);
-		}
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : component.getFormatsRaw().entrySet()) {
-			Boolean isSetted = entry.getValue();
-			if (isSetted != null && isSetted) {
-				style = style.applyFormat(forge(entry.getKey().asTextFormat()));
-			}
-		}
-		ChatClickEvent clickEvent = component.getClickEvent();
-		if (clickEvent != null) style = style.withClickEvent(forge(clickEvent));
-		ChatHoverEvent<?> hoverEvent = component.getHoverEvent();
-		if (hoverEvent != null) style = style.withHoverEvent(forge(hoverEvent));
-		return style;
-	}
-
 	public static TextFormatting forge(ChatTextFormat format) {
-		return format != null ? TextFormatting.getByCode(format.getChar()) : null;
+		return format != null ? TextFormatting.getByName(format.name()) : null;
 	}
 
 	public static ChatTextFormat forge(TextFormatting formatting) {
-		return formatting != null ? ChatTextFormat.getByChar(formatting.toString().charAt(1)) : null;
+		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
 	}
 
-	public static Color forgeColor(ChatTextColor color) {
-		return color != null ? Color.fromRgb(color.value()) : null;
+	public static Color forge(ChatTextColor color) {
+		return color != null ? Color.parseColor(color.toString()) : null;
 	}
 
-	public static ChatTextColor forgeColor(Color color) {
-		return color != null ? ChatTextColor.color(color.getValue(), null) : null;
+	public static ChatTextColor forge(Color color) {
+		return color != null ? ChatTextColor.of(color.toString()) : null;
 	}
 
 	public ChatPlayer toChatPlayer(ServerPlayerEntity player) {

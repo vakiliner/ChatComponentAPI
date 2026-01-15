@@ -2,6 +2,8 @@ package vakiliner.chatcomponentapi.component;
 
 import java.util.Objects;
 import java.util.Set;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 
 public class ChatTextComponent extends ChatComponent {
@@ -15,18 +17,23 @@ public class ChatTextComponent extends ChatComponent {
 		this.text = Objects.requireNonNull(text);
 	}
 
+	public ChatTextComponent(String text, ChatStyle style) {
+		super(style);
+		this.text = Objects.requireNonNull(text);
+	}
+
 	public ChatTextComponent(String text, ChatTextColor color) {
 		super(color);
 		this.text = Objects.requireNonNull(text);
 	}
 
-	public ChatTextComponent(ChatTextComponent component) {
-		super(component);
+	public ChatTextComponent(ChatTextComponent component, boolean cloneExtra) {
+		super(component, cloneExtra);
 		this.text = component.text;
 	}
 
-	public ChatTextComponent clone() {
-		return new ChatTextComponent(this);
+	public ChatTextComponent clone(boolean cloneExtra) {
+		return new ChatTextComponent(this, cloneExtra);
 	}
 
 	public String getText() {
@@ -50,5 +57,18 @@ public class ChatTextComponent extends ChatComponent {
 			ChatTextComponent other = (ChatTextComponent) obj;
 			return super.equals(other) && this.text.equals(other.text);
 		}
+	}
+
+	protected void serialize(JsonObject object) {
+		object.addProperty("text", this.text);
+	}
+
+	public static ChatTextComponent deserialize(JsonElement element) {
+		if (element.isJsonPrimitive()) {
+			return new ChatTextComponent(element.getAsString());
+		}
+		JsonObject object = element.getAsJsonObject();
+		String text = object.get("text").getAsString();
+		return ChatComponent.deserialize((style) -> new ChatTextComponent(text, style), object);
 	}
 }
