@@ -3,10 +3,13 @@ package vakiliner.chatcomponentapi.component;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
+import vakiliner.chatcomponentapi.gson.IGsonSerializer;
 
-public class ChatStyle {
+public class ChatStyle implements IGsonSerializer {
 	public static final ChatStyle EMPTY = new ChatStyle(null, null, null, null, null, null, null, null, null, null);
 	private final ChatTextColor color;
 	private final Boolean bold;
@@ -227,6 +230,65 @@ public class ChatStyle {
 		} else {
 			return false;
 		}
+	}
+
+	public JsonElement serialize() {
+		return serialize(this);
+	}
+
+	public static JsonElement serialize(ChatStyle style) {
+		return serialize(style, new JsonObject());
+	}
+
+	public static JsonObject serialize(ChatStyle style, JsonObject object) {
+		Objects.requireNonNull(object);
+		ChatTextColor color = style.color;
+		Boolean bold = style.bold;
+		Boolean italic = style.italic;
+		Boolean underlined = style.underlined;
+		Boolean strikethrough = style.strikethrough;
+		Boolean obfuscated = style.obfuscated;
+		ChatClickEvent clickEvent = style.clickEvent;
+		ChatHoverEvent<?> hoverEvent = style.hoverEvent;
+		String insertion = style.insertion;
+		ChatId font = style.font;
+		if (color != null) object.addProperty("color", color.toString());
+		if (bold != null) object.addProperty("bold", bold);
+		if (italic != null) object.addProperty("italic", italic);
+		if (underlined != null) object.addProperty("underlined", underlined);
+		if (strikethrough != null) object.addProperty("strikethrough", strikethrough);
+		if (obfuscated != null) object.addProperty("obfuscated", obfuscated);
+		if (clickEvent != null) object.add("clickEvent", ChatClickEvent.serialize(clickEvent));
+		if (hoverEvent != null) object.add("hoverEvent", ChatHoverEvent.serialize(hoverEvent));
+		if (insertion != null) object.addProperty("insertion", insertion);
+		if (font != null) object.addProperty("font", font.toString());
+		return object;
+	}
+
+	public static ChatStyle deserialize(JsonElement element) {
+		JsonObject object = element.getAsJsonObject();
+		JsonElement color = object.get("color");
+		JsonElement bold = object.get("bold");
+		JsonElement italic = object.get("italic");
+		JsonElement underlined = object.get("underlined");
+		JsonElement strikethrough = object.get("strikethrough");
+		JsonElement obfuscated = object.get("obfuscated");
+		JsonElement clickEvent = object.get("clickEvent");
+		JsonElement hoverEvent = object.get("hoverEvent");
+		JsonElement insertion = object.get("insertion");
+		JsonElement font = object.get("font");
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		if (color != null) builder.withColor(ChatTextColor.of(color.getAsString()));
+		if (bold != null) builder.withBold(bold.getAsBoolean());
+		if (italic != null) builder.withItalic(italic.getAsBoolean());
+		if (underlined != null) builder.withUnderlined(underlined.getAsBoolean());
+		if (strikethrough != null) builder.withStrikethrough(strikethrough.getAsBoolean());
+		if (obfuscated != null) builder.withObfuscated(obfuscated.getAsBoolean());
+		if (clickEvent != null) builder.withClickEvent(ChatClickEvent.deserialize(clickEvent));
+		if (hoverEvent != null) builder.withHoverEvent(ChatHoverEvent.deserialize(hoverEvent));
+		if (insertion != null) builder.withInsertion(insertion.getAsString());
+		if (font != null) builder.withFont(ChatId.parse(font.getAsString()));
+		return builder.build();
 	}
 
 	public static class Builder {

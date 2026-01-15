@@ -159,7 +159,7 @@ public class PaperParser extends SpigotParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V> ChatHoverEvent<V> paper(HoverEvent<?> event) {
+	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> paper(HoverEvent<?> event) {
 		return event != null ? new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(event.action().toString()), (V) paperContent2(event.value())) : null;
 	}
 

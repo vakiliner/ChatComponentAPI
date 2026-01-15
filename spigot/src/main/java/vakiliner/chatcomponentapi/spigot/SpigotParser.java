@@ -133,7 +133,7 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V> ChatHoverEvent<V> spigot(HoverEvent event) {
+	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> spigot(HoverEvent event) {
 		return event != null ? new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(event.getAction().name().toLowerCase()), (V) spigotContent2(event.getContents().get(0))) : null;
 	}
 
