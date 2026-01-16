@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.forge;
 
+import java.net.SocketAddress;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -26,6 +27,10 @@ public class ForgeChatPlayer extends ForgeChatOfflinePlayer implements ChatPlaye
 
 	public ChatGameMode getGameMode() {
 		return ChatGameMode.getByValue(this.player.gameMode.getGameModeForPlayer().getId());
+	}
+
+	public SocketAddress getAddress() {
+		return this.player.connection.connection.getRemoteAddress();
 	}
 
 	public void kick(ChatComponent reason) {

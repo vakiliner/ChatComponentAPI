@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import java.net.SocketAddress;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
@@ -24,6 +25,10 @@ public class BukkitChatPlayer extends BukkitChatOfflinePlayer implements ChatPla
 	@SuppressWarnings("deprecation")
 	public ChatGameMode getGameMode() {
 		return ChatGameMode.getByValue(this.getPlayer().getGameMode().getValue());
+	}
+
+	public SocketAddress getAddress() {
+		return this.getPlayer().getAddress();
 	}
 
 	public void kick(ChatComponent reason) {

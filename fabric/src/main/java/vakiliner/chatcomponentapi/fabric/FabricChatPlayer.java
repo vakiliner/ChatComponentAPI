@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.fabric;
 
+import java.net.SocketAddress;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,6 +27,10 @@ public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPla
 
 	public ChatGameMode getGameMode() {
 		return ChatGameMode.getByValue(this.player.gameMode.getGameModeForPlayer().getId());
+	}
+
+	public SocketAddress getAddress() {
+		return this.player.connection.connection.getRemoteAddress();
 	}
 
 	public void kick(ChatComponent reason) {
