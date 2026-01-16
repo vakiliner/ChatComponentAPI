@@ -17,8 +17,8 @@ updateJSONURL="https://raw.githubusercontent.com/vakiliner/ChatComponentAPI/refs
 [[dependencies.chatcomponentapi]]
 	modId="forge"
 	mandatory=true
-	versionRange="[32.0.72,37)"
+	versionRange="[32.0.72,)"
 [[dependencies.chatcomponentapi]]
 	modId="minecraft"
 	mandatory=true
-	versionRange="[1.16.4,1.17)"
+	versionRange="[1.16,1.17)"

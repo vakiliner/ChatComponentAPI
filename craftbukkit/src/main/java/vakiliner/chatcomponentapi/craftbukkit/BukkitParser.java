@@ -26,6 +26,10 @@ public class BukkitParser extends BaseParser {
 		return false;
 	}
 
+	public boolean supportsFontInStyle() {
+		return true;
+	}
+
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.sendMessage(sender, component.toLegacyText(), type == ChatMessageType.CHAT, uuid);
 	}

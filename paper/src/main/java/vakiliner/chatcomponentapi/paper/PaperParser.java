@@ -3,7 +3,6 @@ package vakiliner.chatcomponentapi.paper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
@@ -37,6 +36,7 @@ import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
+import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.spigot.SpigotParser;
@@ -78,7 +78,6 @@ public class PaperParser extends SpigotParser {
 			}
 		}
 		final ComponentBuilder<?, ?> builder;
-		Style style = paperStyle(raw);
 		List<Component> children = new ArrayList<>();
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
@@ -96,7 +95,7 @@ public class PaperParser extends SpigotParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse Component from " + raw.getClass());
 		}
-		return builder.style(style).append(children).build();
+		return builder.style(paper(raw.getStyle())).append(children).build();
 	}
 
 	public static ChatComponent paper(Component raw) {
@@ -115,21 +114,48 @@ public class PaperParser extends SpigotParser {
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
-		Style style = raw.style();
-		chatComponent.setColor(paper(style.color()));
-		for (Map.Entry<TextDecoration, TextDecoration.State> entry : raw.decorations().entrySet()) {
-			TextDecoration.State isSetted = entry.getValue();
-			if (isSetted != TextDecoration.State.NOT_SET) {
-				chatComponent.setFormat(paper(entry.getKey()), isSetted == TextDecoration.State.TRUE);
-			}
-		}
-		chatComponent.setClickEvent(paper(raw.clickEvent()));
-		chatComponent.setHoverEvent(paper(raw.hoverEvent()));
+		chatComponent.setStyle(paper(raw.style()));
 		List<Component> children = raw.children();
 		if (children != null) {
 			chatComponent.setExtra(children.stream().map(PaperParser::paper).collect(Collectors.toList()));
 		}
 		return chatComponent;
+	}
+
+	public static Style paper(ChatStyle chatStyle) {
+		if (chatStyle == null) return null;
+		if (chatStyle.isEmpty()) return Style.empty();
+		Style.Builder builder = Style.style();
+		builder.color(paper(chatStyle.getColor()));
+		for (Map.Entry<ChatComponentFormat, Boolean> entry : chatStyle.getFormats().entrySet()) {
+			Boolean isSetted = entry.getValue();
+			if (isSetted != null) {
+				builder.decoration(paper(entry.getKey()), isSetted);
+			}
+		}
+		builder.clickEvent(paper(chatStyle.getClickEvent()));
+		builder.hoverEvent(paper(chatStyle.getHoverEvent()));
+		builder.insertion(chatStyle.getInsertion());
+		builder.font(paper(chatStyle.getFont()));
+		return builder.build();
+	}
+
+	public static ChatStyle paper(Style style) {
+		if (style == null) return null;
+		if (style.isEmpty()) return ChatStyle.EMPTY;
+		ChatStyle.Builder builder = ChatStyle.newBuilder();
+		builder.withColor(paper(style.color()));
+		for (Map.Entry<TextDecoration, TextDecoration.State> entry : style.decorations().entrySet()) {
+			TextDecoration.State isSetted = entry.getValue();
+			if (isSetted != TextDecoration.State.NOT_SET) {
+				builder.withFormat(paper(entry.getKey()), isSetted == TextDecoration.State.TRUE);
+			}
+		}
+		builder.withClickEvent(paper(style.clickEvent()));
+		builder.withHoverEvent(paper(style.hoverEvent()));
+		builder.withInsertion(style.insertion());
+		builder.withFont(paper(style.font()));
+		return builder.build();
 	}
 
 	public static ClickEvent paper(ChatClickEvent event) {
@@ -146,7 +172,7 @@ public class PaperParser extends SpigotParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V> ChatHoverEvent<V> paper(HoverEvent<?> event) {
+	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> paper(HoverEvent<?> event) {
 		return event != null ? new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(event.action().toString()), (V) paperContent2(event.value())) : null;
 	}
 
@@ -198,24 +224,6 @@ public class PaperParser extends SpigotParser {
 
 	public static ChatMessageType paper(MessageType type) {
 		return type != null ? ChatMessageType.valueOf(type.name()) : null;
-	}
-
-	public static Style paperStyle(ChatComponent component) {
-		Objects.requireNonNull(component);
-		Style.Builder builder = Style.style();
-		ChatTextColor color = component.getColor();
-		if (color != null) {
-			builder.color(paper(color));
-		}
-		for (Map.Entry<ChatComponentFormat, Boolean> entry : component.getFormatsRaw().entrySet()) {
-			Boolean isSetted = entry.getValue();
-			if (isSetted != null) {
-				builder.decoration(paper(entry.getKey()), isSetted);
-			}
-		}
-		builder.clickEvent(paper(component.getClickEvent()));
-		builder.hoverEvent(paper(component.getHoverEvent()));
-		return builder.build();
 	}
 
 	public static NamedTextColor paper(ChatNamedColor color) {
