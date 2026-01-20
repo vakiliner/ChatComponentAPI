@@ -51,6 +51,10 @@ public class PaperParser extends SpigotParser {
 		}
 	}
 
+	public void kickPlayer(Player player, ChatComponent reason) {
+		player.kick(paper(reason));
+	}
+
 	public static Component paper(ChatComponent raw) {
 		return paper(raw, false);
 	}

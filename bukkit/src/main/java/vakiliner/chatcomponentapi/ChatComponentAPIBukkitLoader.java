@@ -1,11 +1,12 @@
 package vakiliner.chatcomponentapi;
 
 import org.bukkit.plugin.java.JavaPlugin;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.craftbukkit.BukkitParser;
 import vakiliner.chatcomponentapi.paper.PaperParser;
 import vakiliner.chatcomponentapi.spigot.SpigotParser;
 
-public class ChatComponentAPIBukkitLoader extends JavaPlugin {
+public class ChatComponentAPIBukkitLoader extends JavaPlugin implements IChatPlugin {
 	public static final BukkitParser PARSER;
 
 	static {
