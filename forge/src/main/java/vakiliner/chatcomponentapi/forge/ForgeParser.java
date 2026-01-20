@@ -28,6 +28,7 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
@@ -251,5 +252,9 @@ public class ForgeParser extends BaseParser {
 
 	public ChatTeam toChatTeam(ScorePlayerTeam team) {
 		return team != null ? new ForgeChatTeam(this, team) : null;
+	}
+
+	public ChatServer toChatServer(MinecraftServer server) {
+		return server != null ? new ForgeChatServer(this, server) : null;
 	}
 }

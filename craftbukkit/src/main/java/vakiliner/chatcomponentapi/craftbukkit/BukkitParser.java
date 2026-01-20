@@ -3,6 +3,7 @@ package vakiliner.chatcomponentapi.craftbukkit;
 import java.util.UUID;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -12,6 +13,7 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
@@ -75,5 +77,9 @@ public class BukkitParser extends BaseParser {
 
 	public ChatTeam toChatTeam(Team team) {
 		return team != null ? new BukkitChatTeam(this, team) : null;
+	}
+
+	public ChatServer toChatServer(Server server) {
+		return server != null ? new BukkitChatServer(this, server) : null;
 	}
 }
