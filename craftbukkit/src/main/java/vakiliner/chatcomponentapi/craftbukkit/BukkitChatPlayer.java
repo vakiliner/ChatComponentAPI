@@ -4,6 +4,7 @@ import java.net.SocketAddress;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.common.ChatGameMode;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -16,6 +17,10 @@ public class BukkitChatPlayer extends BukkitChatOfflinePlayer implements ChatPla
 
 	public Player getPlayer() {
 		return (Player) super.getPlayer();
+	}
+
+	public ChatServer getServer() {
+		return this.parser.toChatServer(this.getPlayer().getServer());
 	}
 
 	public ChatComponent getDisplayName() {
