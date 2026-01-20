@@ -19,7 +19,6 @@ public class FabricChatServer implements ChatServer {
 	}
 
 	public void execute(IChatPlugin plugin, Runnable runnable) {
-		Objects.requireNonNull(plugin);
-		this.server.execute(runnable);
+		this.parser.execute(this.server, plugin, runnable);
 	}
 }

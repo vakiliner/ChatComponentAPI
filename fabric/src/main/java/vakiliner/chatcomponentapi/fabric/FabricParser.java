@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.fabric;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
@@ -30,6 +31,7 @@ import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
@@ -66,6 +68,11 @@ public class FabricParser extends BaseParser {
 	@Deprecated
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		playerList.broadcastMessage(fabric(component), fabric(type), uuid);
+	}
+
+	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		Objects.requireNonNull(plugin, "Invalid plugin");
+		server.execute(runnable);
 	}
 
 	public void kickPlayer(ServerPlayer player, ChatComponent reason) {
