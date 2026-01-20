@@ -9,5 +9,7 @@ public interface ChatOfflinePlayer {
 
 	boolean isOp();
 
+	boolean isOnline();
+
 	ChatTeam getTeam();
 }

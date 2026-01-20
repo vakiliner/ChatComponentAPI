@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.forge;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
@@ -31,6 +32,7 @@ import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
@@ -65,6 +67,15 @@ public class ForgeParser extends BaseParser {
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		playerList.broadcastMessage(forge(component), forge(type), uuid);
+	}
+
+	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		Objects.requireNonNull(plugin, "Invalid plugin");
+		server.execute(runnable);
+	}
+
+	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
+		player.connection.disconnect(forge(reason));
 	}
 
 	public static ITextComponent forge(ChatComponent raw) {

@@ -9,6 +9,8 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Team;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
@@ -17,6 +19,7 @@ import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -59,6 +62,18 @@ public class BukkitParser extends BaseParser {
 		for (CommandSender recipient : recipients) {
 			this.sendMessage(recipient, message, chat, uuid);
 		}
+	}
+
+	public void execute(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof Plugin) {
+			scheduler.runTask((Plugin) plugin, runnable);
+		} else {
+			throw new IllegalArgumentException("Invalid plugin");
+		}
+	}
+
+	public void kickPlayer(Player player, ChatComponent reason) {
+		player.kickPlayer(reason != null ? reason.toLegacyText() : null);
 	}
 
 	public static ChatColor bukkit(ChatTextFormat color) {

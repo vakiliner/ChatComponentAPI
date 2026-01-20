@@ -8,6 +8,7 @@ import org.bukkit.Server;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
@@ -54,5 +55,9 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 
 	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.broadcastMessage(this.server, component, type, uuid);
+	}
+
+	public void execute(IChatPlugin plugin, Runnable runnable) {
+		this.parser.execute(this.server.getScheduler(), plugin, runnable);
 	}
 }
