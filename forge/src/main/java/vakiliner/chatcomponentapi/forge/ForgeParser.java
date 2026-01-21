@@ -9,6 +9,7 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
@@ -66,7 +67,8 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
-		playerList.broadcastMessage(forge(component), forge(type), uuid);
+		this.sendMessage(playerList.getServer(), component, type, uuid);
+		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
