@@ -10,7 +10,7 @@ import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 
 @Mixin(Style.class)
-public interface StyleMixin {
+public interface StyleAccessor {
 	@Invoker("<init>")
 	static Style newStyle(Color сolor, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, ClickEvent clickEvent, HoverEvent hoverEvent, String insertion, ResourceLocation font) {
 		throw new AssertionError();
