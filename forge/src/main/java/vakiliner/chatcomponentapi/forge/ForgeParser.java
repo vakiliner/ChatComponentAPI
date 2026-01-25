@@ -43,7 +43,7 @@ import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.forge.mixin.StyleMixin;
+import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
 	public boolean supportsSeparatorInSelector() {
@@ -125,24 +125,24 @@ public class ForgeParser extends BaseParser {
 	public static Style forge(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
 		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleMixin.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		return StyleAccessor.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
 	}
 
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleMixin mixin = (StyleMixin) style;
+		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(mixin.getColor()));
-		builder.withBold(mixin.getBold());
-		builder.withItalic(mixin.getItalic());
-		builder.withUnderlined(mixin.getUnderlined());
-		builder.withStrikethrough(mixin.getStrikethrough());
-		builder.withObfuscated(mixin.getObfuscated());
-		builder.withClickEvent(forge(mixin.getClickEvent()));
-		builder.withHoverEvent(forge(mixin.getHoverEvent()));
-		builder.withInsertion(mixin.getInsertion());
-		builder.withFont(forge(mixin.getFont()));
+		builder.withColor(forge(accessor.getColor()));
+		builder.withBold(accessor.getBold());
+		builder.withItalic(accessor.getItalic());
+		builder.withUnderlined(accessor.getUnderlined());
+		builder.withStrikethrough(accessor.getStrikethrough());
+		builder.withObfuscated(accessor.getObfuscated());
+		builder.withClickEvent(forge(accessor.getClickEvent()));
+		builder.withHoverEvent(forge(accessor.getHoverEvent()));
+		builder.withInsertion(accessor.getInsertion());
+		builder.withFont(forge(accessor.getFont()));
 		return builder.build();
 	}
 

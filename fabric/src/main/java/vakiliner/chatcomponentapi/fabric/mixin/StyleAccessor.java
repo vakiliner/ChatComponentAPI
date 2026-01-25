@@ -10,7 +10,7 @@ import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 
 @Mixin(Style.class)
-public interface StyleMixin {
+public interface StyleAccessor {
 	@Invoker("<init>")
 	static Style newStyle(TextColor textColor, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, ClickEvent clickEvent, HoverEvent hoverEvent, String insertion, ResourceLocation font) {
 		throw new AssertionError();

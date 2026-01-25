@@ -46,7 +46,7 @@ import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.fabric.mixin.StyleMixin;
+import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
 	public boolean supportsSeparatorInSelector() {
@@ -139,24 +139,24 @@ public class FabricParser extends BaseParser {
 	public static Style fabric(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
 		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleMixin.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont()));
+		return StyleAccessor.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont()));
 	}
 
 	public static ChatStyle fabric(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleMixin mixin = (StyleMixin) style;
+		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(fabric(style.getColor()));
-		builder.withBold(mixin.getBold());
-		builder.withItalic(mixin.getItalic());
-		builder.withUnderlined(mixin.getUnderlined());
-		builder.withStrikethrough(mixin.getStrikethrough());
-		builder.withObfuscated(mixin.getObfuscated());
-		builder.withClickEvent(fabric(style.getClickEvent()));
-		builder.withHoverEvent(fabric(mixin.getHoverEvent()));
-		builder.withInsertion(style.getInsertion());
-		builder.withFont(fabric(mixin.getFont()));
+		builder.withColor(fabric(accessor.getColor()));
+		builder.withBold(accessor.getBold());
+		builder.withItalic(accessor.getItalic());
+		builder.withUnderlined(accessor.getUnderlined());
+		builder.withStrikethrough(accessor.getStrikethrough());
+		builder.withObfuscated(accessor.getObfuscated());
+		builder.withClickEvent(fabric(accessor.getClickEvent()));
+		builder.withHoverEvent(fabric(accessor.getHoverEvent()));
+		builder.withInsertion(accessor.getInsertion());
+		builder.withFont(fabric(accessor.getFont()));
 		return builder.build();
 	}
 
