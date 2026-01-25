@@ -1,11 +1,18 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import java.util.Collection;
 import java.util.Objects;
+import java.util.UUID;
 import org.bukkit.Server;
+import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
+import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public class BukkitChatServer implements ChatServer {
+public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	private final BukkitParser parser;
 	private final Server server;
 
@@ -16,6 +23,38 @@ public class BukkitChatServer implements ChatServer {
 
 	public Server getImpl() {
 		return this.server;
+	}
+
+	public ChatServer getServer() {
+		return this;
+	}
+
+	public ChatPlayerList getPlayerList() {
+		return this;
+	}
+
+	public int getPlayerCount() {
+		return this.server.getOnlinePlayers().size();
+	}
+
+	public int getMaxPlayers() {
+		return this.server.getMaxPlayers();
+	}
+
+	public int getViewDistance() {
+		return this.server.getViewDistance();
+	}
+
+	public Collection<ChatPlayer> getPlayers() {
+		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
+	}
+
+	public ChatPlayer getPlayer(UUID uuid) {
+		return this.parser.toChatPlayer(this.server.getPlayer(uuid));
+	}
+
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.broadcastMessage(this.server, component, type, uuid);
 	}
 
 	public void execute(IChatPlugin plugin, Runnable runnable) {

@@ -1,0 +1,54 @@
+package vakiliner.chatcomponentapi.forge;
+
+import java.util.Collection;
+import java.util.Objects;
+import java.util.UUID;
+import net.minecraft.server.management.PlayerList;
+import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
+import vakiliner.chatcomponentapi.base.ChatServer;
+import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.util.ParseCollection;
+
+public class ForgeChatPlayerList implements ChatPlayerList {
+	private final ForgeParser parser;
+	private final PlayerList playerList;
+
+	public ForgeChatPlayerList(ForgeParser parser, PlayerList playerList) {
+		this.parser = Objects.requireNonNull(parser);
+		this.playerList = Objects.requireNonNull(playerList);
+	}
+
+	public PlayerList getPlayerList() {
+		return this.playerList;
+	}
+
+	public ChatServer getServer() {
+		return this.parser.toChatServer(this.playerList.getServer());
+	}
+
+	public int getPlayerCount() {
+		return this.playerList.getPlayerCount();
+	}
+
+	public int getMaxPlayers() {
+		return this.playerList.getMaxPlayers();
+	}
+
+	public int getViewDistance() {
+		return this.playerList.getViewDistance();
+	}
+
+	public Collection<ChatPlayer> getPlayers() {
+		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
+	}
+
+	public ChatPlayer getPlayer(UUID uuid) {
+		return this.parser.toChatPlayer(this.playerList.getPlayer(uuid));
+	}
+
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.broadcastMessage(this.playerList, component, type, uuid);
+	}
+}
