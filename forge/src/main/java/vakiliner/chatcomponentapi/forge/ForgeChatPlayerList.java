@@ -1,15 +1,15 @@
 package vakiliner.chatcomponentapi.forge;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import net.minecraft.server.management.PlayerList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class ForgeChatPlayerList implements ChatPlayerList {
 	private final ForgeParser parser;
@@ -40,8 +40,8 @@ public class ForgeChatPlayerList implements ChatPlayerList {
 		return this.playerList.getViewDistance();
 	}
 
-	public List<ChatPlayer> getPlayers() {
-		return this.playerList.getPlayers().stream().map(this.parser::toChatPlayer).collect(Collectors.toList());
+	public Collection<ChatPlayer> getPlayers() {
+		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
 	}
 
 	public ChatPlayer getPlayer(UUID uuid) {

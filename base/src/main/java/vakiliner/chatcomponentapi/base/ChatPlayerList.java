@@ -1,6 +1,6 @@
 package vakiliner.chatcomponentapi.base;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.UUID;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -14,7 +14,7 @@ public interface ChatPlayerList {
 
 	int getViewDistance();
 
-	List<ChatPlayer> getPlayers();
+	Collection<ChatPlayer> getPlayers();
 
 	public ChatPlayer getPlayer(UUID uuid);
 

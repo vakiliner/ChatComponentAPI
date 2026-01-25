@@ -1,9 +1,8 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import org.bukkit.Server;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
@@ -11,6 +10,7 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	private final BukkitParser parser;
@@ -45,8 +45,8 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.server.getViewDistance();
 	}
 
-	public List<ChatPlayer> getPlayers() {
-		return this.server.getOnlinePlayers().stream().map(this.parser::toChatPlayer).collect(Collectors.toList());
+	public Collection<ChatPlayer> getPlayers() {
+		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}
 
 	public ChatPlayer getPlayer(UUID uuid) {
