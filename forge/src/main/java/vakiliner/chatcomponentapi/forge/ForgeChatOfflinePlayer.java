@@ -1,7 +1,6 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Objects;
-import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
@@ -20,14 +19,6 @@ public class ForgeChatOfflinePlayer implements ChatOfflinePlayer {
 
 	public GameProfile getGameProfile() {
 		return this.gameProfile;
-	}
-
-	public String getName() {
-		return this.gameProfile.getName();
-	}
-
-	public UUID getUniqueId() {
-		return this.gameProfile.getId();
 	}
 
 	public boolean isOp() {

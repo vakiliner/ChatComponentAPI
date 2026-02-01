@@ -4,6 +4,7 @@ import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 
@@ -18,6 +19,10 @@ public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 
 	public OfflinePlayer getPlayer() {
 		return this.player;
+	}
+
+	public GameProfile getGameProfile() {
+		return new GameProfile(this.player.getUniqueId(), this.player.getName());
 	}
 
 	public String getName() {
