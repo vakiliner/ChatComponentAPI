@@ -18,5 +18,9 @@ public interface ChatPlayerList {
 
 	public ChatPlayer getPlayer(UUID uuid);
 
+	default void broadcastMessage(ChatComponent component) {
+		this.broadcastMessage(component, ChatMessageType.SYSTEM, null);
+	}
+
 	void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid);
 }
