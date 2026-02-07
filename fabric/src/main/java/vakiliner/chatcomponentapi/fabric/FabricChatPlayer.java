@@ -45,4 +45,15 @@ public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPla
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.sendMessage(this.player, component, type, uuid);
 	}
+
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj != null && this.getClass() == obj.getClass()) {
+			FabricChatPlayer other = (FabricChatPlayer) obj;
+			return this.parser.equals(other.parser) && this.player.equals(other.player);
+		} else {
+			return false;
+		}
+	}
 }

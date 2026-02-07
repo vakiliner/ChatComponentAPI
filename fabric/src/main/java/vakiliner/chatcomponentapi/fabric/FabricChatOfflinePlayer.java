@@ -32,4 +32,15 @@ public class FabricChatOfflinePlayer implements ChatOfflinePlayer {
 	public ChatTeam getTeam() {
 		return this.parser.toChatTeam(this.server.getScoreboard().getPlayerTeam(this.getName()));
 	}
+
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj != null && this.getClass() == obj.getClass()) {
+			FabricChatOfflinePlayer other = (FabricChatOfflinePlayer) obj;
+			return this.parser.equals(other.parser) && this.server.equals(other.server) && this.gameProfile.equals(other.gameProfile);
+		} else {
+			return false;
+		}
+	}
 }
