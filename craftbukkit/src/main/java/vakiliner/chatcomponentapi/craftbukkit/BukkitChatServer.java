@@ -13,8 +13,8 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class BukkitChatServer implements ChatServer, ChatPlayerList {
-	private final BukkitParser parser;
-	private final Server server;
+	protected final BukkitParser parser;
+	protected final Server server;
 
 	public BukkitChatServer(BukkitParser parser, Server server) {
 		this.parser = Objects.requireNonNull(parser);

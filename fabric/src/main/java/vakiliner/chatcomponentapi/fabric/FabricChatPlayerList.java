@@ -12,8 +12,8 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class FabricChatPlayerList implements ChatPlayerList {
-	private final FabricParser parser;
-	private final PlayerList playerList;
+	protected final FabricParser parser;
+	protected final PlayerList playerList;
 
 	public FabricChatPlayerList(FabricParser parser, PlayerList playerList) {
 		this.parser = Objects.requireNonNull(parser);

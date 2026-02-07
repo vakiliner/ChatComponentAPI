@@ -12,8 +12,8 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class ForgeChatPlayerList implements ChatPlayerList {
-	private final ForgeParser parser;
-	private final PlayerList playerList;
+	protected final ForgeParser parser;
+	protected final PlayerList playerList;
 
 	public ForgeChatPlayerList(ForgeParser parser, PlayerList playerList) {
 		this.parser = Objects.requireNonNull(parser);
