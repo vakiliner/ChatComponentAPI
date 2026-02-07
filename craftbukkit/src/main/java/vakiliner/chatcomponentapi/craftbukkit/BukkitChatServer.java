@@ -6,8 +6,8 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 
 public class BukkitChatServer implements ChatServer {
-	private final BukkitParser parser;
-	private final Server server;
+	protected final BukkitParser parser;
+	protected final Server server;
 
 	public BukkitChatServer(BukkitParser parser, Server server) {
 		this.parser = Objects.requireNonNull(parser);
