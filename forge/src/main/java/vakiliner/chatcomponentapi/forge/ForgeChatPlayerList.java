@@ -51,4 +51,15 @@ public class ForgeChatPlayerList implements ChatPlayerList {
 	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.broadcastMessage(this.playerList, component, type, uuid);
 	}
+
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj != null && this.getClass() == obj.getClass()) {
+			ForgeChatPlayerList other = (ForgeChatPlayerList) obj;
+			return this.parser.equals(other.parser) && this.playerList.equals(other.playerList);
+		} else {
+			return false;
+		}
+	}
 }
