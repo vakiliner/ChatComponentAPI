@@ -45,4 +45,15 @@ public class ForgeChatPlayer extends ForgeChatOfflinePlayer implements ChatPlaye
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.sendMessage(this.player, component, type, uuid);
 	}
+
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj != null && this.getClass() == obj.getClass()) {
+			ForgeChatPlayer other = (ForgeChatPlayer) obj;
+			return this.parser.equals(other.parser) && this.player.equals(other.player);
+		} else {
+			return false;
+		}
+	}
 }
