@@ -44,4 +44,15 @@ public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 	public ChatTeam getTeam() {
 		return this.parser.toChatTeam(Bukkit.getScoreboardManager().getMainScoreboard().getEntryTeam(this.getName()));
 	}
+
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj != null && this.getClass() == obj.getClass()) {
+			BukkitChatOfflinePlayer other = (BukkitChatOfflinePlayer) obj;
+			return this.parser.equals(other.parser) && this.player.equals(other.player);
+		} else {
+			return false;
+		}
+	}
 }

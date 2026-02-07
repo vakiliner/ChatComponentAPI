@@ -26,4 +26,15 @@ public class ForgeChatServer implements ChatServer {
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server, plugin, runnable);
 	}
+
+	public boolean equals(Object obj) {
+		if (obj == this) {
+			return true;
+		} else if (obj != null && this.getClass() == obj.getClass()) {
+			ForgeChatServer other = (ForgeChatServer) obj;
+			return this.parser.equals(other.parser) && this.server.equals(other.server);
+		} else {
+			return false;
+		}
+	}
 }
