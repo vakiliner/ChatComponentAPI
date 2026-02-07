@@ -6,8 +6,8 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 
 public class ForgeChatServer implements ChatServer {
-	private final ForgeParser parser;
-	private final MinecraftServer server;
+	protected final ForgeParser parser;
+	protected final MinecraftServer server;
 
 	public ForgeChatServer(ForgeParser parser, MinecraftServer server) {
 		this.parser = Objects.requireNonNull(parser);

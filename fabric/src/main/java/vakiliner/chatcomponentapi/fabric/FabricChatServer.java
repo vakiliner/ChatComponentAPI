@@ -6,8 +6,8 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 
 public class FabricChatServer implements ChatServer {
-	private final FabricParser parser;
-	private final MinecraftServer server;
+	protected final FabricParser parser;
+	protected final MinecraftServer server;
 
 	public FabricChatServer(FabricParser parser, MinecraftServer server) {
 		this.parser = Objects.requireNonNull(parser);
