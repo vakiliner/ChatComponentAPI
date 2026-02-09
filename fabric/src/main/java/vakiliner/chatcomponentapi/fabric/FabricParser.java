@@ -2,7 +2,6 @@ package vakiliner.chatcomponentapi.fabric;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
@@ -74,8 +73,11 @@ public class FabricParser extends BaseParser {
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		Objects.requireNonNull(plugin, "Invalid plugin");
-		server.execute(runnable);
+		if (plugin instanceof IFabricChatPlugin) {
+			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
 	}
 
 	public void kickPlayer(ServerPlayer player, ChatComponent reason) {

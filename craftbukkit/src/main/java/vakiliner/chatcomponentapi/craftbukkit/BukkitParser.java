@@ -66,14 +66,14 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public void execute(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof Plugin) {
+		if (plugin instanceof IBukkitChatPlugin) {
 			if (!Bukkit.isPrimaryThread()) {
-				scheduler.runTask((Plugin) plugin, runnable);
+				scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), runnable);
 			} else {
 				runnable.run();
 			}
 		} else {
-			throw new IllegalArgumentException("Invalid plugin");
+			throw new ClassCastException("Invalid plugin");
 		}
 	}
 
