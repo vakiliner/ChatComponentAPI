@@ -48,6 +48,10 @@ public class ForgeChatPlayerList implements ChatPlayerList {
 		return this.parser.toChatPlayer(this.playerList.getPlayer(uuid));
 	}
 
+	public ChatPlayer getPlayer(String name) {
+		return this.parser.toChatPlayer(this.playerList.getPlayerByName(name));
+	}
+
 	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.broadcastMessage(this.playerList, component, type, uuid);
 	}

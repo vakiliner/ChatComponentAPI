@@ -53,6 +53,10 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.parser.toChatPlayer(this.server.getPlayer(uuid));
 	}
 
+	public ChatPlayer getPlayer(String name) {
+		return this.parser.toChatPlayer(this.server.getPlayerExact(name));
+	}
+
 	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.broadcastMessage(this.server, component, type, uuid);
 	}
