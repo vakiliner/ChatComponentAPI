@@ -14,6 +14,10 @@ public class BukkitChatUserBanList extends BukkitChatBanList<GameProfile> implem
 		return this.get(key.getName());
 	}
 
+	public void remove(GameProfile key) {
+		this.remove(key.getName());
+	}
+
 	public boolean isBanned(GameProfile gameProfile) {
 		return this.isBanned(gameProfile.getName());
 	}

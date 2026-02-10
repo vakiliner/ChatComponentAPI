@@ -23,6 +23,10 @@ public abstract class BukkitChatBanList<K> implements ChatStoredUserList<K, Chat
 		return this.parser.toChatBanEntry(this.banList.getBanEntry(key));
 	}
 
+	public void remove(String key) {
+		this.banList.pardon(key);
+	}
+
 	public boolean isBanned(String key) {
 		return this.banList.isBanned(key);
 	}

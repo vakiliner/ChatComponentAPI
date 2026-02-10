@@ -8,7 +8,7 @@ import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserList;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public abstract class FabricChatStoredUserList<Key, List extends StoredUserList<Key, Input>, Output extends ChatStoredUserEntry, Input extends StoredUserEntry<Key>> implements ChatStoredUserList<Key, Output> {
+public class FabricChatStoredUserList<Key, List extends StoredUserList<Key, Input>, Output extends ChatStoredUserEntry, Input extends StoredUserEntry<Key>> implements ChatStoredUserList<Key, Output> {
 	protected final FabricParser parser;
 	protected final List list;
 	protected final Function<Input, Output> i2o;
@@ -21,6 +21,10 @@ public abstract class FabricChatStoredUserList<Key, List extends StoredUserList<
 
 	public Output get(Key key) {
 		return this.i2o.apply(this.list.get(key));
+	}
+
+	public void remove(Key key) {
+		this.list.remove(key);
 	}
 
 	public Collection<Output> getEntries() {
