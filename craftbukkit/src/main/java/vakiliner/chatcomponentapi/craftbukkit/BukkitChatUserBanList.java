@@ -10,6 +10,10 @@ public class BukkitChatUserBanList extends BukkitChatBanList<GameProfile> implem
 		super(parser, banList);
 	}
 
+	public ChatBanEntry add(GameProfile key) {
+		return this.add(key.getName());
+	}
+
 	public ChatBanEntry get(GameProfile key) {
 		return this.get(key.getName());
 	}

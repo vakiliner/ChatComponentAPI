@@ -11,6 +11,12 @@ public class FabricChatIpBanList extends FabricChatStoredUserList<String, IpBanL
 		super(parser, list, parser::toChatBanEntry);
 	}
 
+	public ChatBanEntry add(String key) {
+		IpBanListEntry entry = new IpBanListEntry(key);
+		this.list.add(entry);
+		return this.i2o.apply(entry);
+	}
+
 	public ChatBanEntry get(SocketAddress address) {
 		return this.i2o.apply(this.list.get(address));
 	}

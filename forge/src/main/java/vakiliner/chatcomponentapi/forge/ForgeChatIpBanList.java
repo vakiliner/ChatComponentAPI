@@ -11,6 +11,12 @@ public class ForgeChatIpBanList extends ForgeChatStoredUserList<String, IPBanLis
 		super(parser, list, parser::toChatBanEntry);
 	}
 
+	public ChatBanEntry add(String key) {
+		IPBanEntry entry = new IPBanEntry(key);
+		this.list.add(entry);
+		return this.i2o.apply(entry);
+	}
+
 	public ChatBanEntry get(SocketAddress address) {
 		return this.i2o.apply(this.list.get(address));
 	}

@@ -11,6 +11,12 @@ public class FabricChatUserBanList extends FabricChatStoredUserList<GameProfile,
 		super(parser, list, parser::toChatBanEntry);
 	}
 
+	public ChatBanEntry add(GameProfile key) {
+		UserBanListEntry entry = new UserBanListEntry(key);
+		this.list.add(entry);
+		return this.i2o.apply(entry);
+	}
+
 	public boolean isBanned(GameProfile gameProfile) {
 		return this.list.isBanned(gameProfile);
 	}

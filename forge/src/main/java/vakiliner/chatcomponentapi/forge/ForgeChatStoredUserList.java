@@ -8,7 +8,7 @@ import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserList;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public class ForgeChatStoredUserList<Key, List extends UserList<Key, Input>, Output extends ChatStoredUserEntry, Input extends UserListEntry<Key>> implements ChatStoredUserList<Key, Output> {
+public abstract class ForgeChatStoredUserList<Key, List extends UserList<Key, Input>, Output extends ChatStoredUserEntry, Input extends UserListEntry<Key>> implements ChatStoredUserList<Key, Output> {
 	protected final ForgeParser parser;
 	protected final List list;
 	protected final Function<Input, Output> i2o;
