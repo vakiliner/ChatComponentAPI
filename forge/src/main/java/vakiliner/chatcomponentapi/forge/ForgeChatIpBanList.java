@@ -1,6 +1,7 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.net.SocketAddress;
+import java.util.Date;
 import net.minecraft.server.management.IPBanEntry;
 import net.minecraft.server.management.IPBanList;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
@@ -13,6 +14,12 @@ public class ForgeChatIpBanList extends ForgeChatStoredUserList<String, IPBanLis
 
 	public ChatBanEntry add(String key) {
 		IPBanEntry entry = new IPBanEntry(key);
+		this.list.add(entry);
+		return this.i2o.apply(entry);
+	}
+
+	public ChatBanEntry add(String key, String reason, String source, Date expires) {
+		IPBanEntry entry = new IPBanEntry(key, null, source, expires, reason);
 		this.list.add(entry);
 		return this.i2o.apply(entry);
 	}

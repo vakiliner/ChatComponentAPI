@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import java.util.Date;
 import org.bukkit.BanList;
 import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
@@ -12,6 +13,10 @@ public class BukkitChatUserBanList extends BukkitChatBanList<GameProfile> implem
 
 	public ChatBanEntry add(GameProfile key) {
 		return this.add(key.getName());
+	}
+
+	public ChatBanEntry add(GameProfile key, String reason, String source, Date expires) {
+		return this.add(key.getName(), reason, source, expires);
 	}
 
 	public ChatBanEntry get(GameProfile key) {

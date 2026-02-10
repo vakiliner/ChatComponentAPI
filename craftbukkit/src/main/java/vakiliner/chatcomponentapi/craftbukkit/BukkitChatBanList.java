@@ -1,12 +1,13 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
 import java.util.Collection;
+import java.util.Date;
 import org.bukkit.BanList;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
-import vakiliner.chatcomponentapi.base.ChatStoredUserList;
+import vakiliner.chatcomponentapi.base.ChatBanList;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public abstract class BukkitChatBanList<K> implements ChatStoredUserList<K, ChatBanEntry> {
+public abstract class BukkitChatBanList<K> implements ChatBanList<K> {
 	protected final BukkitParser parser;
 	protected final BanList banList;
 
@@ -20,7 +21,11 @@ public abstract class BukkitChatBanList<K> implements ChatStoredUserList<K, Chat
 	}
 
 	public ChatBanEntry add(String key) {
-		return this.parser.toChatBanEntry(this.banList.addBan(key, null, null, null));
+		return this.add(key, null, null, null);
+	}
+
+	public ChatBanEntry add(String key, String reason, String source, Date expires) {
+		return this.parser.toChatBanEntry(this.banList.addBan(key, reason, expires, source));
 	}
 
 	public ChatBanEntry get(String key) {
