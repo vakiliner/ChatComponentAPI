@@ -2,12 +2,12 @@ package vakiliner.chatcomponentapi.base;
 
 import java.util.Collection;
 
-public interface ChatStoredUserList<K, V extends ChatStoredUserEntry> {
-	V get(K key);
+public interface ChatStoredUserList<Key, Entry extends ChatStoredUserEntry> {
+	Entry get(Key key);
 
-	void remove(K key);
+	void remove(Key key);
 
-	Collection<V> getEntries();
+	Collection<Entry> getEntries();
 
 	boolean isEmpty();
 }
