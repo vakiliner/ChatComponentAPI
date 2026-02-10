@@ -3,6 +3,8 @@ package vakiliner.chatcomponentapi.craftbukkit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.BanEntry;
+import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -13,12 +15,15 @@ import org.bukkit.permissions.Permissible;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Team;
 import vakiliner.chatcomponentapi.base.BaseParser;
+import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
+import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
@@ -116,5 +121,17 @@ public class BukkitParser extends BaseParser {
 
 	public ChatPlayerList toChatPlayerList(Server server) {
 		return server != null ? new BukkitChatServer(this, server) : null;
+	}
+
+	public ChatIpBanList toChatIpBanList(BanList banList) {
+		return banList != null ? new BukkitChatIpBanList(this, banList) : null;
+	}
+
+	public ChatUserBanList toChatUserBanList(BanList banList) {
+		return banList != null ? new BukkitChatUserBanList(this, banList) : null;
+	}
+
+	public ChatBanEntry toChatBanEntry(BanEntry banEntry) {
+		return banEntry != null ? new BukkitChatBanEntry(this, banEntry) : null;
 	}
 }

@@ -8,6 +8,10 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 public interface ChatPlayerList {
 	ChatServer getServer();
 
+	ChatIpBanList getIpBanList();
+
+	ChatUserBanList getUserBanList();
+
 	int getPlayerCount();
 
 	int getMaxPlayers();

@@ -4,9 +4,11 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.server.players.PlayerList;
+import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
+import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.util.ParseCollection;
@@ -26,6 +28,14 @@ public class FabricChatPlayerList implements ChatPlayerList {
 
 	public ChatServer getServer() {
 		return this.parser.toChatServer(this.playerList.getServer());
+	}
+
+	public ChatIpBanList getIpBanList() {
+		return this.parser.toChatIpBanList(this.playerList.getIpBans());
+	}
+
+	public ChatUserBanList getUserBanList() {
+		return this.parser.toChatUserBanList(this.playerList.getBans());
 	}
 
 	public int getPlayerCount() {

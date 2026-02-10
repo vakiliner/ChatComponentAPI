@@ -4,9 +4,12 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Server;
+import org.bukkit.BanList.Type;
+import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
+import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -31,6 +34,14 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 
 	public ChatPlayerList getPlayerList() {
 		return this;
+	}
+
+	public ChatIpBanList getIpBanList() {
+		return this.parser.toChatIpBanList(this.server.getBanList(Type.IP));
+	}
+
+	public ChatUserBanList getUserBanList() {
+		return this.parser.toChatUserBanList(this.server.getBanList(Type.NAME));
 	}
 
 	public int getPlayerCount() {
