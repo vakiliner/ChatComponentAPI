@@ -63,15 +63,16 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
+		if (uuid == null) uuid = Util.NIL_UUID;
 		if (commandSource instanceof ServerPlayerEntity) {
-			ServerPlayerEntity player = (ServerPlayerEntity) commandSource;
-			player.sendMessage(forge(component), forge(type), uuid != null ? uuid : Util.NIL_UUID);
+			((ServerPlayerEntity) commandSource).sendMessage(forge(component), forge(type), uuid);
 		} else {
-			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer), uuid != null ? uuid : Util.NIL_UUID);
+			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer), uuid);
 		}
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
+		if (uuid == null) uuid = Util.NIL_UUID;
 		this.sendMessage(playerList.getServer(), component, type, uuid);
 		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}

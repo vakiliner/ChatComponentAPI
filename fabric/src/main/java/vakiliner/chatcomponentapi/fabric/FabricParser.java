@@ -74,6 +74,7 @@ public class FabricParser extends BaseParser {
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
+		if (uuid == null) uuid = Util.NIL_UUID;
 		this.sendMessage(playerList.getServer(), component, type, uuid);
 		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
