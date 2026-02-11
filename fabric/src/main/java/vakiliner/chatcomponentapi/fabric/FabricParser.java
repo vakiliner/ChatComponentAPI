@@ -19,18 +19,26 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundChatPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.BanListEntry;
+import net.minecraft.server.players.IpBanList;
 import net.minecraft.server.players.PlayerList;
+import net.minecraft.server.players.UserBanList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.PlayerTeam;
 import vakiliner.chatcomponentapi.base.BaseParser;
+import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
+import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
@@ -65,9 +73,10 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
-	@Deprecated
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
-		playerList.broadcastMessage(fabric(component), fabric(type), uuid);
+		if (uuid == null) uuid = Util.NIL_UUID;
+		this.sendMessage(playerList.getServer(), component, type, uuid);
+		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
@@ -270,5 +279,21 @@ public class FabricParser extends BaseParser {
 
 	public ChatServer toChatServer(MinecraftServer server) {
 		return server != null ? new FabricChatServer(this, server) : null;
+	}
+
+	public ChatPlayerList toChatPlayerList(PlayerList playerList) {
+		return playerList != null ? new FabricChatPlayerList(this, playerList) : null;
+	}
+
+	public ChatIpBanList toChatIpBanList(IpBanList ipBanList) {
+		return ipBanList != null ? new FabricChatIpBanList(this, ipBanList) : null;
+	}
+
+	public ChatUserBanList toChatUserBanList(UserBanList userBanList) {
+		return userBanList != null ? new FabricChatUserBanList(this, userBanList) : null;
+	}
+
+	public ChatBanEntry toChatBanEntry(BanListEntry<?> banListEntry) {
+		return banListEntry != null ? new FabricChatBanEntry<>(this, banListEntry) : null;
 	}
 }
