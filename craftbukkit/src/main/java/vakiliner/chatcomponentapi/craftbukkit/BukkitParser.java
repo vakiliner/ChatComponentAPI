@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Team;
 import vakiliner.chatcomponentapi.base.BaseParser;
@@ -37,10 +38,18 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
-	public void execute(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IBukkitChatPlugin) {
+	public void execute(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IBukkitChatPlugin) {
+			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
+			Plugin plugin = chatPlugin.asPlugin();
+			if (!plugin.isEnabled()) {
+				if (chatPlugin.shouldThrowIfPluginDisabledOnChatServerExecute(runnable)) {
+					throw new IllegalStateException("Plugin disabled");
+				}
+				return;
+			}
 			if (!Bukkit.isPrimaryThread()) {
-				scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), runnable);
+				scheduler.runTask(plugin, runnable);
 			} else {
 				runnable.run();
 			}
