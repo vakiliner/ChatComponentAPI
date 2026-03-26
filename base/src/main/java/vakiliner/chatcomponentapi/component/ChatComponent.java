@@ -26,12 +26,16 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		this(ChatStyle.EMPTY);
 	}
 
+	public ChatComponent(ChatStyle style) {
+		this.style = Objects.requireNonNull(style);
+	}
+
 	public ChatComponent(ChatTextColor color) {
 		this(ChatStyle.EMPTY.withColor(color));
 	}
 
-	public ChatComponent(ChatStyle style) {
-		this.style = Objects.requireNonNull(style);
+	public ChatComponent(ChatComponentFormat format) {
+		this(ChatStyle.EMPTY.withFormat(format));
 	}
 
 	protected ChatComponent(ChatComponent component, boolean cloneExtra) {

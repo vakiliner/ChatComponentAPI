@@ -13,6 +13,18 @@ public class ChatTextComponent extends ChatComponent {
 		this("");
 	}
 
+	public ChatTextComponent(ChatStyle style) {
+		this("", style);
+	}
+
+	public ChatTextComponent(ChatTextColor color) {
+		this("", color);
+	}
+
+	public ChatTextComponent(ChatComponentFormat format) {
+		this("", format);
+	}
+
 	public ChatTextComponent(String text) {
 		this.text = Objects.requireNonNull(text);
 	}
@@ -24,6 +36,11 @@ public class ChatTextComponent extends ChatComponent {
 
 	public ChatTextComponent(String text, ChatTextColor color) {
 		super(color);
+		this.text = Objects.requireNonNull(text);
+	}
+
+	public ChatTextComponent(String text, ChatComponentFormat format) {
+		super(format);
 		this.text = Objects.requireNonNull(text);
 	}
 
