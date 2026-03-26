@@ -177,6 +177,10 @@ public class ChatStyle implements IGsonSerializer {
 		return map;
 	}
 
+	public ChatStyle withFormat(ChatComponentFormat format) {
+		return this.withFormat(format, Boolean.TRUE);
+	}
+
 	public ChatStyle withFormat(ChatComponentFormat format, Boolean value) {
 		switch (format) {
 			case BOLD: return this.withBold(value);

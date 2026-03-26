@@ -9,11 +9,11 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.core.Registry;
-import net.minecraft.network.chat.BaseComponent;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.SelectorComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
@@ -96,7 +96,7 @@ public class FabricParser extends BaseParser {
 	}
 
 	public static Component fabric(ChatComponent raw, boolean isConsole) {
-		final BaseComponent component;
+		final MutableComponent component;
 		if (raw instanceof ChatComponentModified) {
 			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
 				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
