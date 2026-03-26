@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.craftbukkit;
 
 import java.util.Objects;
 import org.bukkit.Server;
+import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 
@@ -16,6 +17,23 @@ public class BukkitChatServer implements ChatServer {
 
 	public Server getImpl() {
 		return this.server;
+	}
+
+	public boolean isDedicatedServer() {
+		return true;
+	}
+
+	// Not supported
+	public String getSingleplayerName() {
+		return null;
+	}
+
+	public boolean isSingleplayer() {
+		return this.getSingleplayerName() != null;
+	}
+
+	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+		return false;
 	}
 
 	public void execute(IChatPlugin plugin, Runnable runnable) {
