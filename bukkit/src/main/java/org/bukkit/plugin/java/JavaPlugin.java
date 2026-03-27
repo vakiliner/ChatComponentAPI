@@ -1,4 +1,6 @@
 package org.bukkit.plugin.java;
 
-public abstract class JavaPlugin {
+import org.bukkit.plugin.Plugin;
+
+public abstract class JavaPlugin implements Plugin {
 }

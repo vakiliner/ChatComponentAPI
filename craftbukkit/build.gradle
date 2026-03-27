@@ -7,14 +7,6 @@ dependencies {
 	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
-processResources {
-	inputs.property "version", project.version
-
-	filesMatching('plugin.yml') {
-		expand "version": inputs.properties.version
-	}
-}
-
 jar {
 	var task = project(':bukkit').tasks.getByName('jar')
 

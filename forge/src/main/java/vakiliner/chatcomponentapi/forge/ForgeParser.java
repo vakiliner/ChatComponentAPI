@@ -18,10 +18,10 @@ import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
@@ -30,7 +30,9 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
@@ -46,11 +48,15 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 
 public class ForgeParser extends BaseParser {
 	private static final Constructor<Style> STYLE_CONSTRUCTOR;
+	private static final Field STYLE_COLOR;
 	private static final Field STYLE_BOLD;
 	private static final Field STYLE_ITALIC;
 	private static final Field STYLE_UNDERLINED;
 	private static final Field STYLE_STRIKETHROUGH;
 	private static final Field STYLE_OBFUSCATED;
+	private static final Field STYLE_CLICK_EVENT;
+	private static final Field STYLE_HOVER_EVENT;
+	private static final Field STYLE_INSERTION;
 	private static final Field STYLE_FONT;
 
 	static {
@@ -61,6 +67,8 @@ public class ForgeParser extends BaseParser {
 			throw new RuntimeException(e);
 		}
 		try {
+			STYLE_COLOR = Style.class.getField("color");
+			STYLE_COLOR.setAccessible(true);
 			STYLE_BOLD = Style.class.getField("bold");
 			STYLE_BOLD.setAccessible(true);
 			STYLE_ITALIC = Style.class.getField("italic");
@@ -71,6 +79,12 @@ public class ForgeParser extends BaseParser {
 			STYLE_STRIKETHROUGH.setAccessible(true);
 			STYLE_OBFUSCATED = Style.class.getField("obfuscated");
 			STYLE_OBFUSCATED.setAccessible(true);
+			STYLE_CLICK_EVENT = Style.class.getField("clickEvent");
+			STYLE_CLICK_EVENT.setAccessible(true);
+			STYLE_HOVER_EVENT = Style.class.getField("hoverEvent");
+			STYLE_HOVER_EVENT.setAccessible(true);
+			STYLE_INSERTION = Style.class.getField("insertion");
+			STYLE_INSERTION.setAccessible(true);
 			STYLE_FONT = Style.class.getField("font");
 			STYLE_FONT.setAccessible(true);
 		} catch (NoSuchFieldException e) {
@@ -95,12 +109,24 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IForgeChatPlugin) {
+			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
+		player.connection.disconnect(forge(reason));
+	}
+
 	public static ITextComponent forge(ChatComponent raw) {
 		return forge(raw, false);
 	}
 
 	public static ITextComponent forge(ChatComponent raw, boolean isConsole) {
-		final TextComponent component;
+		final IFormattableTextComponent component;
 		if (raw instanceof ChatComponentModified) {
 			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
 				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
@@ -159,16 +185,16 @@ public class ForgeParser extends BaseParser {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(style.getColor()));
-		builder.withClickEvent(forge(style.getClickEvent()));
-		builder.withHoverEvent(forge(style.getHoverEvent()));
-		builder.withInsertion(style.getInsertion());
 		try {
+			builder.withColor(forge((Color) STYLE_COLOR.get(style)));
 			builder.withBold((Boolean) STYLE_BOLD.get(style));
 			builder.withItalic((Boolean) STYLE_ITALIC.get(style));
 			builder.withUnderlined((Boolean) STYLE_UNDERLINED.get(style));
 			builder.withStrikethrough((Boolean) STYLE_STRIKETHROUGH.get(style));
 			builder.withObfuscated((Boolean) STYLE_OBFUSCATED.get(style));
+			builder.withClickEvent(forge((ClickEvent) STYLE_CLICK_EVENT.get(style)));
+			builder.withHoverEvent(forge((HoverEvent) STYLE_HOVER_EVENT.get(style)));
+			builder.withInsertion((String) STYLE_INSERTION.get(style));
 			builder.withFont(forge((ResourceLocation) STYLE_FONT.get(style)));
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException(e);
@@ -190,7 +216,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V> ChatHoverEvent<V> forge(HoverEvent event) {
+	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> forge(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action<?> action = event.getAction();
 		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) forgeContent2(event.getValue(action)));
@@ -282,5 +308,9 @@ public class ForgeParser extends BaseParser {
 
 	public ChatTeam toChatTeam(ScorePlayerTeam team) {
 		return team != null ? new ForgeChatTeam(this, team) : null;
+	}
+
+	public ChatServer toChatServer(MinecraftServer server) {
+		return server != null ? new ForgeChatServer(this, server) : null;
 	}
 }
