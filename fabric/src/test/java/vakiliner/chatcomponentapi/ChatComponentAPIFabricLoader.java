@@ -13,7 +13,6 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.ChatType;
@@ -178,7 +177,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 		});
 		test("Send message with ChatMessageType & UUID", () -> {
 			ChatPlayer chatPlayer = chatCommandSender instanceof ChatPlayer ? (ChatPlayer) chatCommandSender : null;
-			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : Util.NIL_UUID;
+			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : null;
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, uuid);
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, uuid);
 		});

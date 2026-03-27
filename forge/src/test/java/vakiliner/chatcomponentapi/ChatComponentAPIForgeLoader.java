@@ -15,7 +15,6 @@ import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
@@ -186,7 +185,7 @@ public class ChatComponentAPIForgeLoader {
 		});
 		test("Send message with ChatMessageType & UUID", () -> {
 			ChatPlayer chatPlayer = chatCommandSender instanceof ChatPlayer ? (ChatPlayer) chatCommandSender : null;
-			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : Util.NIL_UUID;
+			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : null;
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, uuid);
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, uuid);
 		});
