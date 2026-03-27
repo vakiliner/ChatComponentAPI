@@ -2,7 +2,9 @@ plugins {
 	id 'java'
 }
 
-var bukkit = project(':spigot')
+var base = project(':base')
+var craftbukkit = project(':craftbukkit')
+var spigot = project(':spigot')
 var fabric = project(':fabric')
 var forge = project(':forge')
 
@@ -16,7 +18,7 @@ allprojects {
 subprojects {
 	apply plugin: 'java'
 
-	base {
+	it.base {
 		archivesName = "${project.archives_base_name}-${project.display_name}"
 	}
 
@@ -38,18 +40,26 @@ subprojects {
 }
 
 jar {
-	evaluationDependsOn(bukkit.getName())
+	evaluationDependsOn(base.getName())
+	evaluationDependsOn(craftbukkit.getName())
+	evaluationDependsOn(spigot.getName())
 	evaluationDependsOn(fabric.getName())
 	evaluationDependsOn(forge.getName())
 
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-	var paperJar = bukkit.tasks.getByName('jar')
+	var baseJar = base.tasks.getByName('jar')
+	var craftbukkitJar = craftbukkit.tasks.getByName('jar')
+	var spigotJar = spigot.tasks.getByName('jar')
 	var fabricJar = fabric.tasks.getByName('jar')
 	var fabricRemapJar = fabric.tasks.getByName('remapJar')
 	var forgeJar = forge.tasks.getByName('jar')
 
-	from(zipTree(paperJar.archiveFile)) {
+	from(zipTree(baseJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(craftbukkitJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(spigotJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
 	from(zipTree(fabricRemapJar.archiveFile)) {
@@ -60,26 +70,37 @@ jar {
 	}
 
 	manifest {
-		from paperJar.manifest
+		from baseJar.manifest
+		from craftbukkitJar.manifest
+		from spigotJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
 	}
 }
 
 task devJar(type: Jar) {
-	evaluationDependsOn(bukkit.getName())
+	evaluationDependsOn(base.getName())
+	evaluationDependsOn(craftbukkit.getName())
+	evaluationDependsOn(spigot.getName())
 	evaluationDependsOn(fabric.getName())
 	evaluationDependsOn(forge.getName())
 
 	archiveBaseName = "Dev${project.base.archivesName.get()}"
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
-	var paperJar = bukkit.tasks.getByName('devJar')
+	var baseJar = base.tasks.getByName('devJar')
+	var craftbukkitJar = craftbukkit.tasks.getByName('devJar')
+	var spigotJar = spigot.tasks.getByName('devJar')
 	var fabricJar = fabric.tasks.getByName('devJar')
 	var fabricRemapJar = fabric.tasks.getByName('remapDevJar')
 	var forgeJar = forge.tasks.getByName('devJar')
 
-	from(zipTree(paperJar.archiveFile)) {
+	from(zipTree(baseJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(craftbukkitJar.archiveFile)) {
+		exclude 'LICENSE'
+	}
+	from(zipTree(spigotJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
 	from(zipTree(fabricRemapJar.archiveFile)) {
@@ -90,7 +111,9 @@ task devJar(type: Jar) {
 	}
 
 	manifest {
-		from paperJar.manifest
+		from baseJar.manifest
+		from craftbukkitJar.manifest
+		from spigotJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
 	}

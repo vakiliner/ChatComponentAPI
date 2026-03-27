@@ -29,18 +29,6 @@ processResources {
 	}
 }
 
-jar {
-	var task = project(':base').tasks.getByName('jar')
-
-	from(zipTree(task.archiveFile)) {
-		exclude 'LICENSE'
-	}
-
-	manifest {
-		from task.manifest
-	}
-}
-
 task remapDevJar(type: net.fabricmc.loom.task.RemapJarTask) {
 	var task = project.tasks.getByName('devJar')
 	archiveBaseName = "Dev${project.base.archivesName.get()}"

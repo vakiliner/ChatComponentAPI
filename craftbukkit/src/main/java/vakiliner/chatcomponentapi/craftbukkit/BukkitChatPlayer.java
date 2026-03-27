@@ -1,8 +1,10 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import java.net.SocketAddress;
 import java.util.UUID;
 import org.bukkit.entity.Player;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.common.ChatGameMode;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -17,6 +19,10 @@ public class BukkitChatPlayer extends BukkitChatOfflinePlayer implements ChatPla
 		return (Player) super.getPlayer();
 	}
 
+	public ChatServer getServer() {
+		return this.parser.toChatServer(this.getPlayer().getServer());
+	}
+
 	public ChatComponent getDisplayName() {
 		return new ChatTextComponent(this.getPlayer().getDisplayName());
 	}
@@ -24,6 +30,14 @@ public class BukkitChatPlayer extends BukkitChatOfflinePlayer implements ChatPla
 	@SuppressWarnings("deprecation")
 	public ChatGameMode getGameMode() {
 		return ChatGameMode.getByValue(this.getPlayer().getGameMode().getValue());
+	}
+
+	public SocketAddress getAddress() {
+		return this.getPlayer().getAddress();
+	}
+
+	public void kick(ChatComponent reason) {
+		this.parser.kickPlayer(this.getPlayer(), reason);
 	}
 
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {

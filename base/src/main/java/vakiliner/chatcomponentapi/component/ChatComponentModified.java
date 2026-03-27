@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
+import com.google.gson.JsonObject;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 
 public abstract class ChatComponentModified extends ChatComponent {
@@ -169,5 +170,9 @@ public abstract class ChatComponentModified extends ChatComponent {
 			ChatComponentModified other = (ChatComponentModified) obj;
 			return this.component.equals(other.component);
 		}
+	}
+
+	protected void serialize(JsonObject object) {
+		this.component.serialize(object);
 	}
 }

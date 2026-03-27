@@ -1,13 +1,22 @@
 package vakiliner.chatcomponentapi.base;
 
 import java.util.UUID;
+import com.mojang.authlib.GameProfile;
 
 public interface ChatOfflinePlayer {
-	String getName();
+	GameProfile getGameProfile();
 
-	UUID getUniqueId();
+	default String getName() {
+		return this.getGameProfile().getName();
+	}
+
+	default UUID getUniqueId() {
+		return this.getGameProfile().getId();
+	}
 
 	boolean isOp();
+
+	boolean isOnline();
 
 	ChatTeam getTeam();
 }

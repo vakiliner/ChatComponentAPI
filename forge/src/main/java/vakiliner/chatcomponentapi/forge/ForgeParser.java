@@ -15,10 +15,10 @@ import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
@@ -27,7 +27,9 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
@@ -40,7 +42,7 @@ import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.forge.mixin.StyleMixin;
+import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
 	public boolean supportsSeparatorInSelector() {
@@ -60,12 +62,24 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IForgeChatPlugin) {
+			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
+		player.connection.disconnect(forge(reason));
+	}
+
 	public static ITextComponent forge(ChatComponent raw) {
 		return forge(raw, false);
 	}
 
 	public static ITextComponent forge(ChatComponent raw, boolean isConsole) {
-		final TextComponent component;
+		final IFormattableTextComponent component;
 		if (raw instanceof ChatComponentModified) {
 			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
 				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
@@ -113,24 +127,24 @@ public class ForgeParser extends BaseParser {
 	public static Style forge(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
 		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleMixin.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		return StyleAccessor.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
 	}
 
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleMixin mixin = (StyleMixin) style;
+		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(mixin.getColor()));
-		builder.withBold(mixin.getBold());
-		builder.withItalic(mixin.getItalic());
-		builder.withUnderlined(mixin.getUnderlined());
-		builder.withStrikethrough(mixin.getStrikethrough());
-		builder.withObfuscated(mixin.getObfuscated());
-		builder.withClickEvent(forge(mixin.getClickEvent()));
-		builder.withHoverEvent(forge(mixin.getHoverEvent()));
-		builder.withInsertion(mixin.getInsertion());
-		builder.withFont(forge(mixin.getFont()));
+		builder.withColor(forge(accessor.getColor()));
+		builder.withBold(accessor.getBold());
+		builder.withItalic(accessor.getItalic());
+		builder.withUnderlined(accessor.getUnderlined());
+		builder.withStrikethrough(accessor.getStrikethrough());
+		builder.withObfuscated(accessor.getObfuscated());
+		builder.withClickEvent(forge(accessor.getClickEvent()));
+		builder.withHoverEvent(forge(accessor.getHoverEvent()));
+		builder.withInsertion(accessor.getInsertion());
+		builder.withFont(forge(accessor.getFont()));
 		return builder.build();
 	}
 
@@ -148,7 +162,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static <V> ChatHoverEvent<V> forge(HoverEvent event) {
+	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> forge(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action<?> action = event.getAction();
 		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) forgeContent2(event.getValue(action)));
@@ -240,5 +254,9 @@ public class ForgeParser extends BaseParser {
 
 	public ChatTeam toChatTeam(ScorePlayerTeam team) {
 		return team != null ? new ForgeChatTeam(this, team) : null;
+	}
+
+	public ChatServer toChatServer(MinecraftServer server) {
+		return server != null ? new ForgeChatServer(this, server) : null;
 	}
 }
