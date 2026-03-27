@@ -176,8 +176,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, null);
 		});
 		test("Send message with ChatMessageType & UUID", () -> {
-			ChatPlayer chatPlayer = chatCommandSender instanceof ChatPlayer ? (ChatPlayer) chatCommandSender : null;
-			UUID uuid = chatPlayer != null ? chatPlayer.getUniqueId() : null;
+			UUID uuid = chatCommandSender instanceof ChatPlayer ? ((ChatPlayer) chatCommandSender).getUniqueId() : null;
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, uuid);
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, uuid);
 		});
