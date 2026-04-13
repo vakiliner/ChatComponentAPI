@@ -4,26 +4,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSource;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.SelectorComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.HoverEvent.Action;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.PlayerTeam;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
@@ -34,7 +32,7 @@ import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
-import vakiliner.chatcomponentapi.common.ChatTextColor;
+import vakiliner.chatcomponentapi.common.ChatNamedColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -53,21 +51,20 @@ public class FabricParser extends BaseParser {
 	}
 
 	public boolean supportsFontInStyle() {
-		return true;
+		return false;
 	}
 
 	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
-		if (uuid == null) uuid = Util.NIL_UUID;
 		if (commandSource instanceof ServerPlayer) {
-			((ServerPlayer) commandSource).sendMessage(fabric(component), fabric(type), uuid);
+			((ServerPlayer) commandSource).sendMessage(fabric(component), fabric(type));
 		} else {
-			commandSource.sendMessage(fabric(component, commandSource instanceof MinecraftServer), uuid);
+			commandSource.sendMessage(fabric(component, commandSource instanceof MinecraftServer));
 		}
 	}
 
 	@Deprecated
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
-		playerList.broadcastMessage(fabric(component), fabric(type), uuid);
+		playerList.broadcastMessage(fabric(component), type == ChatMessageType.SYSTEM);
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
@@ -87,7 +84,7 @@ public class FabricParser extends BaseParser {
 	}
 
 	public static Component fabric(ChatComponent raw, boolean isConsole) {
-		final MutableComponent component;
+		final Component component;
 		if (raw instanceof ChatComponentModified) {
 			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
 				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
@@ -140,8 +137,9 @@ public class FabricParser extends BaseParser {
 
 	public static Style fabric(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
-		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleAccessor.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont()));
+		Style style = new Style();
+		if (chatStyle.isEmpty()) return style;
+		return style;
 	}
 
 	public static ChatStyle fabric(Style style) {
@@ -149,7 +147,7 @@ public class FabricParser extends BaseParser {
 		if (style.isEmpty()) return ChatStyle.EMPTY;
 		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(fabric(accessor.getColor()));
+		builder.withColor(ChatNamedColor.getByFormat(fabric(accessor.getColor())));
 		builder.withBold(accessor.getBold());
 		builder.withItalic(accessor.getItalic());
 		builder.withUnderlined(accessor.getUnderlined());
@@ -158,7 +156,6 @@ public class FabricParser extends BaseParser {
 		builder.withClickEvent(fabric(accessor.getClickEvent()));
 		builder.withHoverEvent(fabric(accessor.getHoverEvent()));
 		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(fabric(accessor.getFont()));
 		return builder.build();
 	}
 
@@ -170,16 +167,24 @@ public class FabricParser extends BaseParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("deprecation")
 	public static HoverEvent fabric(ChatHoverEvent<?> event) {
-		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), fabricContent(event.getContents())) : null;
+		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), fabric(event.getValue())) : null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> fabric(HoverEvent event) {
+	public static ChatHoverEvent<?> fabric(HoverEvent event) {
 		if (event == null) return null;
-		HoverEvent.Action<?> action = event.getAction();
-		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) fabricContent2(event.getValue(action)));
+		HoverEvent.Action action = event.getAction();
+		Component contents = event.getValue();
+		if (action == Action.SHOW_TEXT) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, fabric(contents));
+		}
+		JsonElement value = new Gson().fromJson(((TextComponent) contents).getText(), JsonElement.class);
+		switch (action) {
+			case SHOW_ENTITY: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, ChatHoverEvent.ShowEntity.deserialize(value, true));
+			case SHOW_ITEM: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, ChatHoverEvent.ShowItem.deserialize(value));
+			default: throw new RuntimeException("Unknown action");
+		}
 	}
 
 	public static ResourceLocation fabric(ChatId id) {
@@ -204,49 +209,6 @@ public class FabricParser extends BaseParser {
 
 	public static ChatTextFormat fabric(ChatFormatting formatting) {
 		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
-	}
-
-	public static Object fabricContent(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatComponent) {
-			ChatComponent content = (ChatComponent) raw;
-			return FabricParser.fabric(content);
-		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
-			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
-			return new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(FabricParser.fabric(content.getType())), content.getUniqueId(), FabricParser.fabric(content.getName()));
-		} else if (raw instanceof ChatHoverEvent.ShowItem) {
-			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(FabricParser.fabric(content.getItem())), content.getCount()));
-		} else {
-			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
-		}
-	}
-
-	public static Object fabricContent2(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof Component) {
-			Component content = (Component) raw;
-			return FabricParser.fabric(content);
-		} else if (raw instanceof HoverEvent.EntityTooltipInfo) {
-			HoverEvent.EntityTooltipInfo content = (HoverEvent.EntityTooltipInfo) raw;
-			return new ChatHoverEvent.ShowEntity(FabricParser.fabric(Registry.ENTITY_TYPE.getKey(content.type)), content.id, FabricParser.fabric(content.name));
-		} else if (raw instanceof HoverEvent.ItemStackInfo) {
-			HoverEvent.ItemStackInfo content = (HoverEvent.ItemStackInfo) raw;
-			ItemStack itemStack = content.getItemStack();
-			return new ChatHoverEvent.ShowItem(FabricParser.fabric(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
-		} else {
-			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
-		}
-	}
-
-	public static TextColor fabric(ChatTextColor color) {
-		return color != null ? TextColor.parseColor(color.toString()) : null;
-	}
-
-	public static ChatTextColor fabric(TextColor color) {
-		return color != null ? ChatTextColor.of(color.toString()) : null;
 	}
 
 	public ChatPlayer toChatPlayer(ServerPlayer player) {

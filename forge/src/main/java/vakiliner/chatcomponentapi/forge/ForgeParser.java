@@ -4,18 +4,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
@@ -23,6 +20,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.util.text.event.HoverEvent.Action;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
@@ -32,7 +30,7 @@ import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
-import vakiliner.chatcomponentapi.common.ChatTextColor;
+import vakiliner.chatcomponentapi.common.ChatNamedColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -56,9 +54,9 @@ public class ForgeParser extends BaseParser {
 	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (commandSource instanceof ServerPlayerEntity) {
 			ServerPlayerEntity player = (ServerPlayerEntity) commandSource;
-			player.sendMessage(forge(component), forge(type), uuid != null ? uuid : Util.NIL_UUID);
+			player.sendMessage(forge(component), forge(type));
 		} else {
-			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer), uuid != null ? uuid : Util.NIL_UUID);
+			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer));
 		}
 	}
 
@@ -79,7 +77,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public static ITextComponent forge(ChatComponent raw, boolean isConsole) {
-		final IFormattableTextComponent component;
+		final ITextComponent component;
 		if (raw instanceof ChatComponentModified) {
 			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
 				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
@@ -126,8 +124,9 @@ public class ForgeParser extends BaseParser {
 
 	public static Style forge(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
-		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleAccessor.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		Style style = new Style();
+		if (chatStyle.isEmpty()) return style;
+		return style;
 	}
 
 	public static ChatStyle forge(Style style) {
@@ -135,7 +134,7 @@ public class ForgeParser extends BaseParser {
 		if (style.isEmpty()) return ChatStyle.EMPTY;
 		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(accessor.getColor()));
+		builder.withColor(ChatNamedColor.getByFormat(forge(accessor.getColor())));
 		builder.withBold(accessor.getBold());
 		builder.withItalic(accessor.getItalic());
 		builder.withUnderlined(accessor.getUnderlined());
@@ -144,7 +143,6 @@ public class ForgeParser extends BaseParser {
 		builder.withClickEvent(forge(accessor.getClickEvent()));
 		builder.withHoverEvent(forge(accessor.getHoverEvent()));
 		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(forge(accessor.getFont()));
 		return builder.build();
 	}
 
@@ -156,52 +154,23 @@ public class ForgeParser extends BaseParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V> HoverEvent forge(ChatHoverEvent<?> event) {
-		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), forgeContent(event.getContents())) : null;
+	@SuppressWarnings("deprecation")
+	public static HoverEvent forge(ChatHoverEvent<?> event) {
+		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), forge(event.getValue())) : null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> forge(HoverEvent event) {
+	public static ChatHoverEvent<?> forge(HoverEvent event) {
 		if (event == null) return null;
-		HoverEvent.Action<?> action = event.getAction();
-		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) forgeContent2(event.getValue(action)));
-	}
-
-	@SuppressWarnings("deprecation")
-	public static Object forgeContent(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatComponent) {
-			ChatComponent content = (ChatComponent) raw;
-			return forge(content);
-		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
-			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
-			return new HoverEvent.EntityHover(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName()));
-		} else if (raw instanceof ChatHoverEvent.ShowItem) {
-			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemHover(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount()));
-		} else {
-			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
+		HoverEvent.Action action = event.getAction();
+		ITextComponent contents = event.getValue();
+		if (action == Action.SHOW_TEXT) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, forge(contents));
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public static Object forgeContent2(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ITextComponent) {
-			ITextComponent content = (ITextComponent) raw;
-			return forge(content);
-		} else if (raw instanceof HoverEvent.EntityHover) {
-			HoverEvent.EntityHover content = (HoverEvent.EntityHover) raw;
-			return new ChatHoverEvent.ShowEntity(forge(Registry.ENTITY_TYPE.getKey(content.type)), content.id, forge(content.name));
-		} else if (raw instanceof HoverEvent.ItemHover) {
-			HoverEvent.ItemHover content = (HoverEvent.ItemHover) raw;
-			ItemStack itemStack = content.getItemStack();
-			return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
-		} else {
-			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
+		JsonElement value = new Gson().fromJson(((StringTextComponent) contents).getText(), JsonElement.class);
+		switch (action) {
+			case SHOW_ENTITY: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, ChatHoverEvent.ShowEntity.deserialize(value, true));
+			case SHOW_ITEM: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, ChatHoverEvent.ShowItem.deserialize(value));
+			default: throw new RuntimeException("Unknown action");
 		}
 	}
 
@@ -227,14 +196,6 @@ public class ForgeParser extends BaseParser {
 
 	public static ChatTextFormat forge(TextFormatting formatting) {
 		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
-	}
-
-	public static Color forge(ChatTextColor color) {
-		return color != null ? Color.parseColor(color.toString()) : null;
-	}
-
-	public static ChatTextColor forge(Color color) {
-		return color != null ? ChatTextColor.of(color.toString()) : null;
 	}
 
 	public ChatPlayer toChatPlayer(ServerPlayerEntity player) {

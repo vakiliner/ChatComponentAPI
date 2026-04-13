@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.mojang.brigadier.CommandDispatcher;
@@ -20,14 +19,12 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
-import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -127,16 +124,6 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			ChatTextFormat[] output = new ChatTextFormat[input.length];
 			for (int i = 0; i < input.length; i++) {
 				ChatFormatting test = FabricParser.fabric(input[i]);
-				output[i] = FabricParser.fabric(test);
-			}
-			return Arrays.equals(input, output);
-		});
-		test("Parse ChatTextColor", () -> {
-			List<ChatNamedColor> rawInput = Arrays.asList(ChatTextFormat.values()).stream().filter(ChatTextFormat::isColor).map(ChatNamedColor::getByFormat).collect(Collectors.toList());
-			ChatTextColor[] input = rawInput.toArray(new ChatTextColor[rawInput.size()]);
-			ChatTextColor[] output = new ChatTextColor[input.length];
-			for (int i = 0; i < input.length; i++) {
-				TextColor test = FabricParser.fabric(input[i]);
 				output[i] = FabricParser.fabric(test);
 			}
 			return Arrays.equals(input, output);

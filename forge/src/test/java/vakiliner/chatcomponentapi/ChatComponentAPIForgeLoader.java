@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.mojang.brigadier.CommandDispatcher;
@@ -16,22 +15,20 @@ import net.minecraft.command.CommandSource;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.Color;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
-import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -58,8 +55,8 @@ public class ChatComponentAPIForgeLoader {
 	}
 
 	@SubscribeEvent
-	public void onRegisterCommands(RegisterCommandsEvent event) {
-		CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
+	public void onRegisterCommands(FMLServerStartingEvent event) {
+		CommandDispatcher<CommandSource> dispatcher = event.getCommandDispatcher();
 		dispatcher.register(testCommand());
 	}
 
@@ -135,16 +132,6 @@ public class ChatComponentAPIForgeLoader {
 			ChatTextFormat[] output = new ChatTextFormat[input.length];
 			for (int i = 0; i < input.length; i++) {
 				TextFormatting test = ForgeParser.forge(input[i]);
-				output[i] = ForgeParser.forge(test);
-			}
-			return Arrays.equals(input, output);
-		});
-		test("Parse ChatTextColor", () -> {
-			List<ChatNamedColor> rawInput = Arrays.asList(ChatTextFormat.values()).stream().filter(ChatTextFormat::isColor).map(ChatNamedColor::getByFormat).collect(Collectors.toList());
-			ChatTextColor[] input = rawInput.toArray(new ChatTextColor[rawInput.size()]);
-			ChatTextColor[] output = new ChatTextColor[input.length];
-			for (int i = 0; i < input.length; i++) {
-				Color test = ForgeParser.forge(input[i]);
 				output[i] = ForgeParser.forge(test);
 			}
 			return Arrays.equals(input, output);
