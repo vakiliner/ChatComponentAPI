@@ -44,7 +44,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 	}
 
 	@SuppressWarnings("unchecked")
-	public <T extends ChatHoverEvent.IContent> T getValue(Action<T> action) {
+	public <T extends IContent> T getValue(Action<T> action) {
 		return this.action == action ? (T) this.contents : null;
 	}
 
