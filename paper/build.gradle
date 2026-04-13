@@ -1,9 +1,0 @@
-plugins {
-	id 'java'
-}
-
-dependencies {
-	implementation project(':base')
-	implementation project(':craftbukkit')
-	implementation project(':spigot')
-}
