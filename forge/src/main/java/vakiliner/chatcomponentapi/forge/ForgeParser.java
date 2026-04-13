@@ -42,6 +42,7 @@ import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
+import vakiliner.chatcomponentapi.forge.mixin.ItemHoverAccessor;
 import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
@@ -202,8 +203,8 @@ public class ForgeParser extends BaseParser {
 	@SuppressWarnings("deprecation")
 	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemHover content) {
 		if (content == null) return null;
-		ItemStack itemStack = content.getItemStack();
-		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
+		ItemHoverAccessor accessor = (ItemHoverAccessor) content;
+		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
 	}
 
 	public static ResourceLocation forge(ChatId id) {

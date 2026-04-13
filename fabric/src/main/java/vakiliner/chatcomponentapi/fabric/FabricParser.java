@@ -45,6 +45,7 @@ import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
+import vakiliner.chatcomponentapi.fabric.mixin.ItemStackInfoAccessor;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
@@ -212,8 +213,8 @@ public class FabricParser extends BaseParser {
 
 	public static ChatHoverEvent.ShowItem fabric(HoverEvent.ItemStackInfo content) {
 		if (content == null) return null;
-		ItemStack itemStack = content.getItemStack();
-		return new ChatHoverEvent.ShowItem(fabric(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
+		ItemStackInfoAccessor accessor = (ItemStackInfoAccessor) content;
+		return new ChatHoverEvent.ShowItem(fabric(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
 	}
 
 	public static ResourceLocation fabric(ChatId id) {
