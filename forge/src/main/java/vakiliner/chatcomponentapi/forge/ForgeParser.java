@@ -1,5 +1,8 @@
 package vakiliner.chatcomponentapi.forge;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -42,9 +45,53 @@ import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
+	private static final Constructor<Style> STYLE_CONSTRUCTOR;
+	private static final Field STYLE_COLOR;
+	private static final Field STYLE_BOLD;
+	private static final Field STYLE_ITALIC;
+	private static final Field STYLE_UNDERLINED;
+	private static final Field STYLE_STRIKETHROUGH;
+	private static final Field STYLE_OBFUSCATED;
+	private static final Field STYLE_CLICK_EVENT;
+	private static final Field STYLE_HOVER_EVENT;
+	private static final Field STYLE_INSERTION;
+	private static final Field STYLE_FONT;
+
+	static {
+		try {
+			STYLE_CONSTRUCTOR = Style.class.getConstructor(Color.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class, ClickEvent.class, HoverEvent.class, String.class, ResourceLocation.class);
+			STYLE_CONSTRUCTOR.setAccessible(true);
+		} catch (NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
+		try {
+			STYLE_COLOR = Style.class.getField("color");
+			STYLE_COLOR.setAccessible(true);
+			STYLE_BOLD = Style.class.getField("bold");
+			STYLE_BOLD.setAccessible(true);
+			STYLE_ITALIC = Style.class.getField("italic");
+			STYLE_ITALIC.setAccessible(true);
+			STYLE_UNDERLINED = Style.class.getField("underlined");
+			STYLE_UNDERLINED.setAccessible(true);
+			STYLE_STRIKETHROUGH = Style.class.getField("strikethrough");
+			STYLE_STRIKETHROUGH.setAccessible(true);
+			STYLE_OBFUSCATED = Style.class.getField("obfuscated");
+			STYLE_OBFUSCATED.setAccessible(true);
+			STYLE_CLICK_EVENT = Style.class.getField("clickEvent");
+			STYLE_CLICK_EVENT.setAccessible(true);
+			STYLE_HOVER_EVENT = Style.class.getField("hoverEvent");
+			STYLE_HOVER_EVENT.setAccessible(true);
+			STYLE_INSERTION = Style.class.getField("insertion");
+			STYLE_INSERTION.setAccessible(true);
+			STYLE_FONT = Style.class.getField("font");
+			STYLE_FONT.setAccessible(true);
+		} catch (NoSuchFieldException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
@@ -127,24 +174,31 @@ public class ForgeParser extends BaseParser {
 	public static Style forge(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
 		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleAccessor.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		try {
+			return STYLE_CONSTRUCTOR.newInstance(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		} catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(accessor.getColor()));
-		builder.withBold(accessor.getBold());
-		builder.withItalic(accessor.getItalic());
-		builder.withUnderlined(accessor.getUnderlined());
-		builder.withStrikethrough(accessor.getStrikethrough());
-		builder.withObfuscated(accessor.getObfuscated());
-		builder.withClickEvent(forge(accessor.getClickEvent()));
-		builder.withHoverEvent(forge(accessor.getHoverEvent()));
-		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(forge(accessor.getFont()));
+		try {
+			builder.withColor(forge((Color) STYLE_COLOR.get(style)));
+			builder.withBold((Boolean) STYLE_BOLD.get(style));
+			builder.withItalic((Boolean) STYLE_ITALIC.get(style));
+			builder.withUnderlined((Boolean) STYLE_UNDERLINED.get(style));
+			builder.withStrikethrough((Boolean) STYLE_STRIKETHROUGH.get(style));
+			builder.withObfuscated((Boolean) STYLE_OBFUSCATED.get(style));
+			builder.withClickEvent(forge((ClickEvent) STYLE_CLICK_EVENT.get(style)));
+			builder.withHoverEvent(forge((HoverEvent) STYLE_HOVER_EVENT.get(style)));
+			builder.withInsertion((String) STYLE_INSERTION.get(style));
+			builder.withFont(forge((ResourceLocation) STYLE_FONT.get(style)));
+		} catch (IllegalAccessException e) {
+			throw new IllegalStateException(e);
+		}
 		return builder.build();
 	}
 
