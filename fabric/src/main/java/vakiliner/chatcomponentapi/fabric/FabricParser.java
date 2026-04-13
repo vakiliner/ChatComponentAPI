@@ -170,16 +170,50 @@ public class FabricParser extends BaseParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HoverEvent fabric(ChatHoverEvent<?> event) {
-		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), fabricContent(event.getContents())) : null;
+		if (event == null) return null;
+		ChatHoverEvent.Action<?> action = event.getAction();
+		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
+			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, fabric(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
+			return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, fabric(event.getValue(ChatHoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
+			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, fabric(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
+		} else {
+			throw new IllegalArgumentException("Unknown action");
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> fabric(HoverEvent event) {
+	public static ChatHoverEvent<?> fabric(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action<?> action = event.getAction();
-		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) fabricContent2(event.getValue(action)));
+		if (action == HoverEvent.Action.SHOW_TEXT) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, fabric(event.getValue(HoverEvent.Action.SHOW_TEXT)));
+		} else if (action == HoverEvent.Action.SHOW_ENTITY) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, fabric(event.getValue(HoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == HoverEvent.Action.SHOW_ITEM) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, fabric(event.getValue(HoverEvent.Action.SHOW_ITEM)));
+		} else {
+			throw new IllegalArgumentException("Unknown action");
+		}
+	}
+
+	public static HoverEvent.EntityTooltipInfo fabric(ChatHoverEvent.ShowEntity content) {
+		return content != null ? new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(fabric(content.getType())), content.getUniqueId(), fabric(content.getName())) : null;
+	}
+
+	public static ChatHoverEvent.ShowEntity fabric(HoverEvent.EntityTooltipInfo content) {
+		return content != null ? new ChatHoverEvent.ShowEntity(fabric(Registry.ENTITY_TYPE.getKey(content.type)), content.id, fabric(content.name)) : null;
+	}
+
+	public static HoverEvent.ItemStackInfo fabric(ChatHoverEvent.ShowItem content) {
+		return content != null ? new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(fabric(content.getItem())), content.getCount())) : null;
+	}
+
+	public static ChatHoverEvent.ShowItem fabric(HoverEvent.ItemStackInfo content) {
+		if (content == null) return null;
+		ItemStack itemStack = content.getItemStack();
+		return new ChatHoverEvent.ShowItem(fabric(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
 	}
 
 	public static ResourceLocation fabric(ChatId id) {
@@ -204,41 +238,6 @@ public class FabricParser extends BaseParser {
 
 	public static ChatTextFormat fabric(ChatFormatting formatting) {
 		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
-	}
-
-	public static Object fabricContent(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatComponent) {
-			ChatComponent content = (ChatComponent) raw;
-			return FabricParser.fabric(content);
-		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
-			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
-			return new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(FabricParser.fabric(content.getType())), content.getUniqueId(), FabricParser.fabric(content.getName()));
-		} else if (raw instanceof ChatHoverEvent.ShowItem) {
-			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(FabricParser.fabric(content.getItem())), content.getCount()));
-		} else {
-			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
-		}
-	}
-
-	public static Object fabricContent2(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof Component) {
-			Component content = (Component) raw;
-			return FabricParser.fabric(content);
-		} else if (raw instanceof HoverEvent.EntityTooltipInfo) {
-			HoverEvent.EntityTooltipInfo content = (HoverEvent.EntityTooltipInfo) raw;
-			return new ChatHoverEvent.ShowEntity(FabricParser.fabric(Registry.ENTITY_TYPE.getKey(content.type)), content.id, FabricParser.fabric(content.name));
-		} else if (raw instanceof HoverEvent.ItemStackInfo) {
-			HoverEvent.ItemStackInfo content = (HoverEvent.ItemStackInfo) raw;
-			ItemStack itemStack = content.getItemStack();
-			return new ChatHoverEvent.ShowItem(FabricParser.fabric(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
-		} else {
-			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
-		}
 	}
 
 	public static TextColor fabric(ChatTextColor color) {
