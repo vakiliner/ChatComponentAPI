@@ -36,18 +36,9 @@ public class SpigotParser extends BukkitParser {
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
-			if (uuid != null) {
-				player.spigot().sendMessage(spigot(type), uuid, spigot(component));
-			} else {
-				player.spigot().sendMessage(spigot(type), spigot(component));
-			}
+			player.spigot().sendMessage(spigot(type), spigot(component));
 		} else {
-			boolean isConsole = sender instanceof ConsoleCommandSender;
-			if (uuid != null) {
-				sender.spigot().sendMessage(uuid, spigot(component, isConsole));
-			} else {
-				sender.spigot().sendMessage(spigot(component, isConsole));
-			}
+			sender.spigot().sendMessage(spigot(component, sender instanceof ConsoleCommandSender));
 		}
 	}
 
