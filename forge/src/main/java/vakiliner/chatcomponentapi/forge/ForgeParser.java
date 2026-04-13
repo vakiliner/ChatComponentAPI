@@ -17,6 +17,7 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.SelectorTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -39,6 +40,7 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
+import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
@@ -96,6 +98,9 @@ public class ForgeParser extends BaseParser {
 		} else if (raw instanceof ChatTranslateComponent) {
 			ChatTranslateComponent chatComponent = (ChatTranslateComponent) raw;
 			component = new TranslationTextComponent(chatComponent.getKey(), chatComponent.getWith().stream().map((c) -> forge(c, isConsole)).toArray());
+		} else if (raw instanceof ChatSelectorComponent) {
+			ChatSelectorComponent chatComponent = (ChatSelectorComponent) raw;
+			component = new SelectorTextComponent(chatComponent.getSelector());
 		} else {
 			throw new IllegalArgumentException("Could not parse ITextComponent from " + raw.getClass());
 		}
@@ -117,6 +122,9 @@ public class ForgeParser extends BaseParser {
 		} else if (raw instanceof TranslationTextComponent) {
 			TranslationTextComponent component = (TranslationTextComponent) raw;
 			chatComponent = new ChatTranslateComponent(null, component.getKey(), Arrays.stream(component.getArgs()).map((arg) -> arg instanceof ITextComponent ? forge((ITextComponent) arg) : new ChatTextComponent(String.valueOf(arg))).collect(Collectors.toList()));
+		} else if (raw instanceof SelectorTextComponent) {
+			SelectorTextComponent component = (SelectorTextComponent) raw;
+			chatComponent = new ChatSelectorComponent(component.getPattern());
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
