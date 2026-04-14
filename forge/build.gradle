@@ -71,7 +71,5 @@ reobf {
 	devJar {}
 }
 
-afterEvaluate {
-	jar.finalizedBy reobfJar
-	devJar.finalizedBy reobfDevJar
-}
+jar.finalizedBy('reobfJar')
+devJar.finalizedBy('reobfDevJar')
