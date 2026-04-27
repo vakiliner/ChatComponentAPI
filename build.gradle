@@ -86,6 +86,9 @@ jar {
 		from paperJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
+		attributes([
+			'Build-Timestamp': new Date()
+		])
 	}
 }
 
