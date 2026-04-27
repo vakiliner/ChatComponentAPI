@@ -8,8 +8,10 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.command.ICommandSource;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
@@ -28,6 +30,7 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
@@ -63,6 +66,12 @@ public class ForgeParser extends BaseParser {
 		} else {
 			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer), uuid);
 		}
+	}
+
+	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
+		if (uuid == null) uuid = Util.NIL_UUID;
+		this.sendMessage(playerList.getServer(), component, type, uuid);
+		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
@@ -268,5 +277,9 @@ public class ForgeParser extends BaseParser {
 
 	public ChatServer toChatServer(MinecraftServer server) {
 		return server != null ? new ForgeChatServer(this, server) : null;
+	}
+
+	public ChatPlayerList toChatPlayerList(PlayerList playerList) {
+		return playerList != null ? new ForgeChatPlayerList(this, playerList) : null;
 	}
 }

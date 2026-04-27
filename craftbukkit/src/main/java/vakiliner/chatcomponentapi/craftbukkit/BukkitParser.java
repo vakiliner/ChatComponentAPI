@@ -1,5 +1,7 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -7,12 +9,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Team;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
@@ -30,10 +34,33 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
-		if (type == ChatMessageType.CHAT) {
-			sender.sendMessage(uuid, component.toLegacyText());
+		this.sendMessage(sender, component.toLegacyText(), type == ChatMessageType.SYSTEM, uuid);
+	}
+
+	private void sendMessage(CommandSender sender, String message, boolean system, UUID uuid) {
+		if (!system) {
+			sender.sendMessage(uuid, message);
 		} else {
-			sender.sendMessage(component.toLegacyText());
+			sender.sendMessage(message);
+		}
+	}
+
+	public void broadcastMessage(Server server, ChatComponent component, ChatMessageType type, UUID uuid) {
+		Set<CommandSender> recipients = new HashSet<>();
+		Set<Permissible> permissibles = server.getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_USERS);
+		for (Permissible permissible : permissibles) {
+			if (permissible instanceof CommandSender && permissible.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
+				recipients.add((CommandSender) permissible);
+			}
+		}
+		this.broadcast(recipients, component, type, uuid);
+	}
+
+	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, ChatMessageType chatMessageType, UUID uuid) {
+		String message = chatComponent.toLegacyText();
+		boolean system = chatMessageType == ChatMessageType.SYSTEM;
+		for (CommandSender recipient : recipients) {
+			this.sendMessage(recipient, message, system, uuid);
 		}
 	}
 
@@ -84,6 +111,10 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public ChatServer toChatServer(Server server) {
+		return server != null ? new BukkitChatServer(this, server) : null;
+	}
+
+	public ChatPlayerList toChatPlayerList(Server server) {
 		return server != null ? new BukkitChatServer(this, server) : null;
 	}
 }
