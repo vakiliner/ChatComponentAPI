@@ -41,10 +41,6 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.server.getMaxPlayers();
 	}
 
-	public int getViewDistance() {
-		return this.server.getViewDistance();
-	}
-
 	public Collection<ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}

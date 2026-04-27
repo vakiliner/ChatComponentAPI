@@ -12,8 +12,6 @@ public interface ChatPlayerList {
 
 	int getMaxPlayers();
 
-	int getViewDistance();
-
 	Collection<ChatPlayer> getPlayers();
 
 	ChatPlayer getPlayer(UUID uuid);

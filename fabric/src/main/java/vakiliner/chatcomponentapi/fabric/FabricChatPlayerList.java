@@ -36,10 +36,6 @@ public class FabricChatPlayerList implements ChatPlayerList {
 		return this.playerList.getMaxPlayers();
 	}
 
-	public int getViewDistance() {
-		return this.playerList.getViewDistance();
-	}
-
 	public Collection<ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
 	}
