@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -20,6 +19,7 @@ import net.md_5.bungee.api.chat.hover.content.Entity;
 import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import vakiliner.chatcomponentapi.common.ChatId;
+import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -33,11 +33,11 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.craftbukkit.BukkitParser;
 
 public class SpigotParser extends BukkitParser {
-	public void sendMessage(CommandSender sender, ChatComponent component, vakiliner.chatcomponentapi.common.ChatMessageType type, UUID uuid) {
+	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.sendMessage(sender, spigot(component, sender instanceof ConsoleCommandSender), spigot(type), uuid);
 	}
 
-	private void sendMessage(CommandSender sender, BaseComponent component, ChatMessageType type, UUID uuid) {
+	private void sendMessage(CommandSender sender, BaseComponent component, net.md_5.bungee.api.ChatMessageType type, UUID uuid) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (uuid != null) {
@@ -54,10 +54,10 @@ public class SpigotParser extends BukkitParser {
 		}
 	}
 
-	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, vakiliner.chatcomponentapi.common.ChatMessageType chatMessageType, UUID uuid) {
+	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, ChatMessageType chatMessageType, UUID uuid) {
 		BaseComponent component = spigot(chatComponent, false);
 		BaseComponent consoleComponent = spigot(chatComponent, true);
-		ChatMessageType type = spigot(chatMessageType);
+		net.md_5.bungee.api.ChatMessageType type = spigot(chatMessageType);
 		for (CommandSender recipient : recipients) {
 			this.sendMessage(recipient, recipient instanceof ConsoleCommandSender ? consoleComponent : component, type, uuid);
 		}
@@ -190,12 +190,12 @@ public class SpigotParser extends BukkitParser {
 		}
 	}
 
-	public static ChatMessageType spigot(vakiliner.chatcomponentapi.common.ChatMessageType type) {
-		return type != null ? ChatMessageType.valueOf(type.name()) : null;
+	public static net.md_5.bungee.api.ChatMessageType spigot(ChatMessageType type) {
+		return type != null ? net.md_5.bungee.api.ChatMessageType.valueOf(type.name()) : null;
 	}
 
-	public static vakiliner.chatcomponentapi.common.ChatMessageType spigot(ChatMessageType type) {
-		return type != null ? vakiliner.chatcomponentapi.common.ChatMessageType.valueOf(type.name()) : null;
+	public static ChatMessageType spigot(net.md_5.bungee.api.ChatMessageType type) {
+		return type != null ? ChatMessageType.valueOf(type.name()) : null;
 	}
 
 	protected static ChatStyle spigotStyle(BaseComponent component) {
