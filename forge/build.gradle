@@ -66,3 +66,10 @@ jar {
 		])
 	}
 }
+
+reobf {
+	devJar {}
+}
+
+jar.finalizedBy('reobfJar')
+devJar.finalizedBy('reobfDevJar')

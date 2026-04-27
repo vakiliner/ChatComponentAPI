@@ -1,6 +1,7 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Objects;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
@@ -21,6 +22,22 @@ public class ForgeChatServer implements ChatServer {
 
 	public ChatPlayerList getPlayerList() {
 		return this.parser.toChatPlayerList(this.server.getPlayerList());
+	}
+
+	public boolean isDedicatedServer() {
+		return this.server.isDedicatedServer();
+	}
+
+	public String getSingleplayerName() {
+		return this.server.getSingleplayerName();
+	}
+
+	public boolean isSingleplayer() {
+		return this.server.isSingleplayer();
+	}
+
+	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+		return this.server.isSingleplayerOwner(gameProfile);
 	}
 
 	public void execute(IChatPlugin plugin, Runnable runnable) {

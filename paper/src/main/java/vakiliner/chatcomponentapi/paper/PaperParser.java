@@ -170,48 +170,49 @@ public class PaperParser extends SpigotParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.action().toString()), event.value()) : null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V> HoverEvent<V> paper(ChatHoverEvent<?> event) {
-		return event != null ? HoverEvent.hoverEvent((HoverEvent.Action<V>) HoverEvent.Action.NAMES.value(event.getAction().getName()), (V) paperContent(event.getContents())) : null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> paper(HoverEvent<?> event) {
-		return event != null ? new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(event.action().toString()), (V) paperContent2(event.value())) : null;
-	}
-
-	public static Object paperContent(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatComponent) {
-			ChatComponent content = (ChatComponent) raw;
-			return paper(content);
-		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
-			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
-			return HoverEvent.ShowEntity.of(paper(content.getType()), content.getUniqueId(), paper(content.getName()));
-		} else if (raw instanceof ChatHoverEvent.ShowItem) {
-			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return HoverEvent.ShowItem.of(paper(content.getItem()), content.getCount());
+	public static HoverEvent<?> paper(ChatHoverEvent<?> event) {
+		if (event == null) return null;
+		ChatHoverEvent.Action<?> action = event.getAction();
+		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
+			return HoverEvent.showText(paper(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
+			return HoverEvent.showEntity(paper(event.getValue(ChatHoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
+			return HoverEvent.showItem(paper(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
 		} else {
-			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
+			throw new IllegalArgumentException("Unknown action");
 		}
 	}
 
-	public static Object paperContent2(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof Component) {
-			Component content = (Component) raw;
-			return paper(content);
-		} else if (raw instanceof HoverEvent.ShowEntity) {
-			HoverEvent.ShowEntity content = (HoverEvent.ShowEntity) raw;
-			return new ChatHoverEvent.ShowEntity(paper(content.type()), content.id(), paper(content.name()));
-		} else if (raw instanceof HoverEvent.ShowItem) {
-			HoverEvent.ShowItem content = (HoverEvent.ShowItem) raw;
-			return new ChatHoverEvent.ShowItem(paper(content.item()), content.count());
+	public static ChatHoverEvent<?> paper(HoverEvent<?> event) {
+		if (event == null) return null;
+		HoverEvent.Action<?> action = event.action();
+		Object value = event.value();
+		if (action == HoverEvent.Action.SHOW_TEXT) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, paper((Component) value));
+		} else if (action == HoverEvent.Action.SHOW_ENTITY) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, paper((HoverEvent.ShowEntity) value));
+		} else if (action == HoverEvent.Action.SHOW_ITEM) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, paper((HoverEvent.ShowItem) value));
 		} else {
-			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
+			throw new IllegalArgumentException("Unknown action");
 		}
+	}
+
+	public static HoverEvent.ShowEntity paper(ChatHoverEvent.ShowEntity content) {
+		return content != null ? HoverEvent.ShowEntity.of(paper(content.getType()), content.getUniqueId(), paper(content.getName())) : null;
+	}
+
+	public static ChatHoverEvent.ShowEntity paper(HoverEvent.ShowEntity content) {
+		return content != null ? new ChatHoverEvent.ShowEntity(paper(content.type()), content.id(), paper(content.name())) : null;
+	}
+
+	public static HoverEvent.ShowItem paper(ChatHoverEvent.ShowItem content) {
+		return content != null ? HoverEvent.ShowItem.of(paper(content.getItem()), content.getCount()) : null;
+	}
+
+	public static ChatHoverEvent.ShowItem paper(HoverEvent.ShowItem content) {
+		return content != null ? new ChatHoverEvent.ShowItem(paper(content.item()), content.count()) : null;
 	}
 
 	public static Key paper(ChatId id) {

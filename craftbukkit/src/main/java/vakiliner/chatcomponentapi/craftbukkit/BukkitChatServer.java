@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Server;
+import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
@@ -33,6 +34,23 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this;
 	}
 
+	public boolean isDedicatedServer() {
+		return true;
+	}
+
+	// Not supported
+	public String getSingleplayerName() {
+		return null;
+	}
+
+	public boolean isSingleplayer() {
+		return this.getSingleplayerName() != null;
+	}
+
+	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+		return false;
+	}
+
 	public int getPlayerCount() {
 		return this.server.getOnlinePlayers().size();
 	}
@@ -53,12 +71,12 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.parser.toChatPlayer(this.server.getPlayerExact(name));
 	}
 
-	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.parser.broadcastMessage(this.server, component, type, uuid);
-	}
-
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server.getScheduler(), plugin, runnable);
+	}
+
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.broadcastMessage(this.server, component, type, uuid);
 	}
 
 	public boolean equals(Object obj) {

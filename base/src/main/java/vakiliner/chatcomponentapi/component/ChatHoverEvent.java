@@ -20,6 +20,12 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		this.contents = Objects.requireNonNull(contents);
 	}
 
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public ChatHoverEvent(Action<V> action, Object contents) {
+		this(action, (V) contents);
+	}
+
 	public ChatHoverEvent(ChatHoverEvent<V> event) {
 		this.action = event.action;
 		this.contents = event.contents;
@@ -35,6 +41,11 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 	public V getContents() {
 		return this.contents;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends IContent> T getValue(Action<T> action) {
+		return this.action == action ? (T) this.contents : null;
 	}
 
 	@Deprecated

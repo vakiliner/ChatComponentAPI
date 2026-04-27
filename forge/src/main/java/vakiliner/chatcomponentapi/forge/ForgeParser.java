@@ -19,6 +19,7 @@ import net.minecraft.util.text.ChatType;
 import net.minecraft.util.text.Color;
 import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.SelectorTextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.Style;
 import net.minecraft.util.text.TextFormatting;
@@ -42,9 +43,11 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
+import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
+import vakiliner.chatcomponentapi.forge.mixin.ItemHoverAccessor;
 import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
@@ -104,6 +107,9 @@ public class ForgeParser extends BaseParser {
 		} else if (raw instanceof ChatTranslateComponent) {
 			ChatTranslateComponent chatComponent = (ChatTranslateComponent) raw;
 			component = new TranslationTextComponent(chatComponent.getKey(), chatComponent.getWith().stream().map((c) -> forge(c, isConsole)).toArray());
+		} else if (raw instanceof ChatSelectorComponent) {
+			ChatSelectorComponent chatComponent = (ChatSelectorComponent) raw;
+			component = new SelectorTextComponent(chatComponent.getSelector());
 		} else {
 			throw new IllegalArgumentException("Could not parse ITextComponent from " + raw.getClass());
 		}
@@ -125,6 +131,9 @@ public class ForgeParser extends BaseParser {
 		} else if (raw instanceof TranslationTextComponent) {
 			TranslationTextComponent component = (TranslationTextComponent) raw;
 			chatComponent = new ChatTranslateComponent(null, component.getKey(), Arrays.stream(component.getArgs()).map((arg) -> arg instanceof ITextComponent ? forge((ITextComponent) arg) : new ChatTextComponent(String.valueOf(arg))).collect(Collectors.toList()));
+		} else if (raw instanceof SelectorTextComponent) {
+			SelectorTextComponent component = (SelectorTextComponent) raw;
+			chatComponent = new ChatSelectorComponent(component.getPattern());
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
@@ -165,53 +174,54 @@ public class ForgeParser extends BaseParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V> HoverEvent forge(ChatHoverEvent<?> event) {
-		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), forgeContent(event.getContents())) : null;
+	public static HoverEvent forge(ChatHoverEvent<?> event) {
+		if (event == null) return null;
+		ChatHoverEvent.Action<?> action = event.getAction();
+		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
+			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, forge(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
+			return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, forge(event.getValue(ChatHoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
+			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, forge(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
+		} else {
+			throw new IllegalArgumentException("Unknown action");
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> forge(HoverEvent event) {
+	public static ChatHoverEvent<?> forge(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action<?> action = event.getAction();
-		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) forgeContent2(event.getValue(action)));
-	}
-
-	@SuppressWarnings("deprecation")
-	public static Object forgeContent(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatComponent) {
-			ChatComponent content = (ChatComponent) raw;
-			return forge(content);
-		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
-			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
-			return new HoverEvent.EntityHover(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName()));
-		} else if (raw instanceof ChatHoverEvent.ShowItem) {
-			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemHover(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount()));
+		if (action == HoverEvent.Action.SHOW_TEXT) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, forge(event.getValue(HoverEvent.Action.SHOW_TEXT)));
+		} else if (action == HoverEvent.Action.SHOW_ENTITY) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, forge(event.getValue(HoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == HoverEvent.Action.SHOW_ITEM) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, forge(event.getValue(HoverEvent.Action.SHOW_ITEM)));
 		} else {
-			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
+			throw new IllegalArgumentException("Unknown action");
 		}
 	}
 
 	@SuppressWarnings("deprecation")
-	public static Object forgeContent2(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ITextComponent) {
-			ITextComponent content = (ITextComponent) raw;
-			return forge(content);
-		} else if (raw instanceof HoverEvent.EntityHover) {
-			HoverEvent.EntityHover content = (HoverEvent.EntityHover) raw;
-			return new ChatHoverEvent.ShowEntity(forge(Registry.ENTITY_TYPE.getKey(content.type)), content.id, forge(content.name));
-		} else if (raw instanceof HoverEvent.ItemHover) {
-			HoverEvent.ItemHover content = (HoverEvent.ItemHover) raw;
-			ItemStack itemStack = content.getItemStack();
-			return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
-		} else {
-			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
-		}
+	public static HoverEvent.EntityHover forge(ChatHoverEvent.ShowEntity content) {
+		return content != null ? new HoverEvent.EntityHover(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName())) : null;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static ChatHoverEvent.ShowEntity forge(HoverEvent.EntityHover content) {
+		return content != null ? new ChatHoverEvent.ShowEntity(forge(Registry.ENTITY_TYPE.getKey(content.type)), content.id, forge(content.name)) : null;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static HoverEvent.ItemHover forge(ChatHoverEvent.ShowItem content) {
+		return content != null ? new HoverEvent.ItemHover(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount())) : null;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemHover content) {
+		if (content == null) return null;
+		ItemHoverAccessor accessor = (ItemHoverAccessor) content;
+		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
 	}
 
 	public static ResourceLocation forge(ChatId id) {
