@@ -51,6 +51,10 @@ import vakiliner.chatcomponentapi.fabric.mixin.ItemStackInfoAccessor;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
+	public boolean supportsFallbackInTranslate() {
+		return false;
+	}
+
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}

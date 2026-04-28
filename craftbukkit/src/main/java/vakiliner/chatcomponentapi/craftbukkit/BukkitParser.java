@@ -25,6 +25,10 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class BukkitParser extends BaseParser {
+	public boolean supportsFallbackInTranslate() {
+		return false;
+	}
+
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
