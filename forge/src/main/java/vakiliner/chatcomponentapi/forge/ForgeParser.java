@@ -51,6 +51,10 @@ import vakiliner.chatcomponentapi.forge.mixin.ItemHoverAccessor;
 import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
+	public boolean supportsFallbackInTranslate() {
+		return false;
+	}
+
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
