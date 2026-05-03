@@ -99,7 +99,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			return true;
 		});
 		test("Parse ChatHoverEvent", () -> {
-			ChatHoverEvent<?>[] input = { new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("123")), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, new ChatHoverEvent.ShowEntity(ChatId.parse("creeper"), UUID.randomUUID(), new ChatTextComponent("Hello"))), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, new ChatHoverEvent.ShowItem(ChatId.parse("dirt"), 15)) };
+			ChatHoverEvent<?>[] input = { new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("123")), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, new ChatHoverEvent.ShowEntity(ChatId.of("creeper"), UUID.randomUUID(), new ChatTextComponent("Hello"))), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, new ChatHoverEvent.ShowItem(ChatId.of("dirt"), 15)) };
 			ChatHoverEvent<?>[] output = new ChatHoverEvent[input.length];
 			for (int i = 0; i < input.length; i++) {
 				HoverEvent test = FabricParser.fabric(input[i]);
@@ -142,7 +142,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			return Arrays.equals(input, output);
 		});
 		test("Parse ChatStyle", () -> {
-			ChatStyle input = ChatStyle.newBuilder().withColor(ChatNamedColor.GRAY).withBold(true).withItalic(false).withUnderlined(null).withStrikethrough(false).withObfuscated(true).withInsertion("Test").withFont(ChatId.parse("default")).withClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test")).withHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world"))).build();
+			ChatStyle input = ChatStyle.newBuilder().withColor(ChatNamedColor.GRAY).withBold(true).withItalic(false).withUnderlined(null).withStrikethrough(false).withObfuscated(true).withInsertion("Test").withFont(ChatId.of("default")).withClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test")).withHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world"))).build();
 			Style test = FabricParser.fabric(input);
 			ChatStyle output = FabricParser.fabric(test);
 			return input.equals(output);
