@@ -41,7 +41,6 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
-import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
@@ -59,18 +58,19 @@ public class FabricParser extends BaseParser {
 		return true;
 	}
 
-	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
+	public void sendMessage(CommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
+		Component component = fabric(chatComponent, commandSource instanceof MinecraftServer);
 		if (commandSource instanceof ServerPlayer) {
-			((ServerPlayer) commandSource).sendMessage(fabric(component), fabric(type), uuid);
+			((ServerPlayer) commandSource).sendMessage(component, fabric(type), uuid);
 		} else {
-			commandSource.sendMessage(fabric(component, commandSource instanceof MinecraftServer), uuid);
+			commandSource.sendMessage(component, uuid);
 		}
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
-		this.sendMessage(playerList.getServer(), component, type, uuid);
+		playerList.getServer().sendMessage(fabric(component, true), uuid);
 		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
 
@@ -93,11 +93,7 @@ public class FabricParser extends BaseParser {
 	public static Component fabric(ChatComponent raw, boolean isConsole) {
 		final MutableComponent component;
 		if (raw instanceof ChatComponentModified) {
-			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
-				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
-			} else {
-				raw = ((ChatComponentModified) raw).getComponent();
-			}
+			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
 		if (raw == null) {
 			return null;
@@ -138,7 +134,9 @@ public class FabricParser extends BaseParser {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
 		chatComponent.setStyle(fabric(raw.getStyle()));
-		chatComponent.setExtra(raw.getSiblings().stream().map(FabricParser::fabric).collect(Collectors.toList()));
+		for (Component component : raw.getSiblings()) {
+			chatComponent.append(fabric(component));
+		}
 		return chatComponent;
 	}
 
