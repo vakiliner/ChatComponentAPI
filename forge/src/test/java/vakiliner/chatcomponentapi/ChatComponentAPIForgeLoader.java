@@ -193,7 +193,7 @@ public class ChatComponentAPIForgeLoader {
 			ChatStyle.Builder builder = ChatStyle.newBuilder();
 			ChatHoverEvent<ChatComponent> hoverEvent = new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, component);
 			builder.withHoverEvent(hoverEvent);
-			component.setStyle(builder.build());
+			component.setStyle(builder.build().clone());
 			component.serialize();
 		});
 	}

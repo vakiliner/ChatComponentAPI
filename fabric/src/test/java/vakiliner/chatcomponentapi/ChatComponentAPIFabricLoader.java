@@ -185,7 +185,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 			ChatStyle.Builder builder = ChatStyle.newBuilder();
 			ChatHoverEvent<ChatComponent> hoverEvent = new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, component);
 			builder.withHoverEvent(hoverEvent);
-			component.setStyle(builder.build());
+			component.setStyle(builder.build().clone());
 			component.serialize();
 		});
 	}
