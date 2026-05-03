@@ -170,7 +170,31 @@ public class ChatComponentAPIForgeLoader {
 			} catch (Throwable err) {
 				component2.append(component1.clone());
 			}
-			component1.clone();
+			component1.serialize();
+		});
+		test("Looping ChatTranslateComponent with", () -> {
+			ChatTranslateComponent component1 = new ChatTranslateComponent(null, "text");
+			ChatTranslateComponent component2 = new ChatTranslateComponent(null, "text2");
+			ChatTranslateComponent component3 = new ChatTranslateComponent(null, "text3");
+			component1.addWith(component2);
+			component1.addWith(component3);
+			component3.addWith(component1.clone());
+			component1.serialize();
+		});
+		test("Looping ChatSelectorComponent separator", () -> {
+			ChatSelectorComponent component1 = new ChatSelectorComponent("@a");
+			ChatSelectorComponent component2 = new ChatSelectorComponent("@a");
+			component1.setSeparator(component2);
+			component2.setSeparator(component1.clone());
+			component1.serialize();
+		});
+		test("Looping ChatStyle HoverEvent", () -> {
+			ChatTextComponent component = new ChatTextComponent();
+			ChatStyle.Builder builder = ChatStyle.newBuilder();
+			ChatHoverEvent<ChatComponent> hoverEvent = new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, component);
+			builder.withHoverEvent(hoverEvent);
+			component.setStyle(builder.build());
+			component.serialize();
 		});
 	}
 
