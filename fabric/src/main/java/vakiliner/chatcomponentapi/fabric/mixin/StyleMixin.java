@@ -4,6 +4,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import net.minecraft.network.chat.Style;
 
+@Deprecated
 @Mixin(Style.class)
 public interface StyleMixin {
 	@Accessor("bold")
