@@ -254,13 +254,13 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		if (extra != null) {
 			Set<ChatComponent> checked = new HashSet<>();
 			Queue<ChatComponent> queue = new LinkedList<>(extra);
-			ChatComponent curent = null;
-			while ((curent = queue.poll()) != null) {
-				if (checked.contains(curent)) continue;
-				if (curent == this) throw new IllegalArgumentException("Components are looping, try cloning the component before appending");
-				List<ChatComponent> e = curent.extra;
+			ChatComponent current = null;
+			while ((current = queue.poll()) != null) {
+				if (checked.contains(current)) continue;
+				if (current == this) throw new IllegalArgumentException("Components are looping, try cloning the component before appending");
+				List<ChatComponent> e = current.extra;
 				if (e != null) queue.addAll(e);
-				checked.add(curent);
+				checked.add(current);
 			}
 		}
 		this.unsafeAppend(component);
