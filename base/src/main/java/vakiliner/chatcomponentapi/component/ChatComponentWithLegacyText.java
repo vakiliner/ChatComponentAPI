@@ -29,6 +29,10 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 		}
 	}
 
+	public ChatComponent clone(boolean full) {
+		return new ChatComponentWithLegacyText(this, full);
+	}
+
 	public ChatComponent getLegacyComponent() {
 		if (this.legacyComponent != null) {
 			return this.legacyComponent;
@@ -39,10 +43,6 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 			}
 			return this.legacyComponent = this.getLegacyComponent.get();
 		}
-	}
-
-	public ChatComponent clone(boolean full) {
-		return new ChatComponentWithLegacyText(this, full);
 	}
 
 	public ChatComponent getComponent(boolean isConsole) {
