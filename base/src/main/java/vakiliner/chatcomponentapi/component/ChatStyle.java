@@ -35,7 +35,7 @@ public final class ChatStyle implements IGsonSerializer {
 		this.font = font;
 	}
 
-	private ChatStyle(ChatStyle style) {
+	private ChatStyle(ChatStyle style, boolean full) {
 		this.color = style.color;
 		this.bold = style.bold;
 		this.italic = style.italic;
@@ -43,7 +43,7 @@ public final class ChatStyle implements IGsonSerializer {
 		this.strikethrough = style.strikethrough;
 		this.obfuscated = style.obfuscated;
 		this.clickEvent = style.clickEvent;
-		this.hoverEvent = style.hoverEvent;
+		this.hoverEvent = full ? style.hoverEvent.clone(full) : style.hoverEvent;
 		this.insertion = style.insertion;
 		this.font = style.font;
 	}
@@ -61,7 +61,11 @@ public final class ChatStyle implements IGsonSerializer {
 	}
 
 	public ChatStyle clone() {
-		return new ChatStyle(this);
+		return this.clone(true);
+	}
+
+	public ChatStyle clone(boolean full) {
+		return new ChatStyle(this, full);
 	}
 
 	public boolean isEmpty() {

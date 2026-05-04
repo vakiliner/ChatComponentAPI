@@ -49,14 +49,17 @@ public class ChatSelectorComponent extends ChatComponent {
 		this.separator = separator;
 	}
 
-	public ChatSelectorComponent(ChatSelectorComponent component, boolean cloneExtra) {
-		super(component, cloneExtra);
+	public ChatSelectorComponent(ChatSelectorComponent component, boolean full) {
+		super(component, full);
 		this.selector = component.selector;
 		this.separator = component.separator;
+		if (full) {
+			if (this.separator != null) this.separator = this.separator.clone(full);
+		}
 	}
 
-	public ChatSelectorComponent clone(boolean cloneExtra) {
-		return new ChatSelectorComponent(this, cloneExtra);
+	public ChatSelectorComponent clone(boolean full) {
+		return new ChatSelectorComponent(this, full);
 	}
 
 	public String getSelector() {

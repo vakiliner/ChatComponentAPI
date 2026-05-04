@@ -19,8 +19,8 @@ public abstract class ChatComponentModified extends ChatComponent {
 		this.component = Objects.requireNonNull(component);
 	}
 
-	protected ChatComponentModified(ChatComponentModified component) {
-		this.component = component.component;
+	protected ChatComponentModified(ChatComponentModified component, boolean full) {
+		this.component = full ? component.component.clone(full) : component.component;
 	}
 
 	public final ChatComponent getComponent() {

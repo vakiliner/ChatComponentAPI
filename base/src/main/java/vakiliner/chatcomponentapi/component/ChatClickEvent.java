@@ -16,7 +16,7 @@ public class ChatClickEvent implements IGsonSerializer {
 		this.value = Objects.requireNonNull(value);
 	}
 
-	public ChatClickEvent(ChatClickEvent event) {
+	protected ChatClickEvent(ChatClickEvent event) {
 		this.action = event.action;
 		this.value = event.value;
 	}

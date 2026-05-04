@@ -26,13 +26,18 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		this(action, (V) contents);
 	}
 
-	public ChatHoverEvent(ChatHoverEvent<V> event) {
+	@SuppressWarnings("unchecked")
+	protected ChatHoverEvent(ChatHoverEvent<V> event, boolean full) {
 		this.action = event.action;
-		this.contents = event.contents;
+		this.contents = full ? (V) event.contents.clone(full) : event.contents;
 	}
 
 	public ChatHoverEvent<V> clone() {
-		return new ChatHoverEvent<>(this);
+		return this.clone(true);
+	}
+
+	public ChatHoverEvent<V> clone(boolean full) {
+		return new ChatHoverEvent<>(this, full);
 	}
 
 	public Action<V> getAction() {
@@ -142,6 +147,12 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 	}
 
 	public static interface IContent extends IGsonSerializer {
+		default IContent clone() {
+			return this.clone(true);
+		}
+		
+		IContent clone(boolean full);
+
 		default JsonElement serialize(boolean old) {
 			return this.serialize();
 		}
@@ -156,6 +167,20 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			this.type = Objects.requireNonNull(type);
 			this.id = Objects.requireNonNull(id);
 			this.name = name;
+		}
+
+		protected ShowEntity(ShowEntity showEntity, boolean full) {
+			this.type = showEntity.type;
+			this.id = showEntity.id;
+			this.name = full  ? showEntity.name != null ? showEntity.name.clone(full) : null : showEntity.name;
+		}
+
+		public ShowEntity clone() {
+			return (ShowEntity) IContent.super.clone();
+		}
+
+		public ShowEntity clone(boolean full) {
+			return new ShowEntity(this, full);
 		}
 
 		public ChatId getType() {
@@ -234,6 +259,19 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		public ShowItem(ChatId id, int count) {
 			this.id = Objects.requireNonNull(id);
 			this.count = count;
+		}
+
+		protected ShowItem(ShowItem showItem, boolean full) {
+			this.id = showItem.id;
+			this.count = showItem.count;
+		}
+
+		public ShowItem clone() {
+			return (ShowItem) IContent.super.clone();
+		}
+
+		public ShowItem clone(boolean full) {
+			return new ShowItem(this, full);
 		}
 
 		public ChatId getItem() {
