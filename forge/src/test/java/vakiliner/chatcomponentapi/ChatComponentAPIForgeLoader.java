@@ -80,19 +80,20 @@ public class ChatComponentAPIForgeLoader {
 
 	public static void startTests() {
 		test("Parse ChatTextComponent", () -> {
-			ChatComponent input = new ChatTextComponent("123");
+			ChatTextComponent input = new ChatTextComponent("123");
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
 		test("Parse ChatTranslateComponent", () -> {
-			ChatComponent input = new ChatTranslateComponent(null, "123");
+			ChatTranslateComponent input = new ChatTranslateComponent(null, "123");
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
 		test("Parse ChatSelectorComponent", () -> {
-			ChatComponent input = new ChatSelectorComponent("123");
+			ChatSelectorComponent input = new ChatSelectorComponent("123");
+			if (PARSER.supportsSeparatorInSelector()) input.setSeparator(new ChatTextComponent(" | "));
 			ITextComponent test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
@@ -150,7 +151,18 @@ public class ChatComponentAPIForgeLoader {
 			return Arrays.equals(input, output);
 		});
 		test("Parse ChatStyle", () -> {
-			ChatStyle input = ChatStyle.newBuilder().withColor(ChatNamedColor.GRAY).withBold(true).withItalic(false).withUnderlined(null).withStrikethrough(false).withObfuscated(true).withInsertion("Test").withFont(ChatId.of("default")).withClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test")).withHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world"))).build();
+			ChatStyle.Builder builder = ChatStyle.newBuilder();
+			builder.withColor(ChatNamedColor.GRAY);
+			builder.withBold(true);
+			builder.withItalic(false);
+			builder.withUnderlined(null);
+			builder.withStrikethrough(false);
+			builder.withObfuscated(true);
+			builder.withClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test"));
+			builder.withHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world")));
+			builder.withInsertion("Test");
+			if (PARSER.supportsFontInStyle()) builder.withFont(ChatId.of("default"));
+			ChatStyle input = builder.build();
 			Style test = ForgeParser.forge(input);
 			ChatStyle output = ForgeParser.forge(test);
 			return input.equals(output);
