@@ -64,7 +64,7 @@ public class ChatTextColor {
 			return false;
 		} else {
 			ChatTextColor other = (ChatTextColor) obj;
-			return this.value == other.value;
+			return this.value == other.value && this.asFormat == other.asFormat;
 		}
 	}
 
