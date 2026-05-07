@@ -38,18 +38,9 @@ public class SpigotParser extends BukkitParser {
 
 	private void sendMessage(CommandSender sender, BaseComponent component, net.md_5.bungee.api.ChatMessageType type, UUID uuid) {
 		if (sender instanceof Player) {
-			Player player = (Player) sender;
-			if (uuid != null) {
-				player.spigot().sendMessage(type, uuid, component);
-			} else {
-				player.spigot().sendMessage(type, component);
-			}
+			((Player) sender).spigot().sendMessage(type, component);
 		} else {
-			if (uuid != null) {
-				sender.spigot().sendMessage(uuid, component);
-			} else {
-				sender.spigot().sendMessage(component);
-			}
+			sender.spigot().sendMessage(component);
 		}
 	}
 

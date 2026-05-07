@@ -40,11 +40,7 @@ public class BukkitParser extends BaseParser {
 	}
 
 	private void sendMessage(CommandSender sender, String message, boolean system, UUID uuid) {
-		if (!system) {
-			sender.sendMessage(uuid, message);
-		} else {
-			sender.sendMessage(message);
-		}
+		sender.sendMessage(message);
 	}
 
 	public void broadcastMessage(Server server, ChatComponent component, ChatMessageType type, UUID uuid) {
@@ -90,8 +86,9 @@ public class BukkitParser extends BaseParser {
 		return color != null ? ChatTextFormat.getByChar(color.getChar()) : null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static NamespacedKey bukkit(ChatId chatId) {
-		return chatId != null ? NamespacedKey.fromString(chatId.toString()) : null;
+		return chatId != null ? new NamespacedKey(chatId.getNamespace(), chatId.getValue()) : null;
 	}
 
 	public static ChatId bukkit(NamespacedKey namespacedKey) {
