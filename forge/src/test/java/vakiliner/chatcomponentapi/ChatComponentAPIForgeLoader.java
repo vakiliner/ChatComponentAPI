@@ -13,16 +13,22 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.forge.ForgeDevTester;
 import vakiliner.chatcomponentapi.forge.ForgeParser;
+import vakiliner.chatcomponentapi.forge.IForgeChatPlugin;
 
 @Mod("chatcomponentapi")
 @EventBusSubscriber(modid = "chatcomponentapi", bus = Bus.FORGE)
-public class ChatComponentAPIForgeLoader {
+public class ChatComponentAPIForgeLoader implements IForgeChatPlugin {
 	public static final ForgeParser PARSER = new ForgeParser();
 	public static final ForgeDevTester TESTER = new ForgeDevTester(PARSER);
 
 	public ChatComponentAPIForgeLoader() {
 		MinecraftForge.EVENT_BUS.register(this);
 		TESTER.startTests(TESTER::startTests);
+	}
+
+	@Deprecated
+	public static ForgeParser load() {
+		return PARSER;
 	}
 
 	@SubscribeEvent
