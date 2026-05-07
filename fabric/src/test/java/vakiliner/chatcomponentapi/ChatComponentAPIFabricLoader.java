@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
@@ -39,7 +38,7 @@ import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.fabric.FabricParser;
 
-public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegistrationCallback {
+public class ChatComponentAPIFabricLoader implements ModInitializer {
 	public static final FabricParser PARSER = new FabricParser();
 	public static final Logger LOGGER = LogManager.getLogger("chatcomponentapi");
 	private static final List<Throwable> ERRORS = new ArrayList<>();
@@ -47,18 +46,17 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 	private static int failCount = 0;
 
 	public void onInitialize() {
-		CommandRegistrationCallback.EVENT.register(this);
+		try {
+			net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback.EVENT.register(this::register);
+		} catch (NoClassDefFoundError err) {
+		}
 		startTests(ChatComponentAPIFabricLoader::startTests);
 	}
 
 	public void register(CommandDispatcher<CommandSourceStack> dispatcher, boolean dedicated) {
-		dispatcher.register(testCommand());
-	}
-
-	private static LiteralArgumentBuilder<CommandSourceStack> testCommand() {
 		LiteralArgumentBuilder<CommandSourceStack> chatcomponentapi = LiteralArgumentBuilder.literal("chatcomponentapi");
 		LiteralArgumentBuilder<CommandSourceStack> test = LiteralArgumentBuilder.literal("test");
-		return chatcomponentapi.requires((stack) -> {
+		dispatcher.register(chatcomponentapi.requires((stack) -> {
 			return stack.hasPermission(2);
 		}).then(test.executes((context) -> startTests(() -> {
 			CommandSourceStack commandSourceStack = context.getSource();
@@ -67,7 +65,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, CommandRegi
 				commandSource = commandSourceStack.getServer();
 			}
 			startTests(commandSource);
-		})));
+		}))));
 	}
 
 	public static void startTests() {
