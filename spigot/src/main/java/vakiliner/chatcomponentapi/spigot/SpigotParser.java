@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -14,13 +16,10 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.SelectorComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.TranslatableComponent;
-import net.md_5.bungee.api.chat.hover.content.Content;
-import net.md_5.bungee.api.chat.hover.content.Entity;
-import net.md_5.bungee.api.chat.hover.content.Item;
-import net.md_5.bungee.api.chat.hover.content.Text;
-import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.common.ChatNamedColor;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
+import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
@@ -77,7 +76,8 @@ public class SpigotParser extends BukkitParser {
 			throw new IllegalArgumentException("Could not parse BaseComponent from " + raw.getClass());
 		}
 		ChatStyle chatStyle = raw.getStyle();
-		component.setColor(spigot(chatStyle.getColor()));
+		ChatTextColor color = chatStyle.getColor();
+		if (color != null) component.setColor(spigot(color.asFormat()));
 		component.setBold(chatStyle.getBold());
 		component.setItalic(chatStyle.getItalic());
 		component.setUnderlined(chatStyle.getUnderlined());
@@ -86,10 +86,9 @@ public class SpigotParser extends BukkitParser {
 		component.setClickEvent(spigot(chatStyle.getClickEvent()));
 		component.setHoverEvent(spigot(chatStyle.getHoverEvent()));
 		component.setInsertion(chatStyle.getInsertion());
-		component.setFont(chatStyle.getFont().toString());
-		List<ChatComponent> extra = raw.getExtra();
-		if (extra != null) for (ChatComponent chatComponent : extra) {
-			component.addExtra(spigot(chatComponent, isConsole));
+		List<ChatComponent> children = raw.getExtra();
+		if (children != null) {
+			component.setExtra(children.stream().map((c) -> spigot(c, isConsole)).collect(Collectors.toList()));
 		}
 		return component;
 	}
@@ -125,58 +124,24 @@ public class SpigotParser extends BukkitParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().name().toLowerCase()), event.getValue()) : null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static HoverEvent spigot(ChatHoverEvent<?> event) {
-		if (event == null) return null;
-		ChatHoverEvent.Action<?> action = event.getAction();
-		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
-			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new BaseComponent[] { spigot(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)) }));
-		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
-			return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, spigot(event.getValue(ChatHoverEvent.Action.SHOW_ENTITY)));
-		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
-			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, spigot(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
-		} else {
-			throw new IllegalArgumentException("Unknown action");
-		}
+		return event != null ? new HoverEvent(HoverEvent.Action.valueOf(event.getAction().getName().toUpperCase()), new BaseComponent[] { spigot(event.getValue()) }) : null;
 	}
 
 	public static ChatHoverEvent<?> spigot(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action action = event.getAction();
-		Content content = event.getContents().get(0);
+		BaseComponent contents = event.getValue()[0];
 		if (action == HoverEvent.Action.SHOW_TEXT) {
-			Object value = ((Text) content).getValue();
-			final ChatComponent chatComponent;
-			if (value instanceof String) {
-				chatComponent = new ChatTextComponent((String) value);
-			} else if (value instanceof BaseComponent[]) {
-				chatComponent = spigot(((BaseComponent[]) value)[0]);
-			} else {
-				throw new IllegalArgumentException("Could not parse ChatComponent from " + value.getClass());
-			}
-			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, chatComponent);
-		} else if (action == HoverEvent.Action.SHOW_ENTITY) {
-			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, spigot((Entity) content));
-		} else if (action == HoverEvent.Action.SHOW_ITEM) {
-			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, spigot((Item) content));
-		} else {
-			throw new IllegalArgumentException("Unknown action");
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, spigot(contents));
 		}
-	}
-
-	public static Entity spigot(ChatHoverEvent.ShowEntity content) {
-		return content != null ? new Entity(content.getType().toString(), content.getUniqueId().toString(), spigot(content.getName())) : null;
-	}
-
-	public static ChatHoverEvent.ShowEntity spigot(Entity content) {
-		return content != null ? new ChatHoverEvent.ShowEntity(ChatId.of(content.getType()), UUID.fromString(content.getId()), spigot(content.getName())) : null;
-	}
-
-	public static Item spigot(ChatHoverEvent.ShowItem content) {
-		return content != null ? new Item(content.getItem().toString(), content.getCount(), null) : null;
-	}
-
-	public static ChatHoverEvent.ShowItem spigot(Item content) {
-		return content != null ? new ChatHoverEvent.ShowItem(ChatId.of(content.getId()), content.getCount()) : null;
+		JsonElement value = new Gson().fromJson(((TextComponent) contents).getText(), JsonElement.class);
+		switch (action) {
+			case SHOW_ENTITY: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, ChatHoverEvent.ShowEntity.deserialize(value, true));
+			case SHOW_ITEM: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, ChatHoverEvent.ShowItem.deserialize(value));
+			default: throw new IllegalArgumentException("Unknown action");
+		}
 	}
 
 	public static net.md_5.bungee.api.ChatMessageType spigot(ChatMessageType type) {
@@ -190,7 +155,7 @@ public class SpigotParser extends BukkitParser {
 	protected static ChatStyle spigotStyle(BaseComponent component) {
 		Objects.requireNonNull(component);
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(spigot(component.getColorRaw()));
+		builder.withColor(ChatNamedColor.getByFormat(spigot(component.getColorRaw())));
 		builder.withBold(component.isBoldRaw());
 		builder.withItalic(component.isItalicRaw());
 		builder.withUnderlined(component.isUnderlinedRaw());
@@ -199,17 +164,14 @@ public class SpigotParser extends BukkitParser {
 		builder.withClickEvent(spigot(component.getClickEvent()));
 		builder.withHoverEvent(spigot(component.getHoverEvent()));
 		builder.withInsertion(component.getInsertion());
-		builder.withFont(ChatId.of(component.getFont()));
 		return builder.build();
 	}
 
-	public static ChatColor spigot(ChatTextColor color) {
-		return color != null ? ChatColor.of(color.toString()) : null;
+	public static ChatColor spigot(ChatTextFormat format) {
+		return format != null ? ChatColor.getByChar(format.getChar()) : null;
 	}
 
-	public static ChatTextColor spigot(ChatColor color) {
-		if (color == null) return null;
-		if (color.getColor() == null) throw new IllegalArgumentException("ChatColor has no color");
-		return ChatTextColor.of(color.getName());
+	public static ChatTextFormat spigot(ChatColor color) {
+		return color != null ? ChatTextFormat.getByName(color.getName()) : null;
 	}
 }
