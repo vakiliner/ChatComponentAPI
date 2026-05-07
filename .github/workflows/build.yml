@@ -22,4 +22,5 @@ jobs:
         uses: actions/upload-artifact@v6
         with:
           archive: false
+          if-no-files-found: error
           path: build/libs/
