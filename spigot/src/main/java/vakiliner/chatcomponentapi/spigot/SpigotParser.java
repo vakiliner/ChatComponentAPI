@@ -220,6 +220,7 @@ public class SpigotParser extends BukkitParser {
 	@SuppressWarnings("deprecation")
 	public static ChatTextFormat spigot(ChatColor color) {
 		if (color == null) return null;
+		// Check if ChatColor is a custom color
 		color.ordinal();
 		return ChatTextFormat.getByName(color.getName());
 	}
