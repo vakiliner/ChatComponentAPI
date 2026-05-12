@@ -36,7 +36,7 @@ public class FabricChatPlayerList implements ChatPlayerList {
 		return this.playerList.getMaxPlayers();
 	}
 
-	public Collection<ChatPlayer> getPlayers() {
+	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
 	}
 
