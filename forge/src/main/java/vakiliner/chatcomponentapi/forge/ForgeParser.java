@@ -11,6 +11,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SChatPacket;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.BanEntry;
+import net.minecraft.server.management.BanList;
+import net.minecraft.server.management.IPBanList;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Util;
@@ -27,12 +30,15 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import vakiliner.chatcomponentapi.base.BaseParser;
+import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
+import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
@@ -70,7 +76,7 @@ public class ForgeParser extends BaseParser {
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
-		playerList.getServer().sendMessage(forge(component, true), uuid);
+		this.sendMessage(playerList.getServer(), component, type, uuid);
 		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}
 
@@ -279,5 +285,17 @@ public class ForgeParser extends BaseParser {
 
 	public ChatPlayerList toChatPlayerList(PlayerList playerList) {
 		return playerList != null ? new ForgeChatPlayerList(this, playerList) : null;
+	}
+
+	public ChatIpBanList toChatIpBanList(IPBanList ipBanList) {
+		return ipBanList != null ? new ForgeChatIpBanList(this, ipBanList) : null;
+	}
+
+	public ChatUserBanList toChatUserBanList(BanList userBanList) {
+		return userBanList != null ? new ForgeChatUserBanList(this, userBanList) : null;
+	}
+
+	public ChatBanEntry toChatBanEntry(BanEntry<?> banListEntry) {
+		return banListEntry != null ? new ForgeChatBanEntry<>(this, banListEntry) : null;
 	}
 }
