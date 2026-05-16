@@ -12,8 +12,14 @@ var forge = project(':forge')
 allprojects {
 	apply plugin: 'java'
 
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	java {
+		sourceCompatibility = JavaVersion.VERSION_1_8
+		targetCompatibility = JavaVersion.VERSION_1_8
+	}
+
+	dependencies {
+		compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+	}
 }
 
 subprojects {
@@ -82,6 +88,9 @@ jar {
 		from paperJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
+		attributes([
+			'Built-Timestamp': new Date()
+		])
 	}
 }
 
@@ -129,5 +138,8 @@ task devJar(type: Jar) {
 		from paperJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
+		attributes([
+			'Built-Timestamp': new Date()
+		])
 	}
 }

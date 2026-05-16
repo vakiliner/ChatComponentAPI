@@ -24,6 +24,11 @@ public class ChatComponentAPIBukkitLoader extends JavaPlugin implements IBukkitC
 		PARSER = impl;
 	}
 
+	@Deprecated
+	public static BukkitParser load() {
+		return PARSER;
+	}
+
 	public Plugin asPlugin() {
 		return this;
 	}

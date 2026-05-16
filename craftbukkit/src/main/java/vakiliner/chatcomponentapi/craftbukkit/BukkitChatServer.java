@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.UUID;
 import org.bukkit.Server;
 import org.bukkit.BanList.Type;
+import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
@@ -44,6 +45,23 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.parser.toChatUserBanList(this.server.getBanList(Type.NAME));
 	}
 
+	public boolean isDedicatedServer() {
+		return true;
+	}
+
+	// Not supported
+	public String getSingleplayerName() {
+		return null;
+	}
+
+	public boolean isSingleplayer() {
+		return this.getSingleplayerName() != null;
+	}
+
+	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+		return false;
+	}
+
 	public int getPlayerCount() {
 		return this.server.getOnlinePlayers().size();
 	}
@@ -56,7 +74,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.server.getViewDistance();
 	}
 
-	public Collection<ChatPlayer> getPlayers() {
+	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}
 
@@ -68,12 +86,12 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.parser.toChatPlayer(this.server.getPlayerExact(name));
 	}
 
-	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.parser.broadcastMessage(this.server, component, type, uuid);
-	}
-
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server.getScheduler(), plugin, runnable);
+	}
+
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.broadcastMessage(this.server, component, type, uuid);
 	}
 
 	public boolean equals(Object obj) {

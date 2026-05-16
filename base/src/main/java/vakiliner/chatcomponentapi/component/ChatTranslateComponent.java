@@ -97,7 +97,7 @@ public class ChatTranslateComponent extends ChatComponent {
 		this.with.add(with);
 	}
 
-	public String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
+	protected String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
 		List<ChatComponent> with = this.with;
 		if (with.isEmpty()) {
 			return this.legacyText;

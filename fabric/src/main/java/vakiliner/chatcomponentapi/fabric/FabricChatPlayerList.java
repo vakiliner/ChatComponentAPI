@@ -22,7 +22,7 @@ public class FabricChatPlayerList implements ChatPlayerList {
 		this.playerList = Objects.requireNonNull(playerList);
 	}
 
-	public PlayerList getPlayerList() {
+	public PlayerList getImpl() {
 		return this.playerList;
 	}
 
@@ -50,7 +50,7 @@ public class FabricChatPlayerList implements ChatPlayerList {
 		return this.playerList.getViewDistance();
 	}
 
-	public Collection<ChatPlayer> getPlayers() {
+	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
 	}
 

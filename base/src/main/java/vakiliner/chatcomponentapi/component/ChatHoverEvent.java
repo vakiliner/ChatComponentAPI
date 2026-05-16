@@ -8,6 +8,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.gson.IGsonSerializer;
 
@@ -18,6 +19,12 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 	public ChatHoverEvent(Action<V> action, V contents) {
 		this.action = Objects.requireNonNull(action);
 		this.contents = Objects.requireNonNull(contents);
+	}
+
+	@Deprecated
+	@SuppressWarnings("unchecked")
+	public ChatHoverEvent(Action<V> action, Object contents) {
+		this(action, (V) contents);
 	}
 
 	public ChatHoverEvent(ChatHoverEvent<V> event) {
@@ -35,6 +42,11 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 	public V getContents() {
 		return this.contents;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T extends IContent> T getValue(Action<T> action) {
+		return this.action == action ? (T) this.contents : null;
 	}
 
 	@Deprecated
@@ -136,7 +148,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		}
 	}
 
-	public static class ShowEntity implements IContent {
+	public static final class ShowEntity implements IContent {
 		private final ChatId type;
 		private final UUID id;
 		private final ChatComponent name;
@@ -145,6 +157,10 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			this.type = Objects.requireNonNull(type);
 			this.id = Objects.requireNonNull(id);
 			this.name = name;
+		}
+
+		public ShowEntity(ChatId type, UUID id) {
+			this(type, id, null);
 		}
 
 		public ChatId getType() {
@@ -184,16 +200,13 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 		public static JsonElement serialize(ShowEntity showEntity, boolean old) {
 			JsonObject object = new JsonObject();
-			ChatId type = showEntity.type;
-			UUID id = showEntity.id;
-			ChatComponent name = showEntity.name;
-			if (type != null) object.addProperty("type", type.toString());
-			if (id != null) object.addProperty("id", id.toString());
-			if (name != null) {
+			object.addProperty("type", showEntity.type.toString());
+			object.addProperty("id", showEntity.id.toString());
+			if (showEntity.name != null) {
 				if (!old) {
-					object.add("name", ChatComponent.serialize(name));
+					object.add("name", ChatComponent.serialize(showEntity.name));
 				} else {
-					object.addProperty("name", ChatComponent.serialize(name).toString());
+					object.addProperty("name", ChatComponent.serialize(showEntity.name).toString());
 				}
 			}
 			return object;
@@ -205,24 +218,28 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 		public static ShowEntity deserialize(JsonElement element, boolean old) {
 			JsonObject object = element.getAsJsonObject();
-			JsonElement rawName = object.get("name");
-			if (old) {
-				rawName = new Gson().toJsonTree(rawName.getAsString());
+			ChatId type = ChatId.of(object.getAsJsonPrimitive("type").getAsString());
+			UUID id = UUID.fromString(object.getAsJsonPrimitive("id").getAsString());
+			JsonElement name = object.get("name");
+			if (name != null) {
+				return new ShowEntity(type, id, ChatComponent.deserialize(!old ? name : new Gson().toJsonTree(name.getAsString())));
+			} else {
+				return new ShowEntity(type, id);
 			}
-			ChatId type = ChatId.parse(object.get("type").getAsString());
-			UUID id = UUID.fromString(object.get("id").getAsString());
-			ChatComponent name = rawName != null ? ChatComponent.deserialize(rawName) : null;
-			return new ShowEntity(type, id, name);
 		}
 	}
 
-	public static class ShowItem implements IContent {
+	public static final class ShowItem implements IContent {
 		private final ChatId id;
 		private final int count;
 
 		public ShowItem(ChatId id, int count) {
 			this.id = Objects.requireNonNull(id);
 			this.count = count;
+		}
+
+		public ShowItem(ChatId id) {
+			this(id, 1);
 		}
 
 		public ChatId getItem() {
@@ -251,19 +268,19 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		public static JsonElement serialize(ShowItem showItem) {
 			JsonObject object = new JsonObject();
 			object.addProperty("id", showItem.id.toString());
-			int count = showItem.count;
-			if (count != 1) {
-				object.addProperty("count", count);
-			}
+			if (showItem.count != 1) object.addProperty("count", showItem.count);
 			return object;
 		}
 
 		public static ShowItem deserialize(JsonElement element) {
 			JsonObject object = element.getAsJsonObject();
-			JsonElement rawCount = object.get("count");
-			ChatId id = ChatId.parse(object.get("id").getAsString());
-			int count = rawCount != null ? rawCount.getAsInt() : 1;
-			return new ShowItem(id, count);
+			ChatId id = ChatId.of(object.getAsJsonPrimitive("id").getAsString());
+			JsonPrimitive count = object.getAsJsonPrimitive("count");
+			if (count != null) {
+				return new ShowItem(id, count.getAsInt());
+			} else {
+				return new ShowItem(id);
+			}
 		}
 	}
 }

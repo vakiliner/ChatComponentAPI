@@ -7,4 +7,9 @@ import vakiliner.chatcomponentapi.forge.IForgeChatPlugin;
 @Mod("chatcomponentapi")
 public class ChatComponentAPIForgeLoader implements IForgeChatPlugin {
 	public static final ForgeParser PARSER = new ForgeParser();
+
+	@Deprecated
+	public static ForgeParser load() {
+		return PARSER;
+	}
 }
