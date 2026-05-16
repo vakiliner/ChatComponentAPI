@@ -20,6 +20,11 @@ allprojects {
 	dependencies {
 		compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 	}
+
+	tasks.withType(JavaCompile).configureEach {
+		options.encoding = 'UTF-8'
+		options.release = 8
+	}
 }
 
 subprojects {
@@ -44,6 +49,18 @@ subprojects {
 			from task.manifest
 		}
 	}
+}
+
+def generateManifestAttributes() {
+	var attributes = [
+		'Built-Timestamp': new Date(),
+		'Built-OS': System.getProperty('os.name'),
+	]
+	var githubActions = System.getenv('GITHUB_ACTIONS')
+	var termProgram = System.getenv('TERM_PROGRAM')
+	if (githubActions != null) attributes['Built-GitHub-Actions'] = githubActions
+	if (termProgram != null) attributes['Built-Term-Program'] = termProgram
+	return attributes
 }
 
 jar {
@@ -88,9 +105,7 @@ jar {
 		from paperJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
-		attributes([
-			'Built-Timestamp': new Date()
-		])
+		attributes(generateManifestAttributes())
 	}
 }
 
@@ -138,8 +153,6 @@ task devJar(type: Jar) {
 		from paperJar.manifest
 		from fabricJar.manifest
 		from forgeJar.manifest
-		attributes([
-			'Built-Timestamp': new Date()
-		])
+		attributes(generateManifestAttributes())
 	}
 }
