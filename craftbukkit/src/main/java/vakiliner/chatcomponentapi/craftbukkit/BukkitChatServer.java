@@ -59,7 +59,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.server.getMaxPlayers();
 	}
 
-	public Collection<ChatPlayer> getPlayers() {
+	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}
 
