@@ -110,10 +110,11 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(CommandSender sender) {
+		if (sender == null) return null;
 		if (sender instanceof Player) {
 			return this.toChatPlayer((Player) sender);
 		}
-		return sender != null ? new BukkitChatCommandSender(this, sender) : null;
+		return new BukkitChatCommandSender(this, sender);
 	}
 
 	public ChatTeam toChatTeam(Team team) {

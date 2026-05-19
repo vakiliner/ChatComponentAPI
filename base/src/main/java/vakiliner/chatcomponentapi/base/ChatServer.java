@@ -2,8 +2,12 @@ package vakiliner.chatcomponentapi.base;
 
 import com.mojang.authlib.GameProfile;
 
-public interface ChatServer {
+public interface ChatServer extends ChatCommandSender {
 	ChatPlayerList getPlayerList();
+
+	default boolean isConsole() {
+		return true;
+	}
 
 	boolean isDedicatedServer();
 

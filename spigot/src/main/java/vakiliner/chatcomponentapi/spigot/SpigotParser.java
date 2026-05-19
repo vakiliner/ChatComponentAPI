@@ -96,7 +96,8 @@ public class SpigotParser extends BukkitParser {
 		component.setClickEvent(spigot(chatStyle.getClickEvent()));
 		component.setHoverEvent(spigot(chatStyle.getHoverEvent()));
 		component.setInsertion(chatStyle.getInsertion());
-		component.setFont(chatStyle.getFont().toString());
+		ChatId font = chatStyle.getFont();
+		component.setFont(font != null ? font.toString() : null);
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
 			component.addExtra(spigot(chatComponent, isConsole));
