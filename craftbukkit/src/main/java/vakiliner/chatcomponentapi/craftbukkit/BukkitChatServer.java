@@ -34,6 +34,14 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this;
 	}
 
+	public String getName() {
+		return this.server.getConsoleSender().getName();
+	}
+
+	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.sendMessage(this.server.getConsoleSender(), component, type, uuid);
+	}
+
 	public boolean isDedicatedServer() {
 		return true;
 	}
