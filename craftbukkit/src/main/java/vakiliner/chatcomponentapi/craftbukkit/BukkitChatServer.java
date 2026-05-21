@@ -83,6 +83,10 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		this.parser.execute(this.server.getScheduler(), plugin, runnable);
 	}
 
+	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
+		this.parser.executeBlocking(this.server.getScheduler(), plugin, runnable);
+	}
+
 	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.broadcastMessage(this.server, component, type, uuid);
 	}

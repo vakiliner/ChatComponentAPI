@@ -55,6 +55,10 @@ public class ForgeChatServer implements ChatServer {
 		this.parser.execute(this.server, plugin, runnable);
 	}
 
+	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
+		this.parser.executeBlocking(this.server, plugin, runnable);
+	}
+
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

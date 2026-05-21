@@ -82,6 +82,14 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IForgeChatPlugin) {
+			server.executeBlocking(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
 	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
 		player.connection.disconnect(forge(reason));
 	}

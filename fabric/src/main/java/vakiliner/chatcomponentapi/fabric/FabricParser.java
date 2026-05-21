@@ -82,6 +82,14 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
+	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IFabricChatPlugin) {
+			server.executeBlocking(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
 	public void kickPlayer(ServerPlayer player, ChatComponent reason) {
 		player.connection.disconnect(fabric(reason));
 	}
