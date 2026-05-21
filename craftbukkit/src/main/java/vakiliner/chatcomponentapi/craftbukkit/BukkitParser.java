@@ -89,7 +89,7 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
-		if (plugin instanceof IBukkitChatPlugin) {
+		if (raw instanceof IBukkitChatPlugin) {
 			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
 			Plugin plugin = chatPlugin.asPlugin();
 			if (!plugin.isEnabled()) {
@@ -102,7 +102,7 @@ public class BukkitParser extends BaseParser {
 				CompletableFuture.supplyAsync(() -> {
 					runnable.run();
 					return null;
-				}, (r) -> scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), r));
+				}, (r) -> scheduler.runTask(plugin, r));
 			} else {
 				runnable.run();
 			}
