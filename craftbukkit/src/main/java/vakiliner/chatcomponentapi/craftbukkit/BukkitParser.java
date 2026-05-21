@@ -3,6 +3,7 @@ package vakiliner.chatcomponentapi.craftbukkit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -70,6 +71,21 @@ public class BukkitParser extends BaseParser {
 		if (plugin instanceof IBukkitChatPlugin) {
 			if (!Bukkit.isPrimaryThread()) {
 				scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), runnable);
+			} else {
+				runnable.run();
+			}
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IBukkitChatPlugin) {
+			if (!Bukkit.isPrimaryThread()) {
+				CompletableFuture.supplyAsync(() -> {
+					runnable.run();
+					return null;
+				}, (r) -> scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), r));
 			} else {
 				runnable.run();
 			}

@@ -18,4 +18,6 @@ public interface ChatServer extends ChatCommandSender {
 	boolean isSingleplayerOwner(GameProfile gameProfile);
 
 	void execute(IChatPlugin plugin, Runnable runnable);
+
+	void executeBlocking(IChatPlugin plugin, Runnable runnable);
 }
