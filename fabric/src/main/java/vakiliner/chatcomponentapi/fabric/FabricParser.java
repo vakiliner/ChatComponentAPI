@@ -19,6 +19,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundChatPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,6 +30,7 @@ import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
@@ -39,12 +41,12 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
-import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
+import vakiliner.chatcomponentapi.fabric.mixin.ItemStackInfoAccessor;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
@@ -56,23 +58,33 @@ public class FabricParser extends BaseParser {
 		return true;
 	}
 
-	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
+	public void sendMessage(CommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
+		Component component = fabric(chatComponent, commandSource instanceof MinecraftServer);
 		if (commandSource instanceof ServerPlayer) {
-			((ServerPlayer) commandSource).sendMessage(fabric(component), fabric(type), uuid);
+			((ServerPlayer) commandSource).sendMessage(component, fabric(type), uuid);
 		} else {
-			commandSource.sendMessage(fabric(component, commandSource instanceof MinecraftServer), uuid);
+			commandSource.sendMessage(component, uuid);
 		}
 	}
 
-	@Deprecated
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
-		playerList.broadcastMessage(fabric(component), fabric(type), uuid);
+		if (uuid == null) uuid = Util.NIL_UUID;
+		playerList.getServer().sendMessage(fabric(component, true), uuid);
+		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
 		if (plugin instanceof IFabricChatPlugin) {
 			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IFabricChatPlugin) {
+			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
@@ -89,11 +101,7 @@ public class FabricParser extends BaseParser {
 	public static Component fabric(ChatComponent raw, boolean isConsole) {
 		final MutableComponent component;
 		if (raw instanceof ChatComponentModified) {
-			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
-				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
-			} else {
-				raw = ((ChatComponentModified) raw).getComponent();
-			}
+			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
 		if (raw == null) {
 			return null;
@@ -134,7 +142,9 @@ public class FabricParser extends BaseParser {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
 		chatComponent.setStyle(fabric(raw.getStyle()));
-		chatComponent.setExtra(raw.getSiblings().stream().map(FabricParser::fabric).collect(Collectors.toList()));
+		for (Component component : raw.getSiblings()) {
+			chatComponent.append(fabric(component));
+		}
 		return chatComponent;
 	}
 
@@ -170,16 +180,50 @@ public class FabricParser extends BaseParser {
 		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static HoverEvent fabric(ChatHoverEvent<?> event) {
-		return event != null ? new HoverEvent(HoverEvent.Action.getByName(event.getAction().getName()), fabricContent(event.getContents())) : null;
+		if (event == null) return null;
+		ChatHoverEvent.Action<?> action = event.getAction();
+		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
+			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, fabric(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
+			return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, fabric(event.getValue(ChatHoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
+			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, fabric(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
+		} else {
+			throw new IllegalArgumentException("Unknown action");
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public static <V extends ChatHoverEvent.IContent> ChatHoverEvent<V> fabric(HoverEvent event) {
+	public static ChatHoverEvent<?> fabric(HoverEvent event) {
 		if (event == null) return null;
 		HoverEvent.Action<?> action = event.getAction();
-		return new ChatHoverEvent<>((ChatHoverEvent.Action<V>) ChatHoverEvent.Action.getByName(action.getName()), (V) fabricContent2(event.getValue(action)));
+		if (action == HoverEvent.Action.SHOW_TEXT) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, fabric(event.getValue(HoverEvent.Action.SHOW_TEXT)));
+		} else if (action == HoverEvent.Action.SHOW_ENTITY) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, fabric(event.getValue(HoverEvent.Action.SHOW_ENTITY)));
+		} else if (action == HoverEvent.Action.SHOW_ITEM) {
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, fabric(event.getValue(HoverEvent.Action.SHOW_ITEM)));
+		} else {
+			throw new IllegalArgumentException("Unknown action");
+		}
+	}
+
+	public static HoverEvent.EntityTooltipInfo fabric(ChatHoverEvent.ShowEntity content) {
+		return content != null ? new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(fabric(content.getType())), content.getUniqueId(), fabric(content.getName())) : null;
+	}
+
+	public static ChatHoverEvent.ShowEntity fabric(HoverEvent.EntityTooltipInfo content) {
+		return content != null ? new ChatHoverEvent.ShowEntity(fabric(Registry.ENTITY_TYPE.getKey(content.type)), content.id, fabric(content.name)) : null;
+	}
+
+	public static HoverEvent.ItemStackInfo fabric(ChatHoverEvent.ShowItem content) {
+		return content != null ? new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(fabric(content.getItem())), content.getCount())) : null;
+	}
+
+	public static ChatHoverEvent.ShowItem fabric(HoverEvent.ItemStackInfo content) {
+		if (content == null) return null;
+		ItemStackInfoAccessor accessor = (ItemStackInfoAccessor) content;
+		return new ChatHoverEvent.ShowItem(fabric(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
 	}
 
 	public static ResourceLocation fabric(ChatId id) {
@@ -206,41 +250,6 @@ public class FabricParser extends BaseParser {
 		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
 	}
 
-	public static Object fabricContent(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatComponent) {
-			ChatComponent content = (ChatComponent) raw;
-			return FabricParser.fabric(content);
-		} else if (raw instanceof ChatHoverEvent.ShowEntity) {
-			ChatHoverEvent.ShowEntity content = (ChatHoverEvent.ShowEntity) raw;
-			return new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(FabricParser.fabric(content.getType())), content.getUniqueId(), FabricParser.fabric(content.getName()));
-		} else if (raw instanceof ChatHoverEvent.ShowItem) {
-			ChatHoverEvent.ShowItem content = (ChatHoverEvent.ShowItem) raw;
-			return new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(FabricParser.fabric(content.getItem())), content.getCount()));
-		} else {
-			throw new IllegalArgumentException("Could not parse Content from " + raw.getClass());
-		}
-	}
-
-	public static Object fabricContent2(Object raw) {
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof Component) {
-			Component content = (Component) raw;
-			return FabricParser.fabric(content);
-		} else if (raw instanceof HoverEvent.EntityTooltipInfo) {
-			HoverEvent.EntityTooltipInfo content = (HoverEvent.EntityTooltipInfo) raw;
-			return new ChatHoverEvent.ShowEntity(FabricParser.fabric(Registry.ENTITY_TYPE.getKey(content.type)), content.id, FabricParser.fabric(content.name));
-		} else if (raw instanceof HoverEvent.ItemStackInfo) {
-			HoverEvent.ItemStackInfo content = (HoverEvent.ItemStackInfo) raw;
-			ItemStack itemStack = content.getItemStack();
-			return new ChatHoverEvent.ShowItem(FabricParser.fabric(Registry.ITEM.getKey(itemStack.getItem())), itemStack.getCount());
-		} else {
-			throw new IllegalArgumentException("Could not parse ChatContent from " + raw.getClass());
-		}
-	}
-
 	public static TextColor fabric(ChatTextColor color) {
 		return color != null ? TextColor.parseColor(color.toString()) : null;
 	}
@@ -258,10 +267,13 @@ public class FabricParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(CommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayer) {
 			return this.toChatPlayer((ServerPlayer) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new FabricChatCommandSender(this, commandSource) : null;
+		return new FabricChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(PlayerTeam team) {
@@ -270,5 +282,9 @@ public class FabricParser extends BaseParser {
 
 	public ChatServer toChatServer(MinecraftServer server) {
 		return server != null ? new FabricChatServer(this, server) : null;
+	}
+
+	public ChatPlayerList toChatPlayerList(PlayerList playerList) {
+		return playerList != null ? new FabricChatPlayerList(this, playerList) : null;
 	}
 }

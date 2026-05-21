@@ -1,9 +1,14 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Objects;
+import java.util.UUID;
+import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
+import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
+import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class ForgeChatServer implements ChatServer {
 	protected final ForgeParser parser;
@@ -18,8 +23,40 @@ public class ForgeChatServer implements ChatServer {
 		return this.server;
 	}
 
+	public ChatPlayerList getPlayerList() {
+		return this.parser.toChatPlayerList(this.server.getPlayerList());
+	}
+
+	public String getName() {
+		return "CONSOLE";
+	}
+
+	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.sendMessage(this.server, component, type, uuid);
+	}
+
+	public boolean isDedicatedServer() {
+		return this.server.isDedicatedServer();
+	}
+
+	public String getSingleplayerName() {
+		return this.server.getSingleplayerName();
+	}
+
+	public boolean isSingleplayer() {
+		return this.server.isSingleplayer();
+	}
+
+	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+		return this.server.isSingleplayerOwner(gameProfile);
+	}
+
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server, plugin, runnable);
+	}
+
+	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
+		this.parser.executeBlocking(this.server, plugin, runnable);
 	}
 
 	public boolean equals(Object obj) {
