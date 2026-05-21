@@ -34,6 +34,14 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this;
 	}
 
+	public String getName() {
+		return this.server.getConsoleSender().getName();
+	}
+
+	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.parser.sendMessage(this.server.getConsoleSender(), component, type, uuid);
+	}
+
 	public boolean isDedicatedServer() {
 		return true;
 	}
@@ -59,7 +67,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.server.getMaxPlayers();
 	}
 
-	public Collection<ChatPlayer> getPlayers() {
+	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}
 
@@ -73,6 +81,10 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server.getScheduler(), plugin, runnable);
+	}
+
+	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
+		this.parser.executeBlocking(this.server.getScheduler(), plugin, runnable);
 	}
 
 	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {

@@ -82,6 +82,14 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IForgeChatPlugin) {
+			server.executeBlocking(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
 	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
 		player.connection.disconnect(forge(reason));
 	}
@@ -263,10 +271,13 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(ICommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayerEntity) {
 			return this.toChatPlayer((ServerPlayerEntity) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new ForgeChatCommandSender(this, commandSource) : null;
+		return new ForgeChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(ScorePlayerTeam team) {

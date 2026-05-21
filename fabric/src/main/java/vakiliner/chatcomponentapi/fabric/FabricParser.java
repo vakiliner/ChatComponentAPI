@@ -82,6 +82,14 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
+	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
+		if (plugin instanceof IFabricChatPlugin) {
+			server.executeBlocking(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
 	public void kickPlayer(ServerPlayer player, ChatComponent reason) {
 		player.connection.disconnect(fabric(reason));
 	}
@@ -259,10 +267,13 @@ public class FabricParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(CommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayer) {
 			return this.toChatPlayer((ServerPlayer) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new FabricChatCommandSender(this, commandSource) : null;
+		return new FabricChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(PlayerTeam team) {
