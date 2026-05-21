@@ -85,7 +85,7 @@ public class BukkitParser extends BaseParser {
 				CompletableFuture.supplyAsync(() -> {
 					runnable.run();
 					return null;
-				}, (r) -> scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), r));
+				}, (r) -> scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), r)).join();
 			} else {
 				runnable.run();
 			}
