@@ -41,7 +41,6 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
-import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
@@ -51,36 +50,52 @@ import vakiliner.chatcomponentapi.forge.mixin.ItemHoverAccessor;
 import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
+	@Override
 	public boolean supportsFallbackInTranslate() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsFontInStyle() {
 		return true;
 	}
 
-	public void sendMessage(ICommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
+	public void sendMessage(ICommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
+		ITextComponent component = forge(chatComponent, commandSource instanceof MinecraftServer);
 		if (commandSource instanceof ServerPlayerEntity) {
-			((ServerPlayerEntity) commandSource).sendMessage(forge(component), forge(type), uuid);
+			((ServerPlayerEntity) commandSource).sendMessage(component, forge(type), uuid);
 		} else {
-			commandSource.sendMessage(forge(component, commandSource instanceof MinecraftServer), uuid);
+			commandSource.sendMessage(component, uuid);
 		}
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
-		this.sendMessage(playerList.getServer(), component, type, uuid);
+		playerList.getServer().sendMessage(forge(component, true), uuid);
 		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}
 
-	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IForgeChatPlugin) {
+	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IForgeChatPlugin) {
+			@SuppressWarnings("unused")
+			IForgeChatPlugin chatPlugin = (IForgeChatPlugin) raw;
 			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IForgeChatPlugin) {
+			@SuppressWarnings("unused")
+			IForgeChatPlugin chatPlugin = (IForgeChatPlugin) raw;
+			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
@@ -97,11 +112,7 @@ public class ForgeParser extends BaseParser {
 	public static ITextComponent forge(ChatComponent raw, boolean isConsole) {
 		final IFormattableTextComponent component;
 		if (raw instanceof ChatComponentModified) {
-			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
-				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
-			} else {
-				raw = ((ChatComponentModified) raw).getComponent();
-			}
+			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
 		if (raw == null) {
 			return null;
@@ -142,7 +153,9 @@ public class ForgeParser extends BaseParser {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
 		chatComponent.setStyle(forge(raw.getStyle()));
-		chatComponent.setExtra(raw.getSiblings().stream().map(ForgeParser::forge).collect(Collectors.toList()));
+		for (ITextComponent component : raw.getSiblings()) {
+			chatComponent.append(forge(component));
+		}
 		return chatComponent;
 	}
 
@@ -269,10 +282,13 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(ICommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayerEntity) {
 			return this.toChatPlayer((ServerPlayerEntity) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new ForgeChatCommandSender(this, commandSource) : null;
+		return new ForgeChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(ScorePlayerTeam team) {

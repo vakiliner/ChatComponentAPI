@@ -16,7 +16,7 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 
 	protected ChatComponentWithLegacyText(ChatComponent component, ChatComponent legacyComponent) {
 		super(component);
-		this.getLegacyComponent = () -> this.legacyComponent;
+		this.getLegacyComponent = null;
 		this.legacyComponent = Objects.requireNonNull(legacyComponent);
 	}
 
@@ -24,6 +24,11 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 		super(component);
 		this.getLegacyComponent = component.getLegacyComponent;
 		this.legacyComponent = component.legacyComponent;
+	}
+
+	@Override
+	public ChatComponent clone(boolean cloneExtra) {
+		return new ChatComponentWithLegacyText(this);
 	}
 
 	public ChatComponent getLegacyComponent() {
@@ -38,18 +43,22 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 		}
 	}
 
-	public ChatComponent clone(boolean cloneExtra) {
-		return new ChatComponentWithLegacyText(this);
+	@Override
+	public ChatComponent getComponent(boolean isConsole) {
+		return isConsole ? this.getLegacyComponent() : super.getComponent();
 	}
 
+	@Override
 	public String toLegacyText() {
 		return this.getLegacyComponent().toLegacyText();
 	}
 
+	@Override
 	public String toLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
 		return this.getLegacyComponent().toLegacyText(parentColor, parentFormats);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -57,7 +66,7 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 			return false;
 		} else {
 			ChatComponentWithLegacyText other = (ChatComponentWithLegacyText) obj;
-			return this.component.equals(other.component) && this.getLegacyComponent().equals(other.getLegacyComponent());
+			return super.equals(other) && this.getLegacyComponent().equals(other.getLegacyComponent());
 		}
 	}
 }

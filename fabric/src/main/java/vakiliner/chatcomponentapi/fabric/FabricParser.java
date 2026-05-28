@@ -41,7 +41,6 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.component.ChatComponentModified;
-import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatHoverEvent;
 import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
@@ -51,36 +50,52 @@ import vakiliner.chatcomponentapi.fabric.mixin.ItemStackInfoAccessor;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
+	@Override
 	public boolean supportsFallbackInTranslate() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsFontInStyle() {
 		return true;
 	}
 
-	public void sendMessage(CommandSource commandSource, ChatComponent component, ChatMessageType type, UUID uuid) {
+	public void sendMessage(CommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
+		Component component = fabric(chatComponent, commandSource instanceof MinecraftServer);
 		if (commandSource instanceof ServerPlayer) {
-			((ServerPlayer) commandSource).sendMessage(fabric(component), fabric(type), uuid);
+			((ServerPlayer) commandSource).sendMessage(component, fabric(type), uuid);
 		} else {
-			commandSource.sendMessage(fabric(component, commandSource instanceof MinecraftServer), uuid);
+			commandSource.sendMessage(component, uuid);
 		}
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
-		this.sendMessage(playerList.getServer(), component, type, uuid);
+		playerList.getServer().sendMessage(fabric(component, true), uuid);
 		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
 
-	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IFabricChatPlugin) {
+	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IFabricChatPlugin) {
+			@SuppressWarnings("unused")
+			IFabricChatPlugin chatPlugin = (IFabricChatPlugin) raw;
 			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IFabricChatPlugin) {
+			@SuppressWarnings("unused")
+			IFabricChatPlugin chatPlugin = (IFabricChatPlugin) raw;
+			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
@@ -97,11 +112,7 @@ public class FabricParser extends BaseParser {
 	public static Component fabric(ChatComponent raw, boolean isConsole) {
 		final MutableComponent component;
 		if (raw instanceof ChatComponentModified) {
-			if (isConsole && raw instanceof ChatComponentWithLegacyText) {
-				raw = ((ChatComponentWithLegacyText) raw).getLegacyComponent();
-			} else {
-				raw = ((ChatComponentModified) raw).getComponent();
-			}
+			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
 		if (raw == null) {
 			return null;
@@ -142,7 +153,9 @@ public class FabricParser extends BaseParser {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
 		chatComponent.setStyle(fabric(raw.getStyle()));
-		chatComponent.setExtra(raw.getSiblings().stream().map(FabricParser::fabric).collect(Collectors.toList()));
+		for (Component component : raw.getSiblings()) {
+			chatComponent.append(fabric(component));
+		}
 		return chatComponent;
 	}
 
@@ -265,10 +278,13 @@ public class FabricParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(CommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayer) {
 			return this.toChatPlayer((ServerPlayer) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new FabricChatCommandSender(this, commandSource) : null;
+		return new FabricChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(PlayerTeam team) {

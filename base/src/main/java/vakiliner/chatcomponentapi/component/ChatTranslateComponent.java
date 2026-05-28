@@ -106,6 +106,7 @@ public class ChatTranslateComponent extends ChatComponent {
 		this.legacyText = component.legacyText;
 	}
 
+	@Override
 	public ChatTranslateComponent clone(boolean cloneExtra) {
 		return new ChatTranslateComponent(this, cloneExtra);
 	}
@@ -143,6 +144,7 @@ public class ChatTranslateComponent extends ChatComponent {
 		this.with.add(with);
 	}
 
+	@Override
 	protected String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
 		List<ChatComponent> with = this.with;
 		if (with.isEmpty()) {
@@ -152,6 +154,7 @@ public class ChatTranslateComponent extends ChatComponent {
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -163,6 +166,7 @@ public class ChatTranslateComponent extends ChatComponent {
 		}
 	}
 
+	@Override
 	protected void serialize(JsonObject object) {
 		object.addProperty("translate", this.key);
 		List<ChatComponent> with = this.with;

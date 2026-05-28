@@ -52,6 +52,7 @@ public enum ChatTextFormat {
 		return this.name().toLowerCase();
 	}
 
+	@Override
 	public String toString() {
 		return this.string;
 	}
@@ -70,6 +71,14 @@ public enum ChatTextFormat {
 
 	public static ChatTextFormat getByName(String name) {
 		return BY_NAME.get(name);
+	}
+
+	public static ChatTextFormat getFromColor(ChatTextColor color) {
+		return getFromColor(color, RESET);
+	}
+
+	public static ChatTextFormat getFromColor(ChatTextColor color, ChatTextFormat def) {
+		return color != null ? color.asFormat(def) : def;
 	}
 
 	static {
