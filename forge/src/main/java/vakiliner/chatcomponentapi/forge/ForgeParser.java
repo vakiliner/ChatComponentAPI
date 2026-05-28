@@ -74,16 +74,20 @@ public class ForgeParser extends BaseParser {
 		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}
 
-	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IForgeChatPlugin) {
+	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IForgeChatPlugin) {
+			@SuppressWarnings("unused")
+			IForgeChatPlugin chatPlugin = (IForgeChatPlugin) raw;
 			server.execute(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
 	}
 
-	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IForgeChatPlugin) {
+	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IForgeChatPlugin) {
+			@SuppressWarnings("unused")
+			IForgeChatPlugin chatPlugin = (IForgeChatPlugin) raw;
 			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");

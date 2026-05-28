@@ -74,16 +74,20 @@ public class FabricParser extends BaseParser {
 		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
 
-	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IFabricChatPlugin) {
+	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IFabricChatPlugin) {
+			@SuppressWarnings("unused")
+			IFabricChatPlugin chatPlugin = (IFabricChatPlugin) raw;
 			server.execute(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
 	}
 
-	public void executeBlocking(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IFabricChatPlugin) {
+	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IFabricChatPlugin) {
+			@SuppressWarnings("unused")
+			IFabricChatPlugin chatPlugin = (IFabricChatPlugin) raw;
 			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");

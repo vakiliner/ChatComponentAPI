@@ -67,10 +67,11 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
-	public void execute(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IBukkitChatPlugin) {
+	public void execute(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IBukkitChatPlugin) {
+			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
 			if (!Bukkit.isPrimaryThread()) {
-				scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), runnable);
+				scheduler.runTask(chatPlugin.asPlugin(), runnable);
 			} else {
 				runnable.run();
 			}
@@ -79,13 +80,14 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
-	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IBukkitChatPlugin) {
+	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IBukkitChatPlugin) {
+			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
 			if (!Bukkit.isPrimaryThread()) {
 				CompletableFuture.supplyAsync(() -> {
 					runnable.run();
 					return null;
-				}, (r) -> scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), r)).join();
+				}, (r) -> scheduler.runTask(chatPlugin.asPlugin(), r)).join();
 			} else {
 				runnable.run();
 			}
