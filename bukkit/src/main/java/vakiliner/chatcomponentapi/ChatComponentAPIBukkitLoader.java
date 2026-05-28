@@ -29,6 +29,7 @@ public class ChatComponentAPIBukkitLoader extends JavaPlugin implements IBukkitC
 		return PARSER;
 	}
 
+	@Override
 	public Plugin asPlugin() {
 		return this;
 	}

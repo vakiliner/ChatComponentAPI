@@ -36,10 +36,12 @@ public class ForgeDevTester extends DevTester {
 		this.parser = parser;
 	}
 
+	@Override
 	protected void log(String message) {
 		LOGGER.info(message);
 	}
 
+	@Override
 	public void startTests() {
 		super.startTests();
 		this.startTestsForge();

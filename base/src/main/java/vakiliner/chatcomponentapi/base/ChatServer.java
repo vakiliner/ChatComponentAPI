@@ -5,6 +5,7 @@ import com.mojang.authlib.GameProfile;
 public interface ChatServer extends ChatCommandSender {
 	ChatPlayerList getPlayerList();
 
+	@Override
 	default boolean isConsole() {
 		return true;
 	}

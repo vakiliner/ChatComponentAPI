@@ -19,6 +19,7 @@ public class ChatId {
 		return this.value;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -30,6 +31,7 @@ public class ChatId {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return this.namespace + ':' + this.value;
 	}
