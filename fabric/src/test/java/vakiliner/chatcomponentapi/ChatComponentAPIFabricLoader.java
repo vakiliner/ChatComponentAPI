@@ -18,7 +18,8 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, IFabricChat
 	public static FabricParser load() {
 		return PARSER;
 	}
-	
+
+	@Override
 	public void onInitialize() {
 		try {
 			net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback.EVENT.register(this::register);

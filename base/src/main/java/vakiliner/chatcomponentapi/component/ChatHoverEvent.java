@@ -58,6 +58,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		}
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -69,6 +70,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		}
 	}
 
+	@Override
 	public JsonElement serialize() {
 		return serialize(this);
 	}
@@ -175,6 +177,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			return this.name;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this) {
 				return true;
@@ -186,10 +189,12 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			}
 		}
 
+		@Override
 		public JsonElement serialize() {
 			return serialize(this);
 		}
 
+		@Override
 		public JsonElement serialize(boolean old) {
 			return serialize(this, old);
 		}
@@ -250,6 +255,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			return this.count;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 			if (obj == this) {
 				return true;
@@ -261,6 +267,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 			}
 		}
 
+		@Override
 		public JsonElement serialize() {
 			return serialize(this);
 		}
