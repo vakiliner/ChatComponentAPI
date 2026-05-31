@@ -24,6 +24,12 @@ processResources {
 	}
 }
 
+processTestResources {
+	filesMatching('fabric.mod.json') {
+		expand inputs.properties
+	}
+}
+
 task remapDevJar(type: net.fabricmc.loom.task.RemapJarTask) {
 	var task = project.tasks.getByName('devJar')
 	archiveBaseName = "Dev${project.base.archivesName.get()}"

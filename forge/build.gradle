@@ -54,6 +54,12 @@ processResources {
 	}
 }
 
+processTestResources {
+	filesMatching('META-INF/mods.toml') {
+		expand inputs.properties
+	}
+}
+
 jar {
 	manifest {
 		attributes([

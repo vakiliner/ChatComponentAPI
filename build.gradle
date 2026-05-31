@@ -30,6 +30,10 @@ allprojects {
 		inputs.properties replaceProperties
 	}
 
+	processTestResources {
+		inputs.properties replaceProperties
+	}
+
 	tasks.withType(JavaCompile).configureEach {
 		options.encoding = 'UTF-8'
 	}

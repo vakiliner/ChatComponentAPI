@@ -12,6 +12,12 @@ processResources {
 	}
 }
 
+processTestResources {
+	filesMatching('plugin.yml') {
+		expand inputs.properties
+	}
+}
+
 jar {
 	exclude 'org/'
 	exclude 'vakiliner/chatcomponentapi/craftbukkit/**'
