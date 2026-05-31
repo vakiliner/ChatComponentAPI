@@ -21,6 +21,6 @@ processResources {
 	inputs.property 'pack_format', project.pack_format
 
 	filesMatching('pack.mcmeta') {
-		expand 'pack_format': inputs.properties.pack_format
+		expand inputs.properties
 	}
 }

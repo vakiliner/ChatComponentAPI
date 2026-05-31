@@ -21,6 +21,15 @@ allprojects {
 		compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 	}
 
+	var replaceProperties = [
+		version: project.version,
+		license: project.license,
+	]
+
+	processResources {
+		inputs.properties replaceProperties
+	}
+
 	tasks.withType(JavaCompile).configureEach {
 		options.encoding = 'UTF-8'
 	}
