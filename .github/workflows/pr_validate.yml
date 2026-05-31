@@ -1,5 +1,11 @@
 name: Pull request validate
-on: pull_request_target
+on:
+  pull_request_target:
+    types:
+      - opened
+      - edited
+      - reopened
+      - synchronize
 jobs:
   validate_title:
     name: Validate title
