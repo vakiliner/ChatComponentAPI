@@ -1,5 +1,5 @@
 name: Pull request validate
-on: pull_request
+on: pull_request_target
 jobs:
   validate_title:
     name: Validate title
