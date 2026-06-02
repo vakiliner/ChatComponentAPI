@@ -3,6 +3,7 @@ package vakiliner.chatcomponentapi.fabric;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
@@ -71,9 +72,20 @@ public class FabricParser extends BaseParser {
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.broadcastMessage(playerList, component, type, uuid, null);
+	}
+
+	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
 		if (uuid == null) uuid = Util.NIL_UUID;
+		ClientboundChatPacket packet = new ClientboundChatPacket(fabric(component), fabric(type), uuid);
 		playerList.getServer().sendMessage(fabric(component, true), uuid);
-		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
+		if (predicate == null) {
+			playerList.broadcastAll(packet);
+		} else for (ServerPlayer player : playerList.getPlayers()) {
+			if (predicate.test(this.toChatPlayer(player))) {
+				player.connection.send(packet);
+			}
+		}
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
