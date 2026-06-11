@@ -3,6 +3,7 @@ package vakiliner.chatcomponentapi.craftbukkit;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import org.bukkit.BanEntry;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
@@ -32,10 +33,12 @@ import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class BukkitParser extends BaseParser {
+	@Override
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsFontInStyle() {
 		return true;
 	}
@@ -71,10 +74,27 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
-	public void execute(BukkitScheduler scheduler, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IBukkitChatPlugin) {
+	public void execute(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IBukkitChatPlugin) {
+			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
 			if (!Bukkit.isPrimaryThread()) {
-				scheduler.runTask(((IBukkitChatPlugin) plugin).asPlugin(), runnable);
+				scheduler.runTask(chatPlugin.asPlugin(), runnable);
+			} else {
+				runnable.run();
+			}
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IBukkitChatPlugin) {
+			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
+			if (!Bukkit.isPrimaryThread()) {
+				CompletableFuture.supplyAsync(() -> {
+					runnable.run();
+					return null;
+				}, (r) -> scheduler.runTask(chatPlugin.asPlugin(), r)).join();
 			} else {
 				runnable.run();
 			}
@@ -115,10 +135,11 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(CommandSender sender) {
+		if (sender == null) return null;
 		if (sender instanceof Player) {
 			return this.toChatPlayer((Player) sender);
 		}
-		return sender != null ? new BukkitChatCommandSender(this, sender) : null;
+		return new BukkitChatCommandSender(this, sender);
 	}
 
 	public ChatTeam toChatTeam(Team team) {

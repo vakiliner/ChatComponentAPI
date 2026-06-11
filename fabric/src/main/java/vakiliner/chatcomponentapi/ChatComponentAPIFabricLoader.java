@@ -12,6 +12,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, IFabricChat
 		return PARSER;
 	}
 
+	@Override
 	public void onInitialize() {
 	}
 }

@@ -33,6 +33,7 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.craftbukkit.BukkitParser;
 
 public class SpigotParser extends BukkitParser {
+	@Override
 	public void sendMessage(CommandSender sender, ChatComponent component, vakiliner.chatcomponentapi.common.ChatMessageType type, UUID uuid) {
 		this.sendMessage(sender, spigot(component, sender instanceof ConsoleCommandSender), spigot(type), uuid);
 	}
@@ -54,6 +55,7 @@ public class SpigotParser extends BukkitParser {
 		}
 	}
 
+	@Override
 	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, vakiliner.chatcomponentapi.common.ChatMessageType chatMessageType, UUID uuid) {
 		BaseComponent component = spigot(chatComponent, false);
 		BaseComponent consoleComponent = spigot(chatComponent, true);
@@ -96,7 +98,8 @@ public class SpigotParser extends BukkitParser {
 		component.setClickEvent(spigot(chatStyle.getClickEvent()));
 		component.setHoverEvent(spigot(chatStyle.getHoverEvent()));
 		component.setInsertion(chatStyle.getInsertion());
-		component.setFont(chatStyle.getFont().toString());
+		ChatId font = chatStyle.getFont();
+		component.setFont(font != null ? font.toString() : null);
 		List<ChatComponent> extra = raw.getExtra();
 		if (extra != null) for (ChatComponent chatComponent : extra) {
 			component.addExtra(spigot(chatComponent, isConsole));

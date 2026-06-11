@@ -40,6 +40,7 @@ import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
 import vakiliner.chatcomponentapi.spigot.SpigotParser;
 
 public class PaperParser extends SpigotParser {
+	@Override
 	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.sendMessage(sender, paper(component, sender instanceof ConsoleCommandSender), paper(type), uuid != null ? Identity.identity(uuid) : null);
 	}
@@ -52,6 +53,7 @@ public class PaperParser extends SpigotParser {
 		}
 	}
 
+	@Override
 	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, ChatMessageType chatMessageType, UUID uuid) {
 		Component component = paper(chatComponent, false);
 		Component consoleComponent = paper(chatComponent, true);
@@ -62,6 +64,7 @@ public class PaperParser extends SpigotParser {
 		}
 	}
 
+	@Override
 	public void kickPlayer(Player player, ChatComponent reason) {
 		player.kick(paper(reason));
 	}
@@ -260,10 +263,12 @@ public class PaperParser extends SpigotParser {
 		}
 	}
 
+	@Override
 	public ChatPlayer toChatPlayer(Player player) {
 		return player != null ? new PaperChatPlayer(this, player) : null;
 	}
 
+	@Override
 	public ChatTeam toChatTeam(Team team) {
 		return team != null ? new PaperChatTeam(this, team) : null;
 	}

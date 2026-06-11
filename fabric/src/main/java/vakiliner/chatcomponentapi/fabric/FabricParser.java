@@ -56,10 +56,12 @@ import vakiliner.chatcomponentapi.fabric.mixin.ItemStackInfoAccessor;
 import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
+	@Override
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsFontInStyle() {
 		return true;
 	}
@@ -80,9 +82,21 @@ public class FabricParser extends BaseParser {
 		playerList.broadcastAll(new ClientboundChatPacket(fabric(component), fabric(type), uuid));
 	}
 
-	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IFabricChatPlugin) {
+	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IFabricChatPlugin) {
+			@SuppressWarnings("unused")
+			IFabricChatPlugin chatPlugin = (IFabricChatPlugin) raw;
 			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IFabricChatPlugin) {
+			@SuppressWarnings("unused")
+			IFabricChatPlugin chatPlugin = (IFabricChatPlugin) raw;
+			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
@@ -265,10 +279,13 @@ public class FabricParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(CommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayer) {
 			return this.toChatPlayer((ServerPlayer) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new FabricChatCommandSender(this, commandSource) : null;
+		return new FabricChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(PlayerTeam team) {

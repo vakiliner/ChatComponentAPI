@@ -56,10 +56,12 @@ import vakiliner.chatcomponentapi.forge.mixin.ItemHoverAccessor;
 import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
+	@Override
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
 
+	@Override
 	public boolean supportsFontInStyle() {
 		return true;
 	}
@@ -80,9 +82,21 @@ public class ForgeParser extends BaseParser {
 		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
 	}
 
-	public void execute(MinecraftServer server, IChatPlugin plugin, Runnable runnable) {
-		if (plugin instanceof IForgeChatPlugin) {
+	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IForgeChatPlugin) {
+			@SuppressWarnings("unused")
+			IForgeChatPlugin chatPlugin = (IForgeChatPlugin) raw;
 			server.execute(runnable);
+		} else {
+			throw new ClassCastException("Invalid plugin");
+		}
+	}
+
+	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
+		if (raw instanceof IForgeChatPlugin) {
+			@SuppressWarnings("unused")
+			IForgeChatPlugin chatPlugin = (IForgeChatPlugin) raw;
+			server.executeBlocking(runnable);
 		} else {
 			throw new ClassCastException("Invalid plugin");
 		}
@@ -269,10 +283,13 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public ChatCommandSender toChatCommandSender(ICommandSource commandSource) {
+		if (commandSource == null) return null;
 		if (commandSource instanceof ServerPlayerEntity) {
 			return this.toChatPlayer((ServerPlayerEntity) commandSource);
+		} else if (commandSource instanceof MinecraftServer) {
+			return this.toChatServer((MinecraftServer) commandSource);
 		}
-		return commandSource != null ? new ForgeChatCommandSender(this, commandSource) : null;
+		return new ForgeChatCommandSender(this, commandSource);
 	}
 
 	public ChatTeam toChatTeam(ScorePlayerTeam team) {

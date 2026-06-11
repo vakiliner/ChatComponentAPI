@@ -22,30 +22,37 @@ public class ForgeChatPlayer extends ForgeChatOfflinePlayer implements ChatPlaye
 		return this.player;
 	}
 
+	@Override
 	public ChatServer getServer() {
 		return this.parser.toChatServer(this.player.server);
 	}
 
+	@Override
 	public ChatComponent getDisplayName() {
 		return ForgeParser.forge(this.player.getDisplayName());
 	}
 
+	@Override
 	public ChatGameMode getGameMode() {
 		return ChatGameMode.getByValue(this.player.gameMode.getGameModeForPlayer().getId());
 	}
 
+	@Override
 	public SocketAddress getAddress() {
 		return this.player.connection.connection.getRemoteAddress();
 	}
 
+	@Override
 	public void kick(ChatComponent reason) {
 		this.parser.kickPlayer(this.player, reason);
 	}
 
+	@Override
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
 		this.parser.sendMessage(this.player, component, type, uuid);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
