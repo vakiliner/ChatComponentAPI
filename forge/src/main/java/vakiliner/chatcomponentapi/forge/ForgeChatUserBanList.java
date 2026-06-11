@@ -12,18 +12,21 @@ public class ForgeChatUserBanList extends ForgeChatStoredUserList<GameProfile, B
 		super(parser, list, parser::toChatBanEntry);
 	}
 
+	@Override
 	public ChatBanEntry add(GameProfile key) {
 		ProfileBanEntry entry = new ProfileBanEntry(key);
 		this.list.add(entry);
 		return this.i2o.apply(entry);
 	}
 
+	@Override
 	public ChatBanEntry add(GameProfile key, String reason, String source, Date expires) {
 		ProfileBanEntry entry = new ProfileBanEntry(key, null, source, expires, reason);
 		this.list.add(entry);
 		return this.i2o.apply(entry);
 	}
 
+	@Override
 	public boolean isBanned(GameProfile gameProfile) {
 		return this.list.isBanned(gameProfile);
 	}

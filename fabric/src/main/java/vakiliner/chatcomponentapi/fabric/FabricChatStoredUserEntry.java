@@ -16,6 +16,7 @@ public class FabricChatStoredUserEntry<Entry extends StoredUserEntry<?>> impleme
 		return this.entry;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

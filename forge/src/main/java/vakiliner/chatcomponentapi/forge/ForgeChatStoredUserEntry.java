@@ -16,6 +16,7 @@ public class ForgeChatStoredUserEntry<Entry extends UserListEntry<?>> implements
 		return this.entry;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;

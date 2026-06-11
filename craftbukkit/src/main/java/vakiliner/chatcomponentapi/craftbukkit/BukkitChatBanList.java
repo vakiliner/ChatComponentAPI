@@ -40,10 +40,12 @@ public abstract class BukkitChatBanList<K> implements ChatBanList<K> {
 		return this.banList.isBanned(key);
 	}
 
+	@Override
 	public Collection<ChatBanEntry> getEntries() {
 		return new ParseCollection<>(this.banList.getBanEntries(), this.parser::toChatBanEntry);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return this.banList.getBanEntries().isEmpty();
 	}

@@ -12,12 +12,14 @@ public class ForgeChatIpBanList extends ForgeChatStoredUserList<String, IPBanLis
 		super(parser, list, parser::toChatBanEntry);
 	}
 
+	@Override
 	public ChatBanEntry add(String key) {
 		IPBanEntry entry = new IPBanEntry(key);
 		this.list.add(entry);
 		return this.i2o.apply(entry);
 	}
 
+	@Override
 	public ChatBanEntry add(String key, String reason, String source, Date expires) {
 		IPBanEntry entry = new IPBanEntry(key, null, source, expires, reason);
 		this.list.add(entry);
@@ -32,6 +34,7 @@ public class ForgeChatIpBanList extends ForgeChatStoredUserList<String, IPBanLis
 		return this.list.isBanned(address);
 	}
 
+	@Override
 	public boolean isBanned(String ip) {
 		return this.list.isBanned(ip);
 	}

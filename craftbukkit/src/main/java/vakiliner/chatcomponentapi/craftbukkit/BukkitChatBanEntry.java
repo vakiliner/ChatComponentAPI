@@ -17,14 +17,17 @@ public class BukkitChatBanEntry implements ChatBanEntry {
 		return this.banEntry;
 	}
 
+	@Override
 	public String getReason() {
 		return this.banEntry.getReason();
 	}
 
+	@Override
 	public String getSource() {
 		return this.banEntry.getSource();
 	}
 
+	@Override
 	public Date getExpires() {
 		return this.banEntry.getExpiration();
 	}

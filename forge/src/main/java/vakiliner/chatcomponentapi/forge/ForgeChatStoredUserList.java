@@ -19,22 +19,27 @@ public abstract class ForgeChatStoredUserList<Key, List extends UserList<Key, In
 		this.i2o = i2o;
 	}
 
+	@Override
 	public Output get(Key key) {
 		return this.i2o.apply(this.list.get(key));
 	}
 
+	@Override
 	public void remove(Key key) {
 		this.list.remove(key);
 	}
 
+	@Override
 	public Collection<Output> getEntries() {
 		return new ParseCollection<>(this.list.getEntries(), this.i2o);
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return this.list.isEmpty();
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (obj == this) {
 			return true;
