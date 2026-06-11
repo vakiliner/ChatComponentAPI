@@ -91,11 +91,6 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	@Override
-	public int getViewDistance() {
-		return this.server.getViewDistance();
-	}
-
-	@Override
 	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}

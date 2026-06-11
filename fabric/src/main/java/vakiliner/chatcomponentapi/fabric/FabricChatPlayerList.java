@@ -52,11 +52,6 @@ public class FabricChatPlayerList implements ChatPlayerList {
 	}
 
 	@Override
-	public int getViewDistance() {
-		return this.playerList.getViewDistance();
-	}
-
-	@Override
 	public Collection<? extends ChatPlayer> getPlayers() {
 		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
 	}
