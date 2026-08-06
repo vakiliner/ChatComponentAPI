@@ -12,6 +12,7 @@ import org.bukkit.Server;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scoreboard.Team;
 import vakiliner.chatcomponentapi.base.BaseParser;
@@ -72,8 +73,15 @@ public class BukkitParser extends BaseParser {
 	public void execute(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IBukkitChatPlugin) {
 			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
+			Plugin plugin = chatPlugin.asPlugin();
+			if (!plugin.isEnabled()) {
+				if (chatPlugin.shouldThrowIfPluginDisabledOnChatServerExecute(runnable)) {
+					throw new IllegalStateException("Plugin disabled");
+				}
+				return;
+			}
 			if (!Bukkit.isPrimaryThread()) {
-				scheduler.runTask(chatPlugin.asPlugin(), runnable);
+				scheduler.runTask(plugin, runnable);
 			} else {
 				runnable.run();
 			}
@@ -85,11 +93,18 @@ public class BukkitParser extends BaseParser {
 	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IBukkitChatPlugin) {
 			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
+			Plugin plugin = chatPlugin.asPlugin();
+			if (!plugin.isEnabled()) {
+				if (chatPlugin.shouldThrowIfPluginDisabledOnChatServerExecute(runnable)) {
+					throw new IllegalStateException("Plugin disabled");
+				}
+				return;
+			}
 			if (!Bukkit.isPrimaryThread()) {
 				CompletableFuture.supplyAsync(() -> {
 					runnable.run();
 					return null;
-				}, (r) -> scheduler.runTask(chatPlugin.asPlugin(), r)).join();
+				}, (r) -> scheduler.runTask(plugin, r)).join();
 			} else {
 				runnable.run();
 			}
