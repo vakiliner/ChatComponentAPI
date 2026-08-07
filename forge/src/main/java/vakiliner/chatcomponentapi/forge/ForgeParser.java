@@ -169,8 +169,8 @@ public class ForgeParser extends BaseParser {
 		builder.withClickEvent(forge(accessor.getClickEvent()));
 		builder.withHoverEvent(forge(accessor.getHoverEvent()));
 		builder.withInsertion(accessor.getInsertion());
-		if (accessor.getFont() instanceof FontDescription.Resource resource) {
-			builder.withFont(forge(resource.id()));
+		if (accessor.$getFont() instanceof FontDescription.Resource font) {
+			builder.withFont(forge(font.id()));
 		}
 		return builder.build();
 	}

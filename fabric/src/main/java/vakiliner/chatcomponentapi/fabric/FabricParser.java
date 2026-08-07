@@ -169,8 +169,8 @@ public class FabricParser extends BaseParser {
 		builder.withClickEvent(fabric(accessor.getClickEvent()));
 		builder.withHoverEvent(fabric(accessor.getHoverEvent()));
 		builder.withInsertion(accessor.getInsertion());
-		if (accessor.getFont() instanceof FontDescription.Resource resource) {
-			builder.withFont(fabric(resource.id()));
+		if (accessor.$getFont() instanceof FontDescription.Resource font) {
+			builder.withFont(fabric(font.id()));
 		}
 		return builder.build();
 	}
