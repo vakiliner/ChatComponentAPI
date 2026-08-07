@@ -39,7 +39,6 @@ repositories {
 }
 
 dependencies {
-	evaluationDependsOn(':base')
 	implementation project(':base')
 	testImplementation project(path: ':base', configuration: 'testOutputElements')
 	implementation minecraft.dependency("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
@@ -62,10 +61,10 @@ processTestResources {
 	}
 }
 
-// jar {
-// 	manifest {
-// 		attributes([
-// 			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
-// 		])
-// 	}
-// }
+jar {
+	manifest {
+		attributes([
+			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
+		])
+	}
+}
