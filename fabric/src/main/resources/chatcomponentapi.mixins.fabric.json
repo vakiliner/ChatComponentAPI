@@ -2,13 +2,12 @@
 	"required": true,
 	"minVersion": "0.8",
 	"package": "vakiliner.chatcomponentapi.fabric.mixin",
-	"compatibilityLevel": "JAVA_8",
+	"compatibilityLevel": "JAVA_25",
 	"mixins": [
 		"StyleAccessor",
 		"ItemStackInfoAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
-	},
-	"refmap": "ChatComponentAPI-fabric-refmap.json"
+	}
 }

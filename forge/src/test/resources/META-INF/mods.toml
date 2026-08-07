@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[64,)"
 license="${license}"
 issueTrackerURL="https://github.com/vakiliner/ChatComponentAPI/issues"
 

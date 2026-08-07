@@ -13,8 +13,8 @@ allprojects {
 	apply plugin: 'java'
 
 	java {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
+		sourceCompatibility = JavaVersion.VERSION_25
+		targetCompatibility = JavaVersion.VERSION_25
 	}
 
 	dependencies {
@@ -32,6 +32,10 @@ allprojects {
 
 	processTestResources {
 		inputs.properties replaceProperties
+	}
+
+	tasks.named('test') {
+		failOnNoDiscoveredTests = false
 	}
 
 	tasks.withType(JavaCompile).configureEach {
@@ -90,7 +94,6 @@ jar {
 	var spigotJar = spigot.tasks.getByName('jar')
 	var paperJar = paper.tasks.getByName('jar')
 	var fabricJar = fabric.tasks.getByName('jar')
-	var fabricRemapJar = fabric.tasks.getByName('remapJar')
 	var forgeJar = forge.tasks.getByName('jar')
 
 	from(zipTree(baseJar.archiveFile)) {
@@ -105,7 +108,7 @@ jar {
 	from(zipTree(paperJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
-	from(zipTree(fabricRemapJar.archiveFile)) {
+	from(zipTree(fabricJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
 	from(zipTree(forgeJar.archiveFile)) {
@@ -138,7 +141,6 @@ task devJar(type: Jar) {
 	var spigotJar = spigot.tasks.getByName('devJar')
 	var paperJar = paper.tasks.getByName('devJar')
 	var fabricJar = fabric.tasks.getByName('devJar')
-	var fabricRemapJar = fabric.tasks.getByName('remapDevJar')
 	var forgeJar = forge.tasks.getByName('devJar')
 
 	from(zipTree(baseJar.archiveFile)) {
@@ -153,7 +155,7 @@ task devJar(type: Jar) {
 	from(zipTree(paperJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
-	from(zipTree(fabricRemapJar.archiveFile)) {
+	from(zipTree(fabricJar.archiveFile)) {
 		exclude 'LICENSE'
 	}
 	from(zipTree(forgeJar.archiveFile)) {

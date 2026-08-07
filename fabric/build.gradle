@@ -1,15 +1,14 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'net.fabricmc.fabric-loom' version "${loom_version}"
 }
 
 dependencies {
 	implementation project(':base')
-	testImplementation project(':base').sourceSets.test.output
+	testImplementation project(path: ':base', configuration: 'testOutputElements')
 	minecraft group: 'com.mojang', name: 'minecraft', version: project.minecraft_version
-	mappings loom.officialMojangMappings()
-	modImplementation group: 'net.fabricmc', name: 'fabric-loader', version: project.loader_version
+	implementation group: 'net.fabricmc', name: 'fabric-loader', version: project.loader_version
 
-	modImplementation group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: project.fabric_api
+	implementation group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: project.fabric_api
 }
 
 loom {
@@ -29,11 +28,3 @@ processTestResources {
 		expand inputs.properties
 	}
 }
-
-task remapDevJar(type: net.fabricmc.loom.task.RemapJarTask) {
-	var task = project.tasks.getByName('devJar')
-	archiveBaseName = "Dev${project.base.archivesName.get()}"
-	input.set(task.archiveFile)
-}
-
-devJar.finalizedBy remapDevJar

@@ -10,7 +10,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          java-version: '17'
+          java-version: '25'
           distribution: 'microsoft'
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4

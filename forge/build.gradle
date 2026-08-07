@@ -1,6 +1,5 @@
 plugins {
-	id 'net.minecraftforge.gradle' version '[6.0,6.2)'
-	id 'org.spongepowered.mixin' version '0.7.+'
+	id 'net.minecraftforge.gradle' version '[7.0.17,8)'
 }
 
 minecraft {
@@ -8,45 +7,48 @@ minecraft {
 
 	runs {
 		configureEach {
-			workingDirectory project.file('run')
+			workingDir = layout.projectDirectory.dir('run')
 
-			property 'forge.logging.markers', 'REGISTRIES'
-			property 'forge.logging.console.level', 'debug'
-
-			mods {
-				chatcomponentapi {
-					source sourceSets.main
-				}
-			}
+			systemProperty 'eventbus.api.strictRuntimeChecks', 'true'
+			systemProperty 'forge.enabledGameTestNamespaces', 'chatcomponentapi'
 		}
 
-		client {
-		}
+		register('client')
 
-		server {
+		register('server') {
 			args '--nogui'
 		}
 
-		data {
-			workingDirectory project.file('run-data')
+		register('gameTestServer')
 
-			args '--mod', 'chatcomponentapi', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+		register('data') {
+			workingDir = layout.projectDirectory.dir('run-data')
+
+			args '--mod', 'chatcomponentapi', '--all', '--output', layout.projectDirectory.dir('src/generated/resources/'), '--existing', layout.projectDirectory.dir('src/main/resources/')
 		}
 	}
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
-dependencies {
-	implementation project(':base')
-	testImplementation project(':base').sourceSets.test.output
-	minecraft group: 'net.minecraftforge', name: 'forge', version: "${project.minecraft_version}-${project.forge_version}"
-	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+repositories {
+	minecraft.mavenizer(it) // In Kotlin, it = this
+	maven fg.forgeMaven
+	maven fg.minecraftLibsMaven
+	mavenCentral()
 }
 
-mixin {
-	add sourceSets.main, 'ChatComponentAPI-forge-refmap.json'
+dependencies {
+	evaluationDependsOn(':base')
+	implementation project(':base')
+	testImplementation project(path: ':base', configuration: 'testOutputElements')
+	implementation minecraft.dependency("net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}")
 }
+
+// mixin {
+// 	add sourceSets.main, 'ChatComponentAPI-forge-refmap.json'
+// 	config "chatcomponentapi.mixins.forge.json"
+// }
 
 processResources {
 	filesMatching('META-INF/mods.toml') {
@@ -60,17 +62,10 @@ processTestResources {
 	}
 }
 
-jar {
-	manifest {
-		attributes([
-			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
-		])
-	}
-}
-
-reobf {
-	devJar {}
-}
-
-jar.finalizedBy('reobfJar')
-devJar.finalizedBy('reobfDevJar')
+// jar {
+// 	manifest {
+// 		attributes([
+// 			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
+// 		])
+// 	}
+// }

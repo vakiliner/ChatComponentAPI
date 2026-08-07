@@ -17,6 +17,19 @@ dependencies {
 	compileOnly group: 'com.mojang', name: 'authlib', version: project.authlib_version
 }
 
+configurations {
+	testOutputElements {
+		canBeConsumed = true
+		canBeResolved = false
+		attributes {
+			attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, Usage.JAVA_RUNTIME))
+		}
+	}
+}
+artifacts {
+	testOutputElements tasks.named('devJar')
+}
+
 processResources {
 	inputs.property 'pack_format', project.pack_format
 
