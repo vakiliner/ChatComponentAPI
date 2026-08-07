@@ -7,46 +7,48 @@ import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatBanList;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public abstract class BukkitChatBanList<K> implements ChatBanList<K> {
+public abstract class BukkitChatBanList<Key, HandleKey> implements ChatBanList<Key> {
 	protected final BukkitParser parser;
-	protected final BanList banList;
+	protected final BanList<HandleKey> banList;
 
-	public BukkitChatBanList(BukkitParser parser, BanList banList) {
+	public BukkitChatBanList(BukkitParser parser, BanList<HandleKey> banList) {
 		this.parser = parser;
 		this.banList = banList;
 	}
 
-	public BanList getImpl() {
+	public BanList<HandleKey> getImpl() {
 		return this.banList;
 	}
 
-	public ChatBanEntry add(String key) {
+	protected abstract HandleKey cast(Key key);
+
+	public ChatBanEntry add(Key key) {
 		return this.add(key, null, null, null);
 	}
 
-	public ChatBanEntry add(String key, String reason, String source, Date expires) {
-		return this.parser.toChatBanEntry(this.banList.addBan(key, reason, expires, source));
+	public ChatBanEntry add(Key key, String reason, String source, Date expires) {
+		return this.parser.toChatBanEntry(this.banList.addBan(this.cast(key), reason, expires, source));
 	}
 
-	public ChatBanEntry get(String key) {
-		return this.parser.toChatBanEntry(this.banList.getBanEntry(key));
+	public ChatBanEntry get(Key key) {
+		return this.parser.toChatBanEntry(this.banList.getBanEntry(this.cast(key)));
 	}
 
-	public void remove(String key) {
-		this.banList.pardon(key);
+	public void remove(Key key) {
+		this.banList.pardon(this.cast(key));
 	}
 
-	public boolean isBanned(String key) {
-		return this.banList.isBanned(key);
+	public boolean isBanned(Key key) {
+		return this.banList.isBanned(this.cast(key));
 	}
 
 	@Override
 	public Collection<ChatBanEntry> getEntries() {
-		return new ParseCollection<>(this.banList.getBanEntries(), this.parser::toChatBanEntry);
+		return new ParseCollection<>(this.banList.getEntries(), this.parser::toChatBanEntry);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return this.banList.getBanEntries().isEmpty();
+		return this.banList.getEntries().isEmpty();
 	}
 }

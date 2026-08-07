@@ -5,12 +5,13 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import org.bukkit.BanEntry;
-import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
+import org.bukkit.ban.IpBanList;
+import org.bukkit.ban.ProfileBanList;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permissible;
@@ -154,15 +155,15 @@ public class BukkitParser extends BaseParser {
 		return server != null ? new BukkitChatServer(this, server) : null;
 	}
 
-	public ChatIpBanList toChatIpBanList(BanList banList) {
+	public ChatIpBanList toChatIpBanList(IpBanList banList) {
 		return banList != null ? new BukkitChatIpBanList(this, banList) : null;
 	}
 
-	public ChatUserBanList toChatUserBanList(BanList banList) {
+	public ChatUserBanList toChatUserBanList(ProfileBanList banList) {
 		return banList != null ? new BukkitChatUserBanList(this, banList) : null;
 	}
 
-	public ChatBanEntry toChatBanEntry(BanEntry banEntry) {
+	public ChatBanEntry toChatBanEntry(BanEntry<?> banEntry) {
 		return banEntry != null ? new BukkitChatBanEntry(this, banEntry) : null;
 	}
 }

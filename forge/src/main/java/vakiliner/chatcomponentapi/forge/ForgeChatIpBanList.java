@@ -1,37 +1,34 @@
 package vakiliner.chatcomponentapi.forge;
 
-import java.net.SocketAddress;
 import java.util.Date;
-import net.minecraft.server.management.IPBanEntry;
-import net.minecraft.server.management.IPBanList;
+import net.minecraft.server.players.IpBanList;
+import net.minecraft.server.players.IpBanListEntry;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatIpBanList;
 
-public class ForgeChatIpBanList extends ForgeChatStoredUserList<String, IPBanList, ChatBanEntry, IPBanEntry> implements ChatIpBanList {
-	public ForgeChatIpBanList(ForgeParser parser, IPBanList list) {
-		super(parser, list, parser::toChatBanEntry);
+public class ForgeChatIpBanList extends ForgeChatBanList<String, String, IpBanListEntry, IpBanList> implements ChatIpBanList {
+	public ForgeChatIpBanList(ForgeParser parser, IpBanList list) {
+		super(parser, list);
 	}
 
 	@Override
-	public ChatBanEntry add(String key) {
-		IPBanEntry entry = new IPBanEntry(key);
-		this.list.add(entry);
-		return this.i2o.apply(entry);
+	protected String cast(String ip) {
+		return ip;
 	}
 
 	@Override
-	public ChatBanEntry add(String key, String reason, String source, Date expires) {
-		IPBanEntry entry = new IPBanEntry(key, null, source, expires, reason);
-		this.list.add(entry);
-		return this.i2o.apply(entry);
+	protected ChatBanEntry cast(IpBanListEntry input) {
+		return this.parser.toChatBanEntry(input);
 	}
 
-	public ChatBanEntry get(SocketAddress address) {
-		return this.i2o.apply(this.list.get(address));
+	@Override
+	protected IpBanListEntry create(String key) {
+		return new IpBanListEntry(key);
 	}
 
-	public boolean isBanned(SocketAddress address) {
-		return this.list.isBanned(address);
+	@Override
+	protected IpBanListEntry create(String key, String reason, String source, Date expires) {
+		return new IpBanListEntry(key, null, source, expires, reason);
 	}
 
 	@Override

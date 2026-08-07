@@ -46,7 +46,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 
 	@Override
 	public ChatUserBanList getUserBanList() {
-		return this.parser.toChatUserBanList(this.server.getBanList(Type.NAME));
+		return this.parser.toChatUserBanList(this.server.getBanList(Type.PROFILE));
 	}
 
 	@Override

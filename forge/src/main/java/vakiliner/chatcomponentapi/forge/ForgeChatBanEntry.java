@@ -1,10 +1,11 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Date;
-import net.minecraft.server.management.BanEntry;
+
+import net.minecraft.server.players.BanListEntry;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 
-public class ForgeChatBanEntry<Entry extends BanEntry<?>> extends ForgeChatStoredUserEntry<Entry> implements ChatBanEntry {
+public class ForgeChatBanEntry<Entry extends BanListEntry<?>> extends ForgeChatStoredUserEntry<Entry> implements ChatBanEntry {
 	public ForgeChatBanEntry(ForgeParser parser, Entry entry) {
 		super(parser, entry);
 	}
