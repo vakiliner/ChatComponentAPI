@@ -24,7 +24,7 @@ public class FabricChatOfflinePlayer implements ChatOfflinePlayer {
 
 	@Override
 	public boolean isOp() {
-		return this.server.getPlayerList().isOp(this.gameProfile);
+		return this.server.getPlayerList().isOp(FabricParser.fabric(this.gameProfile));
 	}
 
 	@Override

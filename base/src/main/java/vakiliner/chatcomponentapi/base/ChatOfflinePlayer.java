@@ -7,11 +7,11 @@ public interface ChatOfflinePlayer {
 	GameProfile getGameProfile();
 
 	default String getName() {
-		return this.getGameProfile().getName();
+		return this.getGameProfile().name();
 	}
 
 	default UUID getUniqueId() {
-		return this.getGameProfile().getId();
+		return this.getGameProfile().id();
 	}
 
 	boolean isOp();

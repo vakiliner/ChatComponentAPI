@@ -4,20 +4,23 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.resources.ResourceLocation;
 
 @Mixin(Style.class)
 public interface StyleAccessor {
 	@Invoker("<init>")
-	static Style newStyle(TextColor textColor, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, ClickEvent clickEvent, HoverEvent hoverEvent, String insertion, ResourceLocation font) {
+	static Style newStyle(TextColor color, Integer shadowColor, Boolean bold, Boolean italic, Boolean underlined, Boolean strikethrough, Boolean obfuscated, ClickEvent clickEvent, HoverEvent hoverEvent, String insertion, FontDescription font) {
 		throw new AssertionError();
 	}
 
 	@Accessor("color")
 	TextColor getColor();
+
+	@Accessor("shadowColor")
+	Integer getShadowColor();
 
 	@Accessor("bold")
 	Boolean getBold();
@@ -44,5 +47,5 @@ public interface StyleAccessor {
 	String getInsertion();
 
 	@Accessor("font")
-	ResourceLocation getFont();
+	FontDescription getFont();
 }

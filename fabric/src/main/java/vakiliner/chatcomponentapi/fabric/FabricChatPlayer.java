@@ -9,12 +9,13 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.common.ChatGameMode;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.fabric.mixin.ServerPlayerAccessor;
 
 public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPlayer {
 	protected final ServerPlayer player;
 
 	public FabricChatPlayer(FabricParser parser, ServerPlayer player) {
-		super(parser, player.server, player.getGameProfile());
+		super(parser, ((ServerPlayerAccessor) player).getServer(), player.getGameProfile());
 		this.player = Objects.requireNonNull(player);
 	}
 
@@ -24,7 +25,7 @@ public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPla
 
 	@Override
 	public ChatServer getServer() {
-		return this.parser.toChatServer(this.player.server);
+		return this.parser.toChatServer(this.server);
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPla
 
 	@Override
 	public SocketAddress getAddress() {
-		return this.player.connection.connection.getRemoteAddress();
+		return this.player.connection.getRemoteAddress();
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPla
 
 	@Override
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.parser.sendMessage(this.player, component, type, uuid);
+		this.parser.sendMessage(this.player.commandSource(), component, type, uuid);
 	}
 
 	@Override

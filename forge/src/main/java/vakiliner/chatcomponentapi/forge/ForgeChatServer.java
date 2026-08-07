@@ -45,7 +45,8 @@ public class ForgeChatServer implements ChatServer {
 
 	@Override
 	public String getSingleplayerName() {
-		return this.server.getSingleplayerName();
+		GameProfile profile = this.server.getSingleplayerProfile();
+		return profile != null ? profile.name() : null;
 	}
 
 	@Override
@@ -55,7 +56,7 @@ public class ForgeChatServer implements ChatServer {
 
 	@Override
 	public boolean isSingleplayerOwner(GameProfile gameProfile) {
-		return this.server.isSingleplayerOwner(gameProfile);
+		return this.server.isSingleplayerOwner(ForgeParser.forge(gameProfile));
 	}
 
 	@Override

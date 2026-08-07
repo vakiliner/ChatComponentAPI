@@ -3,28 +3,29 @@ package vakiliner.chatcomponentapi.forge;
 import java.net.SocketAddress;
 import java.util.Objects;
 import java.util.UUID;
-import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.common.ChatGameMode;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.forge.mixin.ServerPlayerAccessor;
 
 public class ForgeChatPlayer extends ForgeChatOfflinePlayer implements ChatPlayer {
-	protected final ServerPlayerEntity player;
+	protected final ServerPlayer player;
 
-	public ForgeChatPlayer(ForgeParser parser, ServerPlayerEntity player) {
-		super(parser, player.server, player.getGameProfile());
+	public ForgeChatPlayer(ForgeParser parser, ServerPlayer player) {
+		super(parser, ((ServerPlayerAccessor) player).getServer(), player.getGameProfile());
 		this.player = Objects.requireNonNull(player);
 	}
 
-	public ServerPlayerEntity getPlayer() {
+	public ServerPlayer getPlayer() {
 		return this.player;
 	}
 
 	@Override
 	public ChatServer getServer() {
-		return this.parser.toChatServer(this.player.server);
+		return this.parser.toChatServer(this.server);
 	}
 
 	@Override
@@ -39,7 +40,7 @@ public class ForgeChatPlayer extends ForgeChatOfflinePlayer implements ChatPlaye
 
 	@Override
 	public SocketAddress getAddress() {
-		return this.player.connection.connection.getRemoteAddress();
+		return this.player.connection.getRemoteAddress();
 	}
 
 	@Override
@@ -49,7 +50,7 @@ public class ForgeChatPlayer extends ForgeChatOfflinePlayer implements ChatPlaye
 
 	@Override
 	public void sendMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.parser.sendMessage(this.player, component, type, uuid);
+		this.parser.sendMessage(this.player.commandSource(), component, type, uuid);
 	}
 
 	@Override

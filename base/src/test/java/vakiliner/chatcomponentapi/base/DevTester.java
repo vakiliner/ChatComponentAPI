@@ -2,11 +2,8 @@ package vakiliner.chatcomponentapi.base;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
-import vakiliner.chatcomponentapi.component.ChatComponent;
-import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 
 public abstract class DevTester {
@@ -22,14 +19,14 @@ public abstract class DevTester {
 
 	public final void startTestsBase() {
 		test("ChatComponentWithLegacyText", () -> {
-			ChatTextComponent legacyComponent = new ChatTextComponent("legacy");
-			ChatComponent chatComponent = new ChatTextComponent("123");
-			ChatComponentWithLegacyText chatComponentWithLegacyText = chatComponent.withLegacyComponent(legacyComponent);
+			var legacyComponent = new ChatTextComponent("legacy");
+			var chatComponent = new ChatTextComponent("123");
+			var chatComponentWithLegacyText = chatComponent.withLegacyComponent(legacyComponent);
 			return chatComponentWithLegacyText.toLegacyText().equals(legacyComponent.toLegacyText()) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
 		test("Looping ChatComponent extra", () -> {
-			ChatComponent component1 = new ChatTextComponent("123");
-			ChatComponent component2 = new ChatTextComponent("456");
+			var component1 = new ChatTextComponent("123");
+			var component2 = new ChatTextComponent("456");
 			component1.append(component2);
 			try {
 				component2.append(component1);
@@ -49,7 +46,7 @@ public abstract class DevTester {
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, null);
 		});
 		test("Send message with ChatMessageType & UUID", () -> {
-			UUID uuid = chatCommandSender instanceof ChatPlayer ? ((ChatPlayer) chatCommandSender).getUniqueId() : null;
+			var uuid = chatCommandSender instanceof ChatPlayer ? ((ChatPlayer) chatCommandSender).getUniqueId() : null;
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.CHAT, uuid);
 			chatCommandSender.sendMessage(new ChatTextComponent("Hello world"), ChatMessageType.SYSTEM, uuid);
 		});
