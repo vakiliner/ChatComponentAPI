@@ -1,37 +1,39 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Collection;
-import java.util.function.Function;
+import java.util.Objects;
 import net.minecraft.server.management.UserList;
 import net.minecraft.server.management.UserListEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserList;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public abstract class ForgeChatStoredUserList<Key, List extends UserList<Key, Input>, Output extends ChatStoredUserEntry, Input extends UserListEntry<Key>> implements ChatStoredUserList<Key, Output> {
+public abstract class ForgeChatStoredUserList<Key, HandleKey, Entry extends ChatStoredUserEntry, HandleEntry extends UserListEntry<HandleKey>, List extends UserList<HandleKey, HandleEntry>> implements ChatStoredUserList<Key, Entry> {
 	protected final ForgeParser parser;
 	protected final List list;
-	protected final Function<Input, Output> i2o;
 
-	public ForgeChatStoredUserList(ForgeParser parser, List list, Function<Input, Output> i2o) {
-		this.parser = parser;
-		this.list = list;
-		this.i2o = i2o;
+	public ForgeChatStoredUserList(ForgeParser parser, List list) {
+		this.parser = Objects.requireNonNull(parser);
+		this.list = Objects.requireNonNull(list);
 	}
 
+	protected abstract HandleKey cast(Key key);
+
+	protected abstract Entry cast(HandleEntry entry);
+
 	@Override
-	public Output get(Key key) {
-		return this.i2o.apply(this.list.get(key));
+	public Entry get(Key key) {
+		return this.cast(this.list.get(this.cast(key)));
 	}
 
 	@Override
 	public void remove(Key key) {
-		this.list.remove(key);
+		this.list.remove(this.cast(key));
 	}
 
 	@Override
-	public Collection<Output> getEntries() {
-		return new ParseCollection<>(this.list.getEntries(), this.i2o);
+	public Collection<Entry> getEntries() {
+		return new ParseCollection<>(this.list.getEntries(), this::cast);
 	}
 
 	@Override

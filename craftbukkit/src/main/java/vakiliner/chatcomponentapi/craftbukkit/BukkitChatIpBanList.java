@@ -7,4 +7,9 @@ public class BukkitChatIpBanList extends BukkitChatBanList<String> implements Ch
 	public BukkitChatIpBanList(BukkitParser parser, BanList banList) {
 		super(parser, banList);
 	}
+
+	@Override
+	protected String cast(String ip) {
+		return ip;
+	}
 }
