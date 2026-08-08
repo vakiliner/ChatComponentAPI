@@ -35,11 +35,11 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 		if (this.legacyComponent != null) {
 			return this.legacyComponent;
 		}
-		synchronized (this) {
+		synchronized (this.getLegacyComponent) {
 			if (this.legacyComponent != null) {
 				return this.legacyComponent;
 			}
-			return this.legacyComponent = this.getLegacyComponent.get();
+			return Objects.requireNonNull(this.legacyComponent = this.getLegacyComponent.get());
 		}
 	}
 
@@ -66,7 +66,7 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 			return false;
 		} else {
 			ChatComponentWithLegacyText other = (ChatComponentWithLegacyText) obj;
-			return super.equals(other) && this.getLegacyComponent().equals(other.getLegacyComponent());
+			return super.equals(other) && (this.getLegacyComponent != null && this.getLegacyComponent == other.getLegacyComponent || this.getLegacyComponent().equals(other.getLegacyComponent()));
 		}
 	}
 }
