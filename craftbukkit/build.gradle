@@ -19,7 +19,6 @@ processTestResources {
 }
 
 jar {
-	exclude 'vakiliner/chatcomponentapi/craftbukkit/**'
 	exclude 'vakiliner/chatcomponentapi/spigot/**'
 	exclude 'vakiliner/chatcomponentapi/paper/**'
 }
