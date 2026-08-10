@@ -179,7 +179,7 @@ public class ForgeParser extends BaseParser {
 		builder.withClickEvent(forge(accessor.getClickEvent()));
 		builder.withHoverEvent(forge(accessor.getHoverEvent()));
 		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(forge(accessor.getFont()));
+		builder.withFont(forge(accessor.$getFont()));
 		return builder.build();
 	}
 
