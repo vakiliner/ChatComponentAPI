@@ -2,7 +2,7 @@ package vakiliner.chatcomponentapi.forge;
 
 import java.util.Objects;
 import java.util.UUID;
-import net.minecraft.command.ICommandSource;
+import net.minecraft.commands.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
@@ -10,9 +10,9 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class ForgeChatCommandSender implements ChatCommandSender {
 	protected final ForgeParser parser;
-	protected final ICommandSource commandSource;
+	protected final CommandSource commandSource;
 
-	public ForgeChatCommandSender(ForgeParser parser, ICommandSource commandSource) {
+	public ForgeChatCommandSender(ForgeParser parser, CommandSource commandSource) {
 		this.parser = Objects.requireNonNull(parser);
 		this.commandSource = Objects.requireNonNull(commandSource);
 	}

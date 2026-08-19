@@ -2,12 +2,12 @@ package vakiliner.chatcomponentapi.forge.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-import net.minecraft.item.Item;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.event.HoverEvent.ItemHover;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.HoverEvent.ItemStackInfo;
+import net.minecraft.world.item.Item;
 
-@Mixin(ItemHover.class)
-public interface ItemHoverAccessor {
+@Mixin(ItemStackInfo.class)
+public interface ItemStackInfoAccessor {
 	@Accessor("item")
 	Item getItem();
 
@@ -15,5 +15,5 @@ public interface ItemHoverAccessor {
 	int getCount();
 
 	@Accessor("tag")
-	CompoundNBT getTag();
+	CompoundTag getTag();
 }

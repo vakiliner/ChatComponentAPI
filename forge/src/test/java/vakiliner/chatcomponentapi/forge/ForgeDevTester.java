@@ -6,14 +6,14 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.resources.ResourceLocation;
 import vakiliner.chatcomponentapi.base.DevTester;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
@@ -50,20 +50,20 @@ public class ForgeDevTester extends DevTester {
 	public final void startTestsForge() {
 		test("Parse ChatTextComponent", () -> {
 			ChatTextComponent input = new ChatTextComponent("123");
-			ITextComponent test = ForgeParser.forge(input);
+			Component test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
 		test("Parse ChatTranslateComponent", () -> {
 			ChatTranslateComponent input = new ChatTranslateComponent(null, "123");
-			ITextComponent test = ForgeParser.forge(input);
+			Component test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
 		test("Parse ChatSelectorComponent", () -> {
 			ChatSelectorComponent input = new ChatSelectorComponent("123");
 			if (this.parser.supportsSeparatorInSelector()) input.setSeparator(new ChatTextComponent(" | "));
-			ITextComponent test = ForgeParser.forge(input);
+			Component test = ForgeParser.forge(input);
 			ChatComponent output = ForgeParser.forge(test);
 			return input.equals(output);
 		});
@@ -104,7 +104,7 @@ public class ForgeDevTester extends DevTester {
 			ChatTextFormat[] input = ChatTextFormat.values();
 			ChatTextFormat[] output = new ChatTextFormat[input.length];
 			for (int i = 0; i < input.length; i++) {
-				TextFormatting test = ForgeParser.forge(input[i]);
+				ChatFormatting test = ForgeParser.forge(input[i]);
 				output[i] = ForgeParser.forge(test);
 			}
 			return Arrays.equals(input, output);
@@ -114,7 +114,7 @@ public class ForgeDevTester extends DevTester {
 			ChatTextColor[] input = rawInput.toArray(new ChatTextColor[rawInput.size()]);
 			ChatTextColor[] output = new ChatTextColor[input.length];
 			for (int i = 0; i < input.length; i++) {
-				Color test = ForgeParser.forge(input[i]);
+				TextColor test = ForgeParser.forge(input[i]);
 				output[i] = ForgeParser.forge(test);
 			}
 			return Arrays.equals(input, output);
