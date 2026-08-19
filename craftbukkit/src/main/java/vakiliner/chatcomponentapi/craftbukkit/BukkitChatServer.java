@@ -3,6 +3,7 @@ package vakiliner.chatcomponentapi.craftbukkit;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.function.Predicate;
 import org.bukkit.Server;
 import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
@@ -103,8 +104,8 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	@Override
-	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.parser.broadcastMessage(this.server, component, type, uuid);
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
+		this.parser.broadcastMessage(this.server, component, type, uuid, predicate);
 	}
 
 	@Override
