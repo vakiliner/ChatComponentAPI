@@ -5,7 +5,7 @@
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
 		"StyleAccessor",
-		"ItemStackInfo"
+		"ItemStackInfoAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
