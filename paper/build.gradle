@@ -6,4 +6,5 @@ dependencies {
 	implementation project(':base')
 	implementation project(':craftbukkit')
 	implementation project(':spigot')
+	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }

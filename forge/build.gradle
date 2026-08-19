@@ -1,51 +1,21 @@
 plugins {
-	id 'net.minecraftforge.gradle' version "${forge_gradle_version}"
-	id 'org.spongepowered.mixin' version '0.7.+'
+	id 'dev.architectury.loom'
 }
-
-minecraft {
-	mappings channel: mapping_channel, version: minecraft_version
-
-	runs {
-		configureEach {
-			workingDirectory project.file('run')
-
-			property 'forge.logging.markers', 'REGISTRIES'
-			property 'forge.logging.console.level', 'debug'
-
-			mods {
-				chatcomponentapi {
-					source sourceSets.main
-				}
-			}
-		}
-
-		client {
-		}
-
-		server {
-			args '--nogui'
-		}
-
-		data {
-			workingDirectory project.file('run-data')
-
-			args '--mod', 'chatcomponentapi', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-		}
-	}
-}
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
 	implementation project(':base')
-	testImplementation project(':base').sourceSets.test.output
-	minecraft group: 'net.minecraftforge', name: 'forge', version: "${project.minecraft_version}-${project.forge_version}"
-	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	testImplementation project(path: ':base', configuration: 'test')
+	minecraft "net.minecraft:minecraft:${project.minecraft_version}"
+	mappings loom.officialMojangMappings()
+	forge "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 }
 
-mixin {
-	add sourceSets.main, 'ChatComponentAPI-forge-refmap.json'
+loom {
+	mixin {
+		defaultRefmapName = "${project.archives_base_name}-forge-refmap.json"
+
+		useLegacyMixinAp = true
+	}
 }
 
 processResources {
@@ -60,18 +30,12 @@ processTestResources {
 	}
 }
 
-jar {
-	manifest {
-		attributes([
-			MixinConfigs: 'chatcomponentapi.mixins.forge.json'
-		])
-	}
+java.withSourcesJar()
 
-	finalizedBy 'reobfJar'
+task remapDevJar(type: net.fabricmc.loom.task.RemapJarTask) {
+	var task = project.tasks.getByName('devJar')
+	archiveBaseName = "Dev${project.base.archivesName.get()}"
+	input.set(task.archiveFile)
 }
 
-reobf {
-	devJar {}
-}
-
-devJar.finalizedBy('reobfDevJar')
+devJar.finalizedBy remapDevJar

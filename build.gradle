@@ -1,5 +1,5 @@
 plugins {
-	id 'java'
+	id 'dev.architectury.loom' version "${loom_version}" apply false
 }
 
 var base = findProject(':base')
@@ -12,14 +12,7 @@ var forge = findProject(':forge')
 allprojects {
 	apply plugin: 'java'
 
-	java {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
-	}
-
-	dependencies {
-		compileOnly fileTree(include: ['*.jar'], dir: 'libs')
-	}
+	java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
 	var replaceProperties = [
 		version: project.version,
@@ -44,10 +37,6 @@ subprojects {
 
 	it.base {
 		archivesName = "${project.archives_base_name}-${project.display_name}"
-	}
-
-	jar {
-		from '../LICENSE'
 	}
 
 	task devJar(type: Jar) {
@@ -92,26 +81,15 @@ jar {
 	var fabricJar = fabric != null ? fabric.tasks.getByName('jar') : null
 	var fabricRemapJar = fabric != null ? fabric.tasks.getByName('remapJar') : null
 	var forgeJar = forge != null ? forge.tasks.getByName('jar') : null
+	var forgeRemapJar = forge != null ? forge.tasks.getByName('remapJar') : null
 
 	from 'LICENSE'
-	if (baseJar != null) from(zipTree(baseJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (craftbukkitJar != null) from(zipTree(craftbukkitJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (spigotJar != null) from(zipTree(spigotJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (paperJar != null) from(zipTree(paperJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (fabricRemapJar != null) from(zipTree(fabricRemapJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (forgeJar != null) from(zipTree(forgeJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
+	if (baseJar != null) from(zipTree(baseJar.archiveFile))
+	if (craftbukkitJar != null) from(zipTree(craftbukkitJar.archiveFile))
+	if (spigotJar != null) from(zipTree(spigotJar.archiveFile))
+	if (paperJar != null) from(zipTree(paperJar.archiveFile))
+	if (fabricRemapJar != null) from(zipTree(fabricRemapJar.archiveFile))
+	if (forgeRemapJar != null) from(zipTree(forgeRemapJar.archiveFile))
 
 	manifest {
 		if (baseJar != null) from baseJar.manifest
@@ -141,26 +119,15 @@ task devJar(type: Jar) {
 	var fabricJar = fabric != null ? fabric.tasks.getByName('devJar') : null
 	var fabricRemapJar = fabric != null ? fabric.tasks.getByName('remapDevJar') : null
 	var forgeJar = forge != null ? forge.tasks.getByName('devJar') : null
+	var forgeRemapJar = forge != null ? forge.tasks.getByName('remapDevJar') : null
 
 	from 'LICENSE'
-	if (baseJar != null) from(zipTree(baseJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (craftbukkitJar != null) from(zipTree(craftbukkitJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (spigotJar != null) from(zipTree(spigotJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (paperJar != null) from(zipTree(paperJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (fabricRemapJar != null) from(zipTree(fabricRemapJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
-	if (forgeJar != null) from(zipTree(forgeJar.archiveFile)) {
-		exclude 'LICENSE'
-	}
+	if (baseJar != null) from(zipTree(baseJar.archiveFile))
+	if (craftbukkitJar != null) from(zipTree(craftbukkitJar.archiveFile))
+	if (spigotJar != null) from(zipTree(spigotJar.archiveFile))
+	if (paperJar != null) from(zipTree(paperJar.archiveFile))
+	if (fabricRemapJar != null) from(zipTree(fabricRemapJar.archiveFile))
+	if (forgeRemapJar != null) from(zipTree(forgeRemapJar.archiveFile))
 
 	manifest {
 		if (baseJar != null) from baseJar.manifest

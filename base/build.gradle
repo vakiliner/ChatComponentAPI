@@ -17,6 +17,19 @@ dependencies {
 	compileOnly group: 'com.mojang', name: 'authlib', version: project.authlib_version
 }
 
+configurations {
+	test {
+		canBeConsumed = true
+		canBeResolved = false
+	}
+}
+
+artifacts {
+	project.sourceSets.test.output.forEach { file ->
+		test file
+	}
+}
+
 processResources {
 	inputs.property 'pack_format', project.pack_format
 

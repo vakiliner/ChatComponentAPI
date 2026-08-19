@@ -5,4 +5,5 @@ plugins {
 dependencies {
 	implementation project(':base')
 	implementation project(':craftbukkit')
+	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
