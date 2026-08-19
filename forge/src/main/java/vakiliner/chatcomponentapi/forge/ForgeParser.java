@@ -242,18 +242,22 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static HoverEvent.EntityTooltipInfo forge(ChatHoverEvent.ShowEntity content) {
 		return content != null ? new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName())) : null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ChatHoverEvent.ShowEntity forge(HoverEvent.EntityTooltipInfo content) {
 		return content != null ? new ChatHoverEvent.ShowEntity(forge(Registry.ENTITY_TYPE.getKey(content.type)), content.id, forge(content.name)) : null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static HoverEvent.ItemStackInfo forge(ChatHoverEvent.ShowItem content) {
 		return content != null ? new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount())) : null;
 	}
 
+	@SuppressWarnings("deprecation")
 	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemStackInfo content) {
 		if (content == null) return null;
 		ItemStackInfoAccessor accessor = (ItemStackInfoAccessor) content;
