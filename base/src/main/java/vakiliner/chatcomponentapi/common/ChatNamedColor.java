@@ -26,7 +26,6 @@ public final class ChatNamedColor extends ChatTextColor {
 
 	private ChatNamedColor(ChatTextFormat format, int color) {
 		super(color, Objects.requireNonNull(format));
-		if (this.asFormat.isFormat()) throw new IllegalArgumentException("ChatTextFormat cannot be a format");
 		BY_FORMAT.put(this.asFormat, this);
 		BY_VALUE.put(this.value, this);
 	}
