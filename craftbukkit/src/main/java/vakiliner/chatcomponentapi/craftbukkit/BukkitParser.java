@@ -30,6 +30,11 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class BukkitParser extends BaseParser {
 	@Override
+	public boolean supportsFallbackInTranslate() {
+		return false;
+	}
+
+	@Override
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}

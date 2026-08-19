@@ -16,56 +16,94 @@ import vakiliner.chatcomponentapi.util.Utils;
 public class ChatTranslateComponent extends ChatComponent {
 	private String key;
 	private final List<ChatComponent> with = new ArrayList<>();
-	private String legacyText;
+	private String fallback;
+	private boolean useFallback;
 
-	public ChatTranslateComponent(String legacyText, String key, ChatComponent... with) {
-		this(legacyText, key, Arrays.asList(with));
+	public ChatTranslateComponent(String fallback, String key, ChatComponent... with) {
+		this(fallback, key, Arrays.asList(with));
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, ChatStyle style, ChatComponent... with) {
-		this(legacyText, key, style, Arrays.asList(with));
+	public ChatTranslateComponent(String fallback, String key, ChatStyle style, ChatComponent... with) {
+		this(fallback, key, style, Arrays.asList(with));
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, ChatTextColor color, ChatComponent... with) {
-		this(legacyText, key, color, Arrays.asList(with));
+	public ChatTranslateComponent(String fallback, String key, ChatTextColor color, ChatComponent... with) {
+		this(fallback, key, color, Arrays.asList(with));
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, ChatComponentFormat format, ChatComponent... with) {
-		this(legacyText, key, format, Arrays.asList(with));
+	public ChatTranslateComponent(String fallback, String key, ChatComponentFormat format, ChatComponent... with) {
+		this(fallback, key, format, Arrays.asList(with));
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, Collection<ChatComponent> with) {
+	public ChatTranslateComponent(String fallback, String key, Collection<ChatComponent> with) {
+		this(fallback, key, false, with);
+	}
+
+	public ChatTranslateComponent(String fallback, String key, ChatStyle style, Collection<ChatComponent> with) {
+		this(fallback, key, false, style, with);
+	}
+
+	public ChatTranslateComponent(String fallback, String key, ChatTextColor color, Collection<ChatComponent> with) {
+		this(fallback, key, false, color, with);
+	}
+
+	public ChatTranslateComponent(String fallback, String key, ChatComponentFormat format, Collection<ChatComponent> with) {
+		this(fallback, key, false, format, with);
+	}
+
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatComponent... with) {
+		this(fallback, key, useFallback, Arrays.asList(with));
+	}
+
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatStyle style, ChatComponent... with) {
+		this(fallback, key, useFallback, style, Arrays.asList(with));
+	}
+
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatTextColor color, ChatComponent... with) {
+		this(fallback, key, useFallback, color, Arrays.asList(with));
+	}
+
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatComponentFormat format, ChatComponent... with) {
+		this(fallback, key, useFallback, format, Arrays.asList(with));
+	}
+
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, Collection<ChatComponent> with) {
 		this.key = Objects.requireNonNull(key);
 		this.with.addAll(with);
-		this.legacyText = legacyText;
+		this.fallback = fallback;
+		this.useFallback = useFallback;
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, ChatStyle style, Collection<ChatComponent> with) {
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatStyle style, Collection<ChatComponent> with) {
 		super(style);
 		this.key = Objects.requireNonNull(key);
 		this.with.addAll(with);
-		this.legacyText = legacyText;
+		this.fallback = fallback;
+		this.useFallback = useFallback;
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, ChatTextColor color, Collection<ChatComponent> with) {
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatTextColor color, Collection<ChatComponent> with) {
 		super(color);
 		this.key = Objects.requireNonNull(key);
 		this.with.addAll(with);
-		this.legacyText = legacyText;
+		this.fallback = fallback;
+		this.useFallback = useFallback;
 	}
 
-	public ChatTranslateComponent(String legacyText, String key, ChatComponentFormat format, Collection<ChatComponent> with) {
+	public ChatTranslateComponent(String fallback, String key, boolean useFallback, ChatComponentFormat format, Collection<ChatComponent> with) {
 		super(format);
 		this.key = Objects.requireNonNull(key);
 		this.with.addAll(with);
-		this.legacyText = legacyText;
+		this.fallback = fallback;
+		this.useFallback = useFallback;
 	}
 
 	public ChatTranslateComponent(ChatTranslateComponent component, boolean cloneExtra) {
 		super(component, cloneExtra);
 		this.key = component.key;
 		this.with.addAll(component.with);
-		this.legacyText = component.legacyText;
+		this.fallback = component.fallback;
+		this.useFallback = component.useFallback;
 	}
 
 	@Override
@@ -81,6 +119,11 @@ public class ChatTranslateComponent extends ChatComponent {
 		return Collections.unmodifiableList(this.with);
 	}
 
+	public String getFallback() {
+		if (!this.useFallback) return null;
+		return this.fallback;
+	}
+
 	public void setKey(String key) {
 		this.key = Objects.requireNonNull(key);
 	}
@@ -90,8 +133,17 @@ public class ChatTranslateComponent extends ChatComponent {
 		this.with.addAll(with);
 	}
 
-	public void setLegacyText(String legacyText) {
-		this.legacyText = legacyText;
+	public void setFallback(String fallback) {
+		this.setFallback(fallback, fallback != null);
+	}
+
+	public void setLegacyText(String fallback) {
+		this.setFallback(fallback, false);
+	}
+
+	private void setFallback(String fallback, boolean useFallback) {
+		this.fallback = fallback;
+		this.useFallback = useFallback;
 	}
 
 	public void addWith(ChatComponent with) {
@@ -102,9 +154,9 @@ public class ChatTranslateComponent extends ChatComponent {
 	protected String getLegacyText(ChatTextColor parentColor, Set<ChatComponentFormat> parentFormats) {
 		List<ChatComponent> with = this.with;
 		if (with.isEmpty()) {
-			return this.legacyText;
+			return this.fallback;
 		} else {
-			return Utils.stringFormat(this.legacyText, with.stream().map((component) -> component.toLegacyText(parentColor, parentFormats)).toArray());
+			return Utils.stringFormat(this.fallback, with.stream().map((component) -> component.toLegacyText(parentColor, parentFormats)).toArray());
 		}
 	}
 
@@ -116,7 +168,7 @@ public class ChatTranslateComponent extends ChatComponent {
 			return false;
 		} else  {
 			ChatTranslateComponent other = (ChatTranslateComponent) obj;
-			return super.equals(other) && this.key.equals(other.key) && Objects.equals(this.legacyText, other.legacyText) && this.with.equals(other.with);
+			return super.equals(other) && this.key.equals(other.key) && Objects.equals(this.fallback, other.fallback) && this.with.equals(other.with);
 		}
 	}
 
