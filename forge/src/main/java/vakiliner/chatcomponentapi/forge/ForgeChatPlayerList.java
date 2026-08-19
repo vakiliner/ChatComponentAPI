@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
-import net.minecraft.server.management.PlayerList;
+import net.minecraft.server.players.PlayerList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;

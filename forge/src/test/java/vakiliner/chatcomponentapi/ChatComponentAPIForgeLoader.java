@@ -2,8 +2,8 @@ package vakiliner.chatcomponentapi;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import net.minecraft.command.CommandSource;
-import net.minecraft.command.ICommandSource;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,18 +33,18 @@ public class ChatComponentAPIForgeLoader implements IForgeChatPlugin {
 
 	@SubscribeEvent
 	public void onRegisterCommands(RegisterCommandsEvent event) {
-		CommandDispatcher<CommandSource> dispatcher = event.getDispatcher();
+		CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
 		dispatcher.register(testCommand());
 	}
 
-	private static LiteralArgumentBuilder<CommandSource> testCommand() {
-		LiteralArgumentBuilder<CommandSource> chatcomponentapi = LiteralArgumentBuilder.literal("chatcomponentapi");
-		LiteralArgumentBuilder<CommandSource> test = LiteralArgumentBuilder.literal("test");
+	private static LiteralArgumentBuilder<CommandSourceStack> testCommand() {
+		LiteralArgumentBuilder<CommandSourceStack> chatcomponentapi = LiteralArgumentBuilder.literal("chatcomponentapi");
+		LiteralArgumentBuilder<CommandSourceStack> test = LiteralArgumentBuilder.literal("test");
 		return chatcomponentapi.requires((stack) -> {
 			return stack.hasPermission(2);
 		}).then(test.executes((context) -> {
-			CommandSource stack = context.getSource();
-			ICommandSource commandSource = stack.getEntity();
+			CommandSourceStack stack = context.getSource();
+			CommandSource commandSource = stack.getEntity();
 			if (commandSource == null) {
 				commandSource = stack.getServer();
 			}
