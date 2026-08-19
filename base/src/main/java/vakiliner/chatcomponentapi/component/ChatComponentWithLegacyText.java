@@ -66,7 +66,7 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 			return false;
 		} else {
 			ChatComponentWithLegacyText other = (ChatComponentWithLegacyText) obj;
-			return super.equals(other) && (this.getLegacyComponent != null && this.getLegacyComponent == other.getLegacyComponent || this.getLegacyComponent().equals(other.getLegacyComponent()));
+			return super.equals(other) && this.getLegacyComponent().equals(other.getLegacyComponent());
 		}
 	}
 }
