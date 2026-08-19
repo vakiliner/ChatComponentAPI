@@ -92,10 +92,9 @@ public class PaperParser extends SpigotParser {
 	}
 
 	public static ChatComponent paper(Component raw) {
+		if (raw == null) return null;
 		final ChatComponent chatComponent;
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof TextComponent) {
+		if (raw instanceof TextComponent) {
 			TextComponent component = (TextComponent) raw;
 			chatComponent = new ChatTextComponent(component.content());
 		} else if (raw instanceof TranslatableComponent) {
@@ -151,16 +150,34 @@ public class PaperParser extends SpigotParser {
 	}
 
 	public static ClickEvent paper(ChatClickEvent event) {
-		return event != null ? ClickEvent.clickEvent(ClickEvent.Action.NAMES.value(event.getAction().getName()), event.getValue()) : null;
+		if (event == null) return null;
+		switch (event.action()) {
+			case OPEN_URL: return ClickEvent.openUrl(event.value());
+			case OPEN_FILE: return ClickEvent.openFile(event.value());
+			case RUN_COMMAND: return ClickEvent.runCommand(event.value());
+			case SUGGEST_COMMAND: return ClickEvent.suggestCommand(event.value());
+			case CHANGE_PAGE: return ClickEvent.changePage(event.value());
+			case COPY_TO_CLIPBOARD: return ClickEvent.copyToClipboard(event.value());
+			default: throw new IllegalArgumentException("Unknown ChatClickEvent.Action " + event.action());
+		}
 	}
 
 	public static ChatClickEvent paper(ClickEvent event) {
-		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.action().toString()), event.value()) : null;
+		if (event == null) return null;
+		switch (event.action()) {
+			case OPEN_URL: return new ChatClickEvent(ChatClickEvent.Action.OPEN_URL, event.value());
+			case OPEN_FILE: return new ChatClickEvent(ChatClickEvent.Action.OPEN_FILE, event.value());
+			case RUN_COMMAND: return new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, event.value());
+			case SUGGEST_COMMAND: return new ChatClickEvent(ChatClickEvent.Action.SUGGEST_COMMAND, event.value());
+			case CHANGE_PAGE: return new ChatClickEvent(ChatClickEvent.Action.CHANGE_PAGE, event.value());
+			case COPY_TO_CLIPBOARD: return new ChatClickEvent(ChatClickEvent.Action.COPY_TO_CLIPBOARD, event.value());
+			default: throw new IllegalArgumentException("Unknown ClickEvent.Action " + event.action());
+		}
 	}
 
 	public static HoverEvent<?> paper(ChatHoverEvent<?> event) {
 		if (event == null) return null;
-		ChatHoverEvent.Action<?> action = event.getAction();
+		ChatHoverEvent.Action<?> action = event.action();
 		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
 			return HoverEvent.showText(paper(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
 		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
@@ -168,7 +185,7 @@ public class PaperParser extends SpigotParser {
 		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
 			return HoverEvent.showItem(paper(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
 		} else {
-			throw new IllegalArgumentException("Unknown action");
+			throw new IllegalArgumentException("Unknown ChatHoverEvent.Action " + action);
 		}
 	}
 
@@ -183,7 +200,7 @@ public class PaperParser extends SpigotParser {
 		} else if (action == HoverEvent.Action.SHOW_ITEM) {
 			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, paper((HoverEvent.ShowItem) value));
 		} else {
-			throw new IllegalArgumentException("Unknown action");
+			throw new IllegalArgumentException("Unknown HoverEvent.Action " + action);
 		}
 	}
 
@@ -204,7 +221,7 @@ public class PaperParser extends SpigotParser {
 	}
 
 	public static Key paper(ChatId id) {
-		return id != null ? Key.key(id.getNamespace(), id.getValue()) : null;
+		return id != null ? Key.key(id.namespace(), id.value()) : null;
 	}
 
 	public static ChatId paper(Key key) {
@@ -212,11 +229,21 @@ public class PaperParser extends SpigotParser {
 	}
 
 	public static MessageType paper(ChatMessageType type) {
-		return type != null ? MessageType.valueOf(type.name()) : null;
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return MessageType.CHAT;
+			case SYSTEM: return MessageType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown ChatMessageType " + type);
+		}
 	}
 
 	public static ChatMessageType paper(MessageType type) {
-		return type != null ? ChatMessageType.valueOf(type.name()) : null;
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return ChatMessageType.CHAT;
+			case SYSTEM: return ChatMessageType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown MessageType " + type);
+		}
 	}
 
 	public static NamedTextColor paper(ChatNamedColor color) {

@@ -70,13 +70,12 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static BaseComponent spigot(ChatComponent raw, boolean isConsole) {
-		final BaseComponent component;
+		if (raw == null) return null;
 		if (raw instanceof ChatComponentModified) {
 			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatTextComponent) {
+		final BaseComponent component;
+		if (raw instanceof ChatTextComponent) {
 			ChatTextComponent chatComponent = (ChatTextComponent) raw;
 			component = new TextComponent(chatComponent.getText());
 		} else if (raw instanceof ChatTranslateComponent) {
@@ -108,10 +107,9 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static ChatComponent spigot(BaseComponent raw) {
+		if (raw == null) return null;
 		final ChatComponent chatComponent;
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof TextComponent) {
+		if (raw instanceof TextComponent) {
 			TextComponent component = (TextComponent) raw;
 			chatComponent = new ChatTextComponent(component.getText());
 		} else if (raw instanceof TranslatableComponent) {
@@ -131,16 +129,34 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static ClickEvent spigot(ChatClickEvent event) {
-		return event != null ? new ClickEvent(ClickEvent.Action.valueOf(event.getAction().name()), event.getValue()) : null;
+		if (event == null) return null;
+		switch (event.action()) {
+			case OPEN_URL: return new ClickEvent(ClickEvent.Action.OPEN_URL, event.value());
+			case OPEN_FILE: return new ClickEvent(ClickEvent.Action.OPEN_FILE, event.value());
+			case RUN_COMMAND: return new ClickEvent(ClickEvent.Action.RUN_COMMAND, event.value());
+			case SUGGEST_COMMAND: return new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, event.value());
+			case CHANGE_PAGE: return new ClickEvent(ClickEvent.Action.CHANGE_PAGE, event.value());
+			case COPY_TO_CLIPBOARD: return new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, event.value());
+			default: throw new IllegalArgumentException("Unknown ChatClickEvent.Action " + event.action());
+		}
 	}
 
 	public static ChatClickEvent spigot(ClickEvent event) {
-		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().name().toLowerCase()), event.getValue()) : null;
+		if (event == null) return null;
+		switch (event.getAction()) {
+			case OPEN_URL: return new ChatClickEvent(ChatClickEvent.Action.OPEN_URL, event.getValue());
+			case OPEN_FILE: return new ChatClickEvent(ChatClickEvent.Action.OPEN_FILE, event.getValue());
+			case RUN_COMMAND: return new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, event.getValue());
+			case SUGGEST_COMMAND: return new ChatClickEvent(ChatClickEvent.Action.SUGGEST_COMMAND, event.getValue());
+			case CHANGE_PAGE: return new ChatClickEvent(ChatClickEvent.Action.CHANGE_PAGE, event.getValue());
+			case COPY_TO_CLIPBOARD: return new ChatClickEvent(ChatClickEvent.Action.COPY_TO_CLIPBOARD, event.getValue());
+			default: throw new IllegalArgumentException("Unknown ClickEvent.Action " + event.getAction());
+		}
 	}
 
 	public static HoverEvent spigot(ChatHoverEvent<?> event) {
 		if (event == null) return null;
-		ChatHoverEvent.Action<?> action = event.getAction();
+		ChatHoverEvent.Action<?> action = event.action();
 		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
 			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(new BaseComponent[] { spigot(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)) }));
 		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
@@ -148,7 +164,7 @@ public class SpigotParser extends BukkitParser {
 		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
 			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, spigot(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
 		} else {
-			throw new IllegalArgumentException("Unknown action");
+			throw new IllegalArgumentException("Unknown ChatHoverEvent.Action " + action);
 		}
 	}
 
@@ -172,7 +188,7 @@ public class SpigotParser extends BukkitParser {
 		} else if (action == HoverEvent.Action.SHOW_ITEM) {
 			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, spigot((Item) content));
 		} else {
-			throw new IllegalArgumentException("Unknown action");
+			throw new IllegalArgumentException("Unknown HoverEvent.Action " + action);
 		}
 	}
 
@@ -193,11 +209,21 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static net.md_5.bungee.api.ChatMessageType spigot(ChatMessageType type) {
-		return type != null ? net.md_5.bungee.api.ChatMessageType.valueOf(type.name()) : null;
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return net.md_5.bungee.api.ChatMessageType.CHAT;
+			case SYSTEM: return net.md_5.bungee.api.ChatMessageType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown ChatMessageType " + type);
+		}
 	}
 
 	public static ChatMessageType spigot(net.md_5.bungee.api.ChatMessageType type) {
-		return type != null ? ChatMessageType.valueOf(type.name()) : null;
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return ChatMessageType.CHAT;
+			case SYSTEM: return ChatMessageType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown ChatMessageType " + type);
+		}
 	}
 
 	protected static ChatStyle spigotStyle(BaseComponent component) {
