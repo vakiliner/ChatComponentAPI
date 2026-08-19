@@ -163,19 +163,7 @@ public class ForgeParser extends BaseParser {
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleAccessor accessor = (StyleAccessor) style;
-		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(accessor.getColor()));
-		builder.withBold(accessor.getBold());
-		builder.withItalic(accessor.getItalic());
-		builder.withUnderlined(accessor.getUnderlined());
-		builder.withStrikethrough(accessor.getStrikethrough());
-		builder.withObfuscated(accessor.getObfuscated());
-		builder.withClickEvent(forge(accessor.getClickEvent()));
-		builder.withHoverEvent(forge(accessor.getHoverEvent()));
-		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(forge(accessor.$getFont()));
-		return builder.build();
+		return ((StyleAccessor) style).toChatComponentAPI();
 	}
 
 	public static ClickEvent forge(ChatClickEvent event) {

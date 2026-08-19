@@ -163,19 +163,7 @@ public class FabricParser extends BaseParser {
 	public static ChatStyle fabric(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleAccessor accessor = (StyleAccessor) style;
-		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(fabric(accessor.getColor()));
-		builder.withBold(accessor.getBold());
-		builder.withItalic(accessor.getItalic());
-		builder.withUnderlined(accessor.getUnderlined());
-		builder.withStrikethrough(accessor.getStrikethrough());
-		builder.withObfuscated(accessor.getObfuscated());
-		builder.withClickEvent(fabric(accessor.getClickEvent()));
-		builder.withHoverEvent(fabric(accessor.getHoverEvent()));
-		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(fabric(accessor.$getFont()));
-		return builder.build();
+		return ((StyleAccessor) style).toChatComponentAPI();
 	}
 
 	public static ClickEvent fabric(ChatClickEvent event) {
