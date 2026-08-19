@@ -25,9 +25,7 @@ configurations {
 }
 
 artifacts {
-	project.sourceSets.test.output.forEach { file ->
-		test file
-	}
+	test tasks.named('devJar')
 }
 
 processResources {
