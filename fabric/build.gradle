@@ -1,20 +1,22 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
+	id 'dev.architectury.loom'
 }
 
 dependencies {
 	implementation project(':base')
-	testImplementation project(':base').sourceSets.test.output
-	minecraft group: 'com.mojang', name: 'minecraft', version: project.minecraft_version
+	testImplementation project(path: ':base', configuration: 'test')
+	minecraft "net.minecraft:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
-	modImplementation group: 'net.fabricmc', name: 'fabric-loader', version: project.loader_version
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-	modImplementation group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: project.fabric_api_version
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
 loom {
 	mixin {
-		defaultRefmapName = 'ChatComponentAPI-fabric-refmap.json'
+		defaultRefmapName = "${project.archives_base_name}-fabric-refmap.json"
+
+		useLegacyMixinAp = true
 	}
 }
 
@@ -29,6 +31,8 @@ processTestResources {
 		expand inputs.properties
 	}
 }
+
+java.withSourcesJar()
 
 task remapDevJar(type: net.fabricmc.loom.task.RemapJarTask) {
 	var task = project.tasks.getByName('devJar')

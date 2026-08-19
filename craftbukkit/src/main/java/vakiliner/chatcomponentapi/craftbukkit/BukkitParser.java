@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
@@ -56,10 +57,15 @@ public class BukkitParser extends BaseParser {
 	}
 
 	public void broadcastMessage(Server server, ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.broadcastMessage(server, component, type, uuid, null);
+	}
+
+	public void broadcastMessage(Server server, ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
+		if (predicate == null) predicate = (p) -> true;
 		Set<CommandSender> recipients = new HashSet<>();
 		Set<Permissible> permissibles = server.getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_USERS);
 		for (Permissible permissible : permissibles) {
-			if (permissible instanceof CommandSender && permissible.hasPermission(Server.BROADCAST_CHANNEL_USERS)) {
+			if (permissible instanceof CommandSender && permissible.hasPermission(Server.BROADCAST_CHANNEL_USERS) && !(permissible instanceof Player && !predicate.test(this.toChatPlayer((Player) permissible)))) {
 				recipients.add((CommandSender) permissible);
 			}
 		}

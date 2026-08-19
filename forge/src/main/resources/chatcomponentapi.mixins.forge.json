@@ -5,10 +5,9 @@
 	"compatibilityLevel": "JAVA_8",
 	"mixins": [
 		"StyleAccessor",
-		"ItemHoverAccessor"
+		"ItemStackInfoAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1
-	},
-	"refmap": "ChatComponentAPI-forge-refmap.json"
+	}
 }
