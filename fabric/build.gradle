@@ -9,7 +9,7 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation group: 'net.fabricmc', name: 'fabric-loader', version: project.loader_version
 
-	modImplementation group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: project.fabric_api
+	modImplementation group: 'net.fabricmc.fabric-api', name: 'fabric-api', version: project.fabric_api_version
 }
 
 loom {
