@@ -16,6 +16,10 @@ loom {
 
 		useLegacyMixinAp = true
 	}
+
+	forge {
+		mixinConfig 'chatcomponentapi.mixins.forge.json'
+	}
 }
 
 processResources {
