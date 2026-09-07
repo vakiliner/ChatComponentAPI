@@ -12,14 +12,6 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 }
 
-loom {
-	mixin {
-		defaultRefmapName = "${project.archives_base_name}-fabric-refmap.json"
-
-		useLegacyMixinAp = true
-	}
-}
-
 processResources {
 	filesMatching('fabric.mod.json') {
 		expand inputs.properties
