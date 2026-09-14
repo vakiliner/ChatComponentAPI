@@ -11,12 +11,6 @@ dependencies {
 }
 
 loom {
-	mixin {
-		defaultRefmapName = "${project.archives_base_name}-forge-refmap.json"
-
-		useLegacyMixinAp = true
-	}
-
 	forge {
 		mixinConfig 'chatcomponentapi.mixins.forge.json'
 	}
