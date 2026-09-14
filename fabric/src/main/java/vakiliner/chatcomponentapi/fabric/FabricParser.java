@@ -88,6 +88,7 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
+	@Deprecated
 	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IFabricChatPlugin) {
 			@SuppressWarnings("unused")
@@ -98,6 +99,7 @@ public class FabricParser extends BaseParser {
 		}
 	}
 
+	@Deprecated
 	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IFabricChatPlugin) {
 			@SuppressWarnings("unused")
