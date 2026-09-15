@@ -59,11 +59,23 @@ public class FabricChatServer implements ChatServer {
 	}
 
 	@Override
+	public void execute(Runnable command) {
+		this.server.execute(command);
+	}
+
+	@Override
+	public void executeBlocking(Runnable command) {
+		this.server.executeBlocking(command);
+	}
+
+	@Override
+	@Deprecated
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server, plugin, runnable);
 	}
 
 	@Override
+	@Deprecated
 	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
 		this.parser.executeBlocking(this.server, plugin, runnable);
 	}
