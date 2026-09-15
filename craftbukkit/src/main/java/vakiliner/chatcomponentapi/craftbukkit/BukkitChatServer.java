@@ -21,6 +21,7 @@ import vakiliner.chatcomponentapi.util.ParseCollection;
 public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	private static final Method GET_HANDLE;
 	private static final Method EXECUTE_SYNC;
+	private static final Method GET_SINGLE_PLAYER_NAME;
 	protected final BukkitParser parser;
 	protected final Server server;
 
@@ -42,6 +43,14 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 			throw new IllegalStateException(err);
 		}
 		if (EXECUTE_SYNC.getReturnType() != void.class) {
+			throw new IllegalStateException();
+		}
+		try {
+			GET_SINGLE_PLAYER_NAME = nmsClass.getMethod("getSinglePlayerName");
+		} catch (NoSuchMethodException err) {
+			throw new IllegalStateException(err);
+		}
+		if (GET_SINGLE_PLAYER_NAME.getReturnType() != String.class) {
 			throw new IllegalStateException();
 		}
 	}
@@ -93,10 +102,18 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return true;
 	}
 
-	// Not supported
 	@Override
 	public String getSingleplayerName() {
-		return null;
+		try {
+			return (String) GET_SINGLE_PLAYER_NAME.invoke(this.getNMS());
+		} catch (IllegalAccessException err) {
+			throw new IllegalStateException(err);
+		} catch (InvocationTargetException err) {
+			Throwable target = err.getTargetException();
+			if (target instanceof Error) throw (Error) target;
+			if (target instanceof RuntimeException) throw (RuntimeException) target;
+			throw new RuntimeException(err);
+		}
 	}
 
 	@Override
