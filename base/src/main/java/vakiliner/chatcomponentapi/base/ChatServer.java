@@ -19,6 +19,9 @@ public interface ChatServer extends Executor, ChatCommandSender {
 
 	boolean isSingleplayerOwner(GameProfile gameProfile);
 
+	@Override
+	void execute(Runnable command);
+
 	void executeBlocking(Runnable command);
 
 	@Deprecated
