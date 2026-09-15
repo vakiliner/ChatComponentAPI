@@ -27,6 +27,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	static {
 		Server server = Bukkit.getServer();
 		try {
+			// Gets a method of the CraftServer class, not the Server class
 			GET_HANDLE = server.getClass().getMethod("getServer");
 		} catch (NoSuchMethodException err) {
 			throw new IllegalStateException(err);
