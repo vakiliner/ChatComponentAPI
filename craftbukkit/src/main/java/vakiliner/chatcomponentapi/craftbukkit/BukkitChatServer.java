@@ -9,12 +9,12 @@ import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
-import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
@@ -122,7 +122,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	@Override
-	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+	public boolean isSingleplayerOwner(ChatNameAndId chatNameAndId) {
 		return false;
 	}
 

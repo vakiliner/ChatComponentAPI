@@ -2,12 +2,12 @@ package vakiliner.chatcomponentapi.fabric;
 
 import java.util.Objects;
 import java.util.UUID;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class FabricChatServer implements ChatServer {
@@ -54,8 +54,8 @@ public class FabricChatServer implements ChatServer {
 	}
 
 	@Override
-	public boolean isSingleplayerOwner(GameProfile gameProfile) {
-		return this.server.isSingleplayerOwner(gameProfile);
+	public boolean isSingleplayerOwner(ChatNameAndId chatNameAndId) {
+		return this.server.isSingleplayerOwner(chatNameAndId.toGameProfile());
 	}
 
 	@Override
