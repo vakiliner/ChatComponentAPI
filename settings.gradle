@@ -8,13 +8,16 @@ pluginManagement {
 			name = 'MinecraftForge'
 			url = 'https://maven.minecraftforge.net/'
 		}
+		maven {
+			name = 'Architectury'
+			url = 'https://maven.architectury.dev/'
+		}
 		mavenCentral()
 		gradlePluginPortal()
 	}
 }
 
 include 'base'
-include 'bukkit'
 include 'craftbukkit'
 include 'spigot'
 include 'paper'

@@ -35,11 +35,11 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 		if (this.legacyComponent != null) {
 			return this.legacyComponent;
 		}
-		synchronized (this) {
+		synchronized (this.getLegacyComponent) {
 			if (this.legacyComponent != null) {
 				return this.legacyComponent;
 			}
-			return this.legacyComponent = this.getLegacyComponent.get();
+			return Objects.requireNonNull(this.legacyComponent = this.getLegacyComponent.get());
 		}
 	}
 

@@ -44,5 +44,5 @@ public interface StyleAccessor {
 	String getInsertion();
 
 	@Accessor("font")
-	ResourceLocation getFont();
+	ResourceLocation $getFont();
 }

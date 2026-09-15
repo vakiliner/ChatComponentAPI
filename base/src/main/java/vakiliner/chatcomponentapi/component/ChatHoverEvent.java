@@ -36,12 +36,22 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		return new ChatHoverEvent<>(this);
 	}
 
-	public Action<V> getAction() {
+	public Action<V> action() {
 		return this.action;
 	}
 
-	public V getContents() {
+	public V contents() {
 		return this.contents;
+	}
+
+	@Deprecated
+	public Action<V> getAction() {
+		return this.action();
+	}
+
+	@Deprecated
+	public V getContents() {
+		return this.contents();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -117,7 +127,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		throw new JsonParseException("No content");
 	}
 
-	public static class Action<V extends IContent> {
+	public static final class Action<V extends IContent> {
 		private static final Map<String, Action<?>> BY_NAME = Maps.newHashMap();
 		public static final Action<ChatComponent> SHOW_TEXT = new Action<>("show_text", ChatComponent.class);
 		public static final Action<ShowEntity> SHOW_ENTITY = new Action<>("show_entity", ShowEntity.class);

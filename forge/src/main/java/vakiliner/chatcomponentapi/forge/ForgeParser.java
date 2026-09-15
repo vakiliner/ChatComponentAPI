@@ -3,32 +3,33 @@ package vakiliner.chatcomponentapi.forge;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.command.ICommandSource;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.server.SChatPacket;
-import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.core.Registry;
+import net.minecraft.network.chat.ChatType;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.SelectorComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.protocol.game.ClientboundChatPacket;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.BanEntry;
-import net.minecraft.server.management.BanList;
-import net.minecraft.server.management.IPBanList;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Util;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.text.ChatType;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.SelectorTextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.Style;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.players.BanListEntry;
+import net.minecraft.server.players.IpBanList;
+import net.minecraft.server.players.PlayerList;
+import net.minecraft.server.players.UserBanList;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.scores.PlayerTeam;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
@@ -52,7 +53,7 @@ import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.forge.mixin.ItemHoverAccessor;
+import vakiliner.chatcomponentapi.forge.mixin.ItemStackInfoAccessor;
 import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
@@ -66,20 +67,31 @@ public class ForgeParser extends BaseParser {
 		return true;
 	}
 
-	public void sendMessage(ICommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
+	public void sendMessage(CommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
 		if (uuid == null) uuid = Util.NIL_UUID;
-		ITextComponent component = forge(chatComponent, commandSource instanceof MinecraftServer);
-		if (commandSource instanceof ServerPlayerEntity) {
-			((ServerPlayerEntity) commandSource).sendMessage(component, forge(type), uuid);
+		Component component = forge(chatComponent, commandSource instanceof MinecraftServer);
+		if (commandSource instanceof ServerPlayer) {
+			((ServerPlayer) commandSource).sendMessage(component, forge(type), uuid);
 		} else {
 			commandSource.sendMessage(component, uuid);
 		}
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid) {
+		this.broadcastMessage(playerList, component, type, uuid, null);
+	}
+
+	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
 		if (uuid == null) uuid = Util.NIL_UUID;
-		this.sendMessage(playerList.getServer(), component, type, uuid);
-		playerList.broadcastAll(new SChatPacket(forge(component), forge(type), uuid));
+		ClientboundChatPacket packet = new ClientboundChatPacket(forge(component), forge(type), uuid);
+		playerList.getServer().sendMessage(forge(component, true), uuid);
+		if (predicate == null) {
+			playerList.broadcastAll(packet);
+		} else for (ServerPlayer player : playerList.getPlayers()) {
+			if (predicate.test(this.toChatPlayer(player))) {
+				player.connection.send(packet);
+			}
+		}
 	}
 
 	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
@@ -102,32 +114,31 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
-	public void kickPlayer(ServerPlayerEntity player, ChatComponent reason) {
+	public void kickPlayer(ServerPlayer player, ChatComponent reason) {
 		player.connection.disconnect(forge(reason));
 	}
 
-	public static ITextComponent forge(ChatComponent raw) {
+	public static Component forge(ChatComponent raw) {
 		return forge(raw, false);
 	}
 
-	public static ITextComponent forge(ChatComponent raw, boolean isConsole) {
-		final IFormattableTextComponent component;
+	public static Component forge(ChatComponent raw, boolean isConsole) {
+		if (raw == null) return null;
 		if (raw instanceof ChatComponentModified) {
 			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof ChatTextComponent) {
+		final MutableComponent component;
+		if (raw instanceof ChatTextComponent) {
 			ChatTextComponent chatComponent = (ChatTextComponent) raw;
-			component = new StringTextComponent(chatComponent.getText());
+			component = new TextComponent(chatComponent.getText());
 		} else if (raw instanceof ChatTranslateComponent) {
 			ChatTranslateComponent chatComponent = (ChatTranslateComponent) raw;
-			component = new TranslationTextComponent(chatComponent.getKey(), chatComponent.getWith().stream().map((c) -> forge(c, isConsole)).toArray());
+			component = new TranslatableComponent(chatComponent.getKey(), chatComponent.getWith().stream().map((c) -> forge(c, isConsole)).toArray());
 		} else if (raw instanceof ChatSelectorComponent) {
 			ChatSelectorComponent chatComponent = (ChatSelectorComponent) raw;
-			component = new SelectorTextComponent(chatComponent.getSelector());
+			component = new SelectorComponent(chatComponent.getSelector());
 		} else {
-			throw new IllegalArgumentException("Could not parse ITextComponent from " + raw.getClass());
+			throw new IllegalArgumentException("Could not parse Component from " + raw.getClass());
 		}
 		component.setStyle(forge(raw.getStyle()));
 		List<ChatComponent> extra = raw.getExtra();
@@ -137,24 +148,23 @@ public class ForgeParser extends BaseParser {
 		return component;
 	}
 
-	public static ChatComponent forge(ITextComponent raw) {
+	public static ChatComponent forge(Component raw) {
+		if (raw == null) return null;
 		final ChatComponent chatComponent;
-		if (raw == null) {
-			return null;
-		} else if (raw instanceof StringTextComponent) {
-			StringTextComponent component = (StringTextComponent) raw;
+		if (raw instanceof TextComponent) {
+			TextComponent component = (TextComponent) raw;
 			chatComponent = new ChatTextComponent(component.getText());
-		} else if (raw instanceof TranslationTextComponent) {
-			TranslationTextComponent component = (TranslationTextComponent) raw;
-			chatComponent = new ChatTranslateComponent(null, component.getKey(), Arrays.stream(component.getArgs()).map((arg) -> arg instanceof ITextComponent ? forge((ITextComponent) arg) : new ChatTextComponent(String.valueOf(arg))).collect(Collectors.toList()));
-		} else if (raw instanceof SelectorTextComponent) {
-			SelectorTextComponent component = (SelectorTextComponent) raw;
+		} else if (raw instanceof TranslatableComponent) {
+			TranslatableComponent component = (TranslatableComponent) raw;
+			chatComponent = new ChatTranslateComponent(null, component.getKey(), Arrays.stream(component.getArgs()).map((arg) -> arg instanceof Component ? forge((Component) arg) : new ChatTextComponent(String.valueOf(arg))).collect(Collectors.toList()));
+		} else if (raw instanceof SelectorComponent) {
+			SelectorComponent component = (SelectorComponent) raw;
 			chatComponent = new ChatSelectorComponent(component.getPattern());
 		} else {
 			throw new IllegalArgumentException("Could not parse ChatComponent from " + raw.getClass());
 		}
 		chatComponent.setStyle(forge(raw.getStyle()));
-		for (ITextComponent component : raw.getSiblings()) {
+		for (Component component : raw.getSiblings()) {
 			chatComponent.append(forge(component));
 		}
 		return chatComponent;
@@ -180,21 +190,39 @@ public class ForgeParser extends BaseParser {
 		builder.withClickEvent(forge(accessor.getClickEvent()));
 		builder.withHoverEvent(forge(accessor.getHoverEvent()));
 		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(forge(accessor.getFont()));
+		builder.withFont(forge(accessor.$getFont()));
 		return builder.build();
 	}
 
 	public static ClickEvent forge(ChatClickEvent event) {
-		return event != null ? new ClickEvent(ClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
+		if (event == null) return null;
+		switch (event.action()) {
+			case OPEN_URL: return new ClickEvent(ClickEvent.Action.OPEN_URL, event.value());
+			case OPEN_FILE: return new ClickEvent(ClickEvent.Action.OPEN_FILE, event.value());
+			case RUN_COMMAND: return new ClickEvent(ClickEvent.Action.RUN_COMMAND, event.value());
+			case SUGGEST_COMMAND: return new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, event.value());
+			case CHANGE_PAGE: return new ClickEvent(ClickEvent.Action.CHANGE_PAGE, event.value());
+			case COPY_TO_CLIPBOARD: return new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, event.value());
+			default: throw new IllegalArgumentException("Unknown ChatClickEvent.Action " + event.action());
+		}
 	}
 
 	public static ChatClickEvent forge(ClickEvent event) {
-		return event != null ? new ChatClickEvent(ChatClickEvent.Action.getByName(event.getAction().getName()), event.getValue()) : null;
+		if (event == null) return null;
+		switch (event.getAction()) {
+			case OPEN_URL: return new ChatClickEvent(ChatClickEvent.Action.OPEN_URL, event.getValue());
+			case OPEN_FILE: return new ChatClickEvent(ChatClickEvent.Action.OPEN_FILE, event.getValue());
+			case RUN_COMMAND: return new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, event.getValue());
+			case SUGGEST_COMMAND: return new ChatClickEvent(ChatClickEvent.Action.SUGGEST_COMMAND, event.getValue());
+			case CHANGE_PAGE: return new ChatClickEvent(ChatClickEvent.Action.CHANGE_PAGE, event.getValue());
+			case COPY_TO_CLIPBOARD: return new ChatClickEvent(ChatClickEvent.Action.COPY_TO_CLIPBOARD, event.getValue());
+			default: throw new IllegalArgumentException("Unknown ClickEvent.Action " + event.getAction());
+		}
 	}
 
 	public static HoverEvent forge(ChatHoverEvent<?> event) {
 		if (event == null) return null;
-		ChatHoverEvent.Action<?> action = event.getAction();
+		ChatHoverEvent.Action<?> action = event.action();
 		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
 			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, forge(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
 		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
@@ -202,7 +230,7 @@ public class ForgeParser extends BaseParser {
 		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
 			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, forge(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
 		} else {
-			throw new IllegalArgumentException("Unknown action");
+			throw new IllegalArgumentException("Unknown ChatHoverEvent.Action " + action);
 		}
 	}
 
@@ -216,34 +244,34 @@ public class ForgeParser extends BaseParser {
 		} else if (action == HoverEvent.Action.SHOW_ITEM) {
 			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, forge(event.getValue(HoverEvent.Action.SHOW_ITEM)));
 		} else {
-			throw new IllegalArgumentException("Unknown action");
+			throw new IllegalArgumentException("Unknown HoverEvent.Action " + action);
 		}
 	}
 
 	@SuppressWarnings("deprecation")
-	public static HoverEvent.EntityHover forge(ChatHoverEvent.ShowEntity content) {
-		return content != null ? new HoverEvent.EntityHover(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName())) : null;
+	public static HoverEvent.EntityTooltipInfo forge(ChatHoverEvent.ShowEntity content) {
+		return content != null ? new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName())) : null;
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ChatHoverEvent.ShowEntity forge(HoverEvent.EntityHover content) {
+	public static ChatHoverEvent.ShowEntity forge(HoverEvent.EntityTooltipInfo content) {
 		return content != null ? new ChatHoverEvent.ShowEntity(forge(Registry.ENTITY_TYPE.getKey(content.type)), content.id, forge(content.name)) : null;
 	}
 
 	@SuppressWarnings("deprecation")
-	public static HoverEvent.ItemHover forge(ChatHoverEvent.ShowItem content) {
-		return content != null ? new HoverEvent.ItemHover(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount())) : null;
+	public static HoverEvent.ItemStackInfo forge(ChatHoverEvent.ShowItem content) {
+		return content != null ? new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount())) : null;
 	}
 
 	@SuppressWarnings("deprecation")
-	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemHover content) {
+	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemStackInfo content) {
 		if (content == null) return null;
-		ItemHoverAccessor accessor = (ItemHoverAccessor) content;
+		ItemStackInfoAccessor accessor = (ItemStackInfoAccessor) content;
 		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
 	}
 
 	public static ResourceLocation forge(ChatId id) {
-		return id != null ? new ResourceLocation(id.getNamespace(), id.getValue()) : null;
+		return id != null ? new ResourceLocation(id.namespace(), id.value()) : null;
 	}
 
 	public static ChatId forge(ResourceLocation resourceLocation) {
@@ -251,30 +279,40 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public static ChatType forge(ChatMessageType type) {
-		return type != null ? ChatType.valueOf(type.name()) : null;
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return ChatType.CHAT;
+			case SYSTEM: return ChatType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown ChatMessageType " + type);
+		}
 	}
 
 	public static ChatMessageType forge(ChatType type) {
-		return type != null ? ChatMessageType.valueOf(type.name()) : null;
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return ChatMessageType.CHAT;
+			case SYSTEM: return ChatMessageType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown ChatType " + type);
+		}
 	}
 
-	public static TextFormatting forge(ChatTextFormat format) {
-		return format != null ? TextFormatting.getByName(format.name()) : null;
+	public static ChatFormatting forge(ChatTextFormat format) {
+		return format != null ? ChatFormatting.getByName(format.getName()) : null;
 	}
 
-	public static ChatTextFormat forge(TextFormatting formatting) {
+	public static ChatTextFormat forge(ChatFormatting formatting) {
 		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
 	}
 
-	public static Color forge(ChatTextColor color) {
-		return color != null ? Color.parseColor(color.toString()) : null;
+	public static TextColor forge(ChatTextColor color) {
+		return color != null ? TextColor.parseColor(color.toString()) : null;
 	}
 
-	public static ChatTextColor forge(Color color) {
+	public static ChatTextColor forge(TextColor color) {
 		return color != null ? ChatTextColor.of(color.toString()) : null;
 	}
 
-	public ChatPlayer toChatPlayer(ServerPlayerEntity player) {
+	public ChatPlayer toChatPlayer(ServerPlayer player) {
 		return player != null ? new ForgeChatPlayer(this, player) : null;
 	}
 
@@ -282,17 +320,17 @@ public class ForgeParser extends BaseParser {
 		return gameProfile != null ? new ForgeChatOfflinePlayer(this, server, gameProfile) : null;
 	}
 
-	public ChatCommandSender toChatCommandSender(ICommandSource commandSource) {
+	public ChatCommandSender toChatCommandSender(CommandSource commandSource) {
 		if (commandSource == null) return null;
-		if (commandSource instanceof ServerPlayerEntity) {
-			return this.toChatPlayer((ServerPlayerEntity) commandSource);
+		if (commandSource instanceof ServerPlayer) {
+			return this.toChatPlayer((ServerPlayer) commandSource);
 		} else if (commandSource instanceof MinecraftServer) {
 			return this.toChatServer((MinecraftServer) commandSource);
 		}
 		return new ForgeChatCommandSender(this, commandSource);
 	}
 
-	public ChatTeam toChatTeam(ScorePlayerTeam team) {
+	public ChatTeam toChatTeam(PlayerTeam team) {
 		return team != null ? new ForgeChatTeam(this, team) : null;
 	}
 

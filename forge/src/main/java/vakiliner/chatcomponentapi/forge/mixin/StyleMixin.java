@@ -2,7 +2,7 @@ package vakiliner.chatcomponentapi.forge.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
-import net.minecraft.util.text.Style;
+import net.minecraft.network.chat.Style;
 
 @Deprecated
 @Mixin(Style.class)

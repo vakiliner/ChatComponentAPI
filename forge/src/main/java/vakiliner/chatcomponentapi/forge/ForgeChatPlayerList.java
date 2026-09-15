@@ -3,7 +3,8 @@ package vakiliner.chatcomponentapi.forge;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.UUID;
-import net.minecraft.server.management.PlayerList;
+import java.util.function.Predicate;
+import net.minecraft.server.players.PlayerList;
 import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
@@ -67,8 +68,8 @@ public class ForgeChatPlayerList implements ChatPlayerList {
 	}
 
 	@Override
-	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.parser.broadcastMessage(this.playerList, component, type, uuid);
+	public void broadcastMessage(ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
+		this.parser.broadcastMessage(this.playerList, component, type, uuid, predicate);
 	}
 
 	@Override

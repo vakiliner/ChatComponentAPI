@@ -11,12 +11,22 @@ public class ChatId {
 		this.value = Objects.requireNonNull(value);
 	}
 
-	public String getNamespace() {
+	public String namespace() {
 		return this.namespace;
 	}
 
-	public String getValue() {
+	public String value() {
 		return this.value;
+	}
+
+	@Deprecated
+	public String getNamespace() {
+		return this.namespace();
+	}
+
+	@Deprecated
+	public String getValue() {
+		return this.value();
 	}
 
 	@Override
