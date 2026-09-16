@@ -36,7 +36,7 @@ public abstract class DevTester {
 			} catch (Throwable err) {
 				component2.append(component1.clone());
 			}
-			component1.clone();
+			component1.serialize().toString();
 		});
 	}
 
