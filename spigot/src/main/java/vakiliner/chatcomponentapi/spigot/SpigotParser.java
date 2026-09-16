@@ -37,7 +37,7 @@ public class SpigotParser extends BukkitParser {
 		this.sendMessage(sender, spigot(component, sender instanceof ConsoleCommandSender), spigot(type), uuid);
 	}
 
-	private void sendMessage(CommandSender sender, BaseComponent component, ChatMessageType type, UUID uuid) {
+	private void sendMessage(CommandSender sender, BaseComponent component, net.md_5.bungee.api.ChatMessageType type, UUID uuid) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (uuid != null) {
@@ -58,7 +58,7 @@ public class SpigotParser extends BukkitParser {
 	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, vakiliner.chatcomponentapi.common.ChatMessageType chatMessageType, UUID uuid) {
 		BaseComponent component = spigot(chatComponent, false);
 		BaseComponent consoleComponent = spigot(chatComponent, true);
-		ChatMessageType type = spigot(chatMessageType);
+		net.md_5.bungee.api.ChatMessageType type = spigot(chatMessageType);
 		for (CommandSender recipient : recipients) {
 			this.sendMessage(recipient, recipient instanceof ConsoleCommandSender ? consoleComponent : component, type, uuid);
 		}
