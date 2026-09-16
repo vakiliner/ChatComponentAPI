@@ -2,8 +2,23 @@ plugins {
 	id 'java'
 }
 
+repositories {
+	maven {
+		name = 'Codemc'
+		url = 'https://repo.codemc.io/repository/nms/'
+	}
+
+	maven {
+		name = 'SpigotHub'
+		url = 'https://hub.spigotmc.org/nexus/content/groups/public/'
+	}
+
+	mavenCentral()
+}
+
 dependencies {
 	implementation project(':base')
 	implementation project(':craftbukkit')
-	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+	implementation "org.spigotmc:spigot-api:${project.minecraft_version}-${project.spigot_version}"
+	implementation "net.md-5:bungeecord-chat:${project.bungeecord_version}"
 }

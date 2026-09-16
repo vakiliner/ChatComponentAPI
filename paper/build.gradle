@@ -2,9 +2,18 @@ plugins {
 	id 'java'
 }
 
+repositories {
+	maven {
+		name = 'Codemc'
+		url = 'https://repo.codemc.io/repository/nms/'
+	}
+
+	mavenCentral()
+}
+
 dependencies {
 	implementation project(':base')
 	implementation project(':craftbukkit')
 	implementation project(':spigot')
-	compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+	implementation "com.destroystokyo.paper:paper-api:${project.minecraft_version}-${project.paper_version}"
 }
