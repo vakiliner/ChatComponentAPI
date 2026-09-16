@@ -12,6 +12,8 @@ var forge = findProject(':forge')
 allprojects {
 	apply plugin: 'java'
 
+	java.toolchain.languageVersion = JavaLanguageVersion.of(8)
+
 	var replaceProperties = [
 		version: project.version,
 		license: project.license,
@@ -30,13 +32,7 @@ allprojects {
 	}
 
 	tasks.withType(JavaCompile).configureEach {
-		options.release = 8
 		options.encoding = 'UTF-8'
-	}
-
-	java {
-		sourceCompatibility = JavaVersion.VERSION_1_8
-		targetCompatibility = JavaVersion.VERSION_1_8
 	}
 }
 
