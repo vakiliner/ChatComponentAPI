@@ -7,8 +7,16 @@ insert_final_newline = true
 tab_width = 4
 indent_style = tab
 
+[*.yml]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+
 [.vscode/**]
 insert_final_newline = unset
 
-[**/src/*/resources/**]
+[**/src/*/resources/**.json]
+insert_final_newline = unset
+
+[**/src/*/resources/pack.mcmeta]
 insert_final_newline = unset

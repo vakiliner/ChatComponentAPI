@@ -27,19 +27,3 @@ configurations {
 artifacts {
 	test tasks.named('devJar')
 }
-
-processResources {
-	inputs.property 'pack_format', project.pack_format
-
-	filesMatching('pack.mcmeta') {
-		expand inputs.properties
-	}
-}
-
-processTestResources {
-	inputs.property 'pack_format', project.pack_format
-
-	filesMatching('pack.mcmeta') {
-		expand inputs.properties
-	}
-}
