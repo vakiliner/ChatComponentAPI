@@ -2,7 +2,7 @@ plugins {
 	id 'dev.architectury.loom' version "${loom_version}" apply false
 }
 
-var core = project(':base')
+var core = project(':core')
 var craftbukkit = findProject(':craftbukkit')
 var spigot = findProject(':spigot')
 var paper = findProject(':paper')
@@ -112,7 +112,7 @@ task devJar(type: Jar) {
 	if (fabric != null) evaluationDependsOn(fabric.getName())
 	if (forge != null) evaluationDependsOn(forge.getName())
 
-	archiveBaseName = "Dev${base.archivesName.get()}"
+	archiveBaseName = "Dev${project.base.archivesName.get()}"
 
 	var coreJar = core.tasks.getByName('devJar')
 	var craftbukkitJar = craftbukkit != null ? craftbukkit.tasks.getByName('devJar') : null
