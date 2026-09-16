@@ -1,13 +1,13 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Date;
-import net.minecraft.server.management.IPBanEntry;
-import net.minecraft.server.management.IPBanList;
+import net.minecraft.server.players.IpBanList;
+import net.minecraft.server.players.IpBanListEntry;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatIpBanList;
 
-public class ForgeChatIpBanList extends ForgeChatBanList<String, String, IPBanEntry, IPBanList> implements ChatIpBanList {
-	public ForgeChatIpBanList(ForgeParser parser, IPBanList list) {
+public class ForgeChatIpBanList extends ForgeChatBanList<String, String, IpBanListEntry, IpBanList> implements ChatIpBanList {
+	public ForgeChatIpBanList(ForgeParser parser, IpBanList list) {
 		super(parser, list);
 	}
 
@@ -17,18 +17,18 @@ public class ForgeChatIpBanList extends ForgeChatBanList<String, String, IPBanEn
 	}
 
 	@Override
-	protected ChatBanEntry cast(IPBanEntry entry) {
+	protected ChatBanEntry cast(IpBanListEntry entry) {
 		return this.parser.toChatBanEntry(entry);
 	}
 
 	@Override
-	protected IPBanEntry create(String ip) {
-		return new IPBanEntry(this.cast(ip));
+	protected IpBanListEntry create(String ip) {
+		return new IpBanListEntry(this.cast(ip));
 	}
 
 	@Override
-	protected IPBanEntry create(String ip, String reason, String source, Date expires) {
-		return new IPBanEntry(this.cast(ip), null, source, expires, reason);
+	protected IpBanListEntry create(String ip, String reason, String source, Date expires) {
+		return new IpBanListEntry(this.cast(ip), null, source, expires, reason);
 	}
 
 	@Override

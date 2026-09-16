@@ -342,15 +342,15 @@ public class ForgeParser extends BaseParser {
 		return playerList != null ? new ForgeChatPlayerList(this, playerList) : null;
 	}
 
-	public ChatIpBanList toChatIpBanList(IPBanList ipBanList) {
+	public ChatIpBanList toChatIpBanList(IpBanList ipBanList) {
 		return ipBanList != null ? new ForgeChatIpBanList(this, ipBanList) : null;
 	}
 
-	public ChatUserBanList toChatUserBanList(BanList userBanList) {
+	public ChatUserBanList toChatUserBanList(UserBanList userBanList) {
 		return userBanList != null ? new ForgeChatUserBanList(this, userBanList) : null;
 	}
 
-	public ChatBanEntry toChatBanEntry(BanEntry<?> banListEntry) {
+	public ChatBanEntry toChatBanEntry(BanListEntry<?> banListEntry) {
 		return banListEntry != null ? new ForgeChatBanEntry<>(this, banListEntry) : null;
 	}
 }

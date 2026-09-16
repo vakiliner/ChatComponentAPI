@@ -1,12 +1,12 @@
 package vakiliner.chatcomponentapi.forge;
 
 import java.util.Date;
-import net.minecraft.server.management.BanEntry;
-import net.minecraft.server.management.UserList;
+import net.minecraft.server.players.BanListEntry;
+import net.minecraft.server.players.StoredUserList;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatBanList;
 
-public abstract class ForgeChatBanList<Key, HandleKey, HandleEntry extends BanEntry<HandleKey>, List extends UserList<HandleKey, HandleEntry>> extends ForgeChatStoredUserList<Key, HandleKey, ChatBanEntry, HandleEntry, List> implements ChatBanList<Key> {
+public abstract class ForgeChatBanList<Key, HandleKey, HandleEntry extends BanListEntry<HandleKey>, List extends StoredUserList<HandleKey, HandleEntry>> extends ForgeChatStoredUserList<Key, HandleKey, ChatBanEntry, HandleEntry, List> implements ChatBanList<Key> {
 	public ForgeChatBanList(ForgeParser parser, List list) {
 		super(parser, list);
 	}

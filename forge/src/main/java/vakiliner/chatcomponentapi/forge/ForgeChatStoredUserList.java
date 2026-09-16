@@ -2,13 +2,13 @@ package vakiliner.chatcomponentapi.forge;
 
 import java.util.Collection;
 import java.util.Objects;
-import net.minecraft.server.management.UserList;
-import net.minecraft.server.management.UserListEntry;
+import net.minecraft.server.players.StoredUserEntry;
+import net.minecraft.server.players.StoredUserList;
 import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserList;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
-public abstract class ForgeChatStoredUserList<Key, HandleKey, Entry extends ChatStoredUserEntry, HandleEntry extends UserListEntry<HandleKey>, List extends UserList<HandleKey, HandleEntry>> implements ChatStoredUserList<Key, Entry> {
+public abstract class ForgeChatStoredUserList<Key, HandleKey, Entry extends ChatStoredUserEntry, HandleEntry extends StoredUserEntry<HandleKey>, List extends StoredUserList<HandleKey, HandleEntry>> implements ChatStoredUserList<Key, Entry> {
 	protected final ForgeParser parser;
 	protected final List list;
 

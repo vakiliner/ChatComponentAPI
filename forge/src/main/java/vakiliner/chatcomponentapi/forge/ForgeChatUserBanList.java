@@ -2,13 +2,13 @@ package vakiliner.chatcomponentapi.forge;
 
 import java.util.Date;
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.management.BanList;
-import net.minecraft.server.management.ProfileBanEntry;
+import net.minecraft.server.players.UserBanList;
+import net.minecraft.server.players.UserBanListEntry;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 import vakiliner.chatcomponentapi.base.ChatUserBanList;
 
-public class ForgeChatUserBanList extends ForgeChatBanList<GameProfile, GameProfile, ProfileBanEntry, BanList> implements ChatUserBanList {
-	public ForgeChatUserBanList(ForgeParser parser, BanList list) {
+public class ForgeChatUserBanList extends ForgeChatBanList<GameProfile, GameProfile, UserBanListEntry, UserBanList> implements ChatUserBanList {
+	public ForgeChatUserBanList(ForgeParser parser, UserBanList list) {
 		super(parser, list);
 	}
 
@@ -18,18 +18,18 @@ public class ForgeChatUserBanList extends ForgeChatBanList<GameProfile, GameProf
 	}
 
 	@Override
-	protected ChatBanEntry cast(ProfileBanEntry entry) {
+	protected ChatBanEntry cast(UserBanListEntry entry) {
 		return this.parser.toChatBanEntry(entry);
 	}
 
 	@Override
-	protected ProfileBanEntry create(GameProfile gameProfile) {
-		return new ProfileBanEntry(this.cast(gameProfile));
+	protected UserBanListEntry create(GameProfile gameProfile) {
+		return new UserBanListEntry(this.cast(gameProfile));
 	}
 
 	@Override
-	protected ProfileBanEntry create(GameProfile gameProfile, String reason, String source, Date expires) {
-		return new ProfileBanEntry(this.cast(gameProfile), null, source, expires, reason);
+	protected UserBanListEntry create(GameProfile gameProfile, String reason, String source, Date expires) {
+		return new UserBanListEntry(this.cast(gameProfile), null, source, expires, reason);
 	}
 
 	@Override

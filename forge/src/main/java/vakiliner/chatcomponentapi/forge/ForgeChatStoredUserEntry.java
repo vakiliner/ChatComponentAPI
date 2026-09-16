@@ -1,15 +1,16 @@
 package vakiliner.chatcomponentapi.forge;
 
-import net.minecraft.server.management.UserListEntry;
+import java.util.Objects;
+import net.minecraft.server.players.StoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 
-public class ForgeChatStoredUserEntry<Entry extends UserListEntry<?>> implements ChatStoredUserEntry {
+public class ForgeChatStoredUserEntry<Entry extends StoredUserEntry<?>> implements ChatStoredUserEntry {
 	protected final ForgeParser parser;
 	protected final Entry entry;
 
 	public ForgeChatStoredUserEntry(ForgeParser parser, Entry entry) {
-		this.parser = parser;
-		this.entry = entry;
+		this.parser = Objects.requireNonNull(parser);
+		this.entry = Objects.requireNonNull(entry);
 	}
 
 	public Entry getImpl() {

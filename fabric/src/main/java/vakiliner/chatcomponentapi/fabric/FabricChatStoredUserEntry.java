@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.fabric;
 
+import java.util.Objects;
 import net.minecraft.server.players.StoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 
@@ -8,8 +9,8 @@ public class FabricChatStoredUserEntry<Entry extends StoredUserEntry<?>> impleme
 	protected final Entry entry;
 
 	public FabricChatStoredUserEntry(FabricParser parser, Entry entry) {
-		this.parser = parser;
-		this.entry = entry;
+		this.parser = Objects.requireNonNull(parser);
+		this.entry = Objects.requireNonNull(entry);
 	}
 
 	public Entry getImpl() {
