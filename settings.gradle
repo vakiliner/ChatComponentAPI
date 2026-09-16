@@ -20,6 +20,5 @@ pluginManagement {
 include 'core'
 include 'craftbukkit'
 include 'spigot'
-include 'paper'
 include 'fabric'
 include 'forge'
