@@ -4,8 +4,8 @@ plugins {
 
 repositories {
 	maven {
-		name = 'Codemc'
-		url = 'https://repo.codemc.io/repository/nms/'
+		name = 'Papermc'
+		url = 'https://repo.papermc.io/repository/maven-public/'
 	}
 
 	mavenCentral()
