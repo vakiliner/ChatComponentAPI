@@ -12,7 +12,6 @@ import vakiliner.chatcomponentapi.component.ChatTextComponent;
 public abstract class DevTester {
 	private final List<Throwable> ERRORS = new ArrayList<>();
 	private int testCount = 0;
-	private int failCount = 0;
 
 	protected abstract void log(String message);
 
@@ -36,7 +35,7 @@ public abstract class DevTester {
 			} catch (Throwable err) {
 				component2.append(component1.clone());
 			}
-			component1.clone();
+			component1.serialize().toString();
 		});
 	}
 
@@ -78,7 +77,6 @@ public abstract class DevTester {
 		}
 		testCount++;
 		if (!success) {
-			failCount++;
 			ERRORS.add(new RuntimeException("Test failed: " + name, error));
 		}
 		return success;
@@ -88,7 +86,7 @@ public abstract class DevTester {
 		this.log("Tests started");
 		runnable.run();
 		int tests = testCount;
-		int fails = failCount;
+		int fails = ERRORS.size();
 		this.log("Fails " + fails + '/' + testCount);
 		ERRORS.forEach(Throwable::printStackTrace);
 		clearTests();
@@ -97,7 +95,6 @@ public abstract class DevTester {
 
 	protected final void clearTests() {
 		testCount = 0;
-		failCount = 0;
 		ERRORS.clear();
 	}
 }

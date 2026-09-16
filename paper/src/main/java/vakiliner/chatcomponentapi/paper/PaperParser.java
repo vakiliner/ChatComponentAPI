@@ -41,8 +41,8 @@ import vakiliner.chatcomponentapi.spigot.SpigotParser;
 
 public class PaperParser extends SpigotParser {
 	@Override
-	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.sendMessage(sender, paper(component, sender instanceof ConsoleCommandSender), paper(type), uuid != null ? Identity.identity(uuid) : null);
+	public void sendMessage(CommandSender sender, ChatComponent chatComponent, ChatMessageType chatMessageType, UUID uuid) {
+		this.sendMessage(sender, paper(chatComponent, sender instanceof ConsoleCommandSender), paper(chatMessageType), uuid != null ? Identity.identity(uuid) : null);
 	}
 
 	private void sendMessage(CommandSender sender, Component component, MessageType type, Identity identity) {

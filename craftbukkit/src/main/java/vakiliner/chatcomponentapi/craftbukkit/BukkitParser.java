@@ -80,6 +80,7 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
+	@Deprecated
 	public void execute(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IBukkitChatPlugin) {
 			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;
@@ -93,6 +94,7 @@ public class BukkitParser extends BaseParser {
 		}
 	}
 
+	@Deprecated
 	public void executeBlocking(BukkitScheduler scheduler, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IBukkitChatPlugin) {
 			IBukkitChatPlugin chatPlugin = (IBukkitChatPlugin) raw;

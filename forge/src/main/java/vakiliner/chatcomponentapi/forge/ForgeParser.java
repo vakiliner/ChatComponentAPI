@@ -94,6 +94,7 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	@Deprecated
 	public void execute(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IForgeChatPlugin) {
 			@SuppressWarnings("unused")
@@ -104,6 +105,7 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	@Deprecated
 	public void executeBlocking(MinecraftServer server, IChatPlugin raw, Runnable runnable) {
 		if (raw instanceof IForgeChatPlugin) {
 			@SuppressWarnings("unused")
