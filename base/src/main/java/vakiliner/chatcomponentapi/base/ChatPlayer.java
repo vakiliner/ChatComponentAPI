@@ -15,7 +15,7 @@ public interface ChatPlayer extends ChatOfflinePlayer, ChatCommandSender {
 	ChatComponent getDisplayName();
 
 	ChatGameMode getGameMode();
-	
+
 	SocketAddress getAddress();
 
 	default void kick() {

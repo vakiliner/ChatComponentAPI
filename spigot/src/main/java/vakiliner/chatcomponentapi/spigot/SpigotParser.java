@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -19,7 +20,6 @@ import net.md_5.bungee.api.chat.hover.content.Entity;
 import net.md_5.bungee.api.chat.hover.content.Item;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import vakiliner.chatcomponentapi.common.ChatId;
-import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
@@ -34,11 +34,11 @@ import vakiliner.chatcomponentapi.craftbukkit.BukkitParser;
 
 public class SpigotParser extends BukkitParser {
 	@Override
-	public void sendMessage(CommandSender sender, ChatComponent component, ChatMessageType type, UUID uuid) {
-		this.sendMessage(sender, spigot(component, sender instanceof ConsoleCommandSender), spigot(type), uuid);
+	public void sendMessage(CommandSender sender, ChatComponent chatComponent, vakiliner.chatcomponentapi.common.ChatMessageType chatMessageType, UUID uuid) {
+		this.sendMessage(sender, spigot(chatComponent, sender instanceof ConsoleCommandSender), spigot(chatMessageType), uuid);
 	}
 
-	private void sendMessage(CommandSender sender, BaseComponent component, net.md_5.bungee.api.ChatMessageType type, UUID uuid) {
+	private void sendMessage(CommandSender sender, BaseComponent component, ChatMessageType type, UUID uuid) {
 		if (sender instanceof Player) {
 			Player player = (Player) sender;
 			if (uuid != null) {
@@ -56,10 +56,10 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	@Override
-	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, ChatMessageType chatMessageType, UUID uuid) {
+	public void broadcast(Iterable<CommandSender> recipients, ChatComponent chatComponent, vakiliner.chatcomponentapi.common.ChatMessageType chatMessageType, UUID uuid) {
 		BaseComponent component = spigot(chatComponent, false);
 		BaseComponent consoleComponent = spigot(chatComponent, true);
-		net.md_5.bungee.api.ChatMessageType type = spigot(chatMessageType);
+		ChatMessageType type = spigot(chatMessageType);
 		for (CommandSender recipient : recipients) {
 			this.sendMessage(recipient, recipient instanceof ConsoleCommandSender ? consoleComponent : component, type, uuid);
 		}
@@ -208,21 +208,21 @@ public class SpigotParser extends BukkitParser {
 		return content != null ? new ChatHoverEvent.ShowItem(ChatId.of(content.getId()), content.getCount()) : null;
 	}
 
-	public static net.md_5.bungee.api.ChatMessageType spigot(ChatMessageType type) {
-		if (type == null) return null;
-		switch (type) {
-			case CHAT: return net.md_5.bungee.api.ChatMessageType.CHAT;
-			case SYSTEM: return net.md_5.bungee.api.ChatMessageType.SYSTEM;
-			default: throw new IllegalArgumentException("Unknown ChatMessageType " + type);
-		}
-	}
-
-	public static ChatMessageType spigot(net.md_5.bungee.api.ChatMessageType type) {
+	public static ChatMessageType spigot(vakiliner.chatcomponentapi.common.ChatMessageType type) {
 		if (type == null) return null;
 		switch (type) {
 			case CHAT: return ChatMessageType.CHAT;
 			case SYSTEM: return ChatMessageType.SYSTEM;
-			default: throw new IllegalArgumentException("Unknown ChatMessageType " + type);
+			default: throw new IllegalArgumentException("Unknown vakiliner.chatcomponentapi.common.ChatMessageType " + type);
+		}
+	}
+
+	public static vakiliner.chatcomponentapi.common.ChatMessageType spigot(ChatMessageType type) {
+		if (type == null) return null;
+		switch (type) {
+			case CHAT: return vakiliner.chatcomponentapi.common.ChatMessageType.CHAT;
+			case SYSTEM: return vakiliner.chatcomponentapi.common.ChatMessageType.SYSTEM;
+			default: throw new IllegalArgumentException("Unknown net.md_5.bungee.api.ChatMessageType " + type);
 		}
 	}
 
