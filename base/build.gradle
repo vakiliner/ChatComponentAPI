@@ -12,9 +12,9 @@ repositories {
 }
 
 dependencies {
-	compileOnly "com.google.code.gson:gson:${project.gson_version}"
-	compileOnly "com.google.guava:guava:${project.google_guava_version}"
-	compileOnly "com.mojang:authlib:${project.authlib_version}"
+	implementation "com.google.code.gson:gson:${project.gson_version}"
+	implementation "com.google.guava:guava:${project.google_guava_version}"
+	implementation "com.mojang:authlib:${project.authlib_version}"
 }
 
 configurations {
