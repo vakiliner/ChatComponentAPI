@@ -3,8 +3,8 @@ plugins {
 }
 
 dependencies {
-	implementation project(':base')
-	testImplementation project(path: ':base', configuration: 'test')
+	implementation project(':core')
+	testImplementation project(path: ':core', configuration: 'test')
 	minecraft "net.minecraft:minecraft:${project.minecraft_version}"
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"

@@ -2,7 +2,7 @@ plugins {
 	id 'dev.architectury.loom' version "${loom_version}" apply false
 }
 
-var base = findProject(':base')
+var core = project(':core')
 var craftbukkit = findProject(':craftbukkit')
 var spigot = findProject(':spigot')
 var paper = findProject(':paper')
@@ -39,9 +39,7 @@ allprojects {
 subprojects {
 	apply plugin: 'java'
 
-	it.base {
-		archivesName = "${project.archives_base_name}-${project.display_name}"
-	}
+	base.archivesName = "${project.archives_base_name}-${project.display_name}"
 
 	task devJar(type: Jar) {
 		var task = tasks.getByName('jar')
@@ -71,14 +69,14 @@ def generateManifestAttributes() {
 }
 
 jar {
-	if (base != null) evaluationDependsOn(base.getName())
+	evaluationDependsOn(core.getName())
 	if (craftbukkit != null) evaluationDependsOn(craftbukkit.getName())
 	if (spigot != null) evaluationDependsOn(spigot.getName())
 	if (paper != null) evaluationDependsOn(paper.getName())
 	if (fabric != null) evaluationDependsOn(fabric.getName())
 	if (forge != null) evaluationDependsOn(forge.getName())
 
-	var baseJar = base != null ? base.tasks.getByName('jar') : null
+	var coreJar = core.tasks.getByName('jar')
 	var craftbukkitJar = craftbukkit != null ? craftbukkit.tasks.getByName('jar') : null
 	var spigotJar = spigot != null ? spigot.tasks.getByName('jar') : null
 	var paperJar = paper != null ? paper.tasks.getByName('jar') : null
@@ -88,7 +86,7 @@ jar {
 	var forgeRemapJar = forge != null ? forge.tasks.getByName('remapJar') : null
 
 	from 'LICENSE'
-	if (baseJar != null) from(zipTree(baseJar.archiveFile))
+	from(zipTree(coreJar.archiveFile))
 	if (craftbukkitJar != null) from(zipTree(craftbukkitJar.archiveFile))
 	if (spigotJar != null) from(zipTree(spigotJar.archiveFile))
 	if (paperJar != null) from(zipTree(paperJar.archiveFile))
@@ -96,7 +94,7 @@ jar {
 	if (forgeRemapJar != null) from(zipTree(forgeRemapJar.archiveFile))
 
 	manifest {
-		if (baseJar != null) from baseJar.manifest
+		from coreJar.manifest
 		if (craftbukkitJar != null) from craftbukkitJar.manifest
 		if (spigotJar != null) from spigotJar.manifest
 		if (paperJar != null) from paperJar.manifest
@@ -107,7 +105,7 @@ jar {
 }
 
 task devJar(type: Jar) {
-	if (base != null) evaluationDependsOn(base.getName())
+	evaluationDependsOn(core.getName())
 	if (craftbukkit != null) evaluationDependsOn(craftbukkit.getName())
 	if (spigot != null) evaluationDependsOn(spigot.getName())
 	if (paper != null) evaluationDependsOn(paper.getName())
@@ -116,7 +114,7 @@ task devJar(type: Jar) {
 
 	archiveBaseName = "Dev${project.base.archivesName.get()}"
 
-	var baseJar = base != null ? base.tasks.getByName('devJar') : null
+	var coreJar = core.tasks.getByName('devJar')
 	var craftbukkitJar = craftbukkit != null ? craftbukkit.tasks.getByName('devJar') : null
 	var spigotJar = spigot != null ? spigot.tasks.getByName('devJar') : null
 	var paperJar = paper != null ? paper.tasks.getByName('devJar') : null
@@ -126,7 +124,7 @@ task devJar(type: Jar) {
 	var forgeRemapJar = forge != null ? forge.tasks.getByName('remapDevJar') : null
 
 	from 'LICENSE'
-	if (baseJar != null) from(zipTree(baseJar.archiveFile))
+	from(zipTree(coreJar.archiveFile))
 	if (craftbukkitJar != null) from(zipTree(craftbukkitJar.archiveFile))
 	if (spigotJar != null) from(zipTree(spigotJar.archiveFile))
 	if (paperJar != null) from(zipTree(paperJar.archiveFile))
@@ -134,7 +132,7 @@ task devJar(type: Jar) {
 	if (forgeRemapJar != null) from(zipTree(forgeRemapJar.archiveFile))
 
 	manifest {
-		if (baseJar != null) from baseJar.manifest
+		from coreJar.manifest
 		if (craftbukkitJar != null) from craftbukkitJar.manifest
 		if (spigotJar != null) from spigotJar.manifest
 		if (paperJar != null) from paperJar.manifest
