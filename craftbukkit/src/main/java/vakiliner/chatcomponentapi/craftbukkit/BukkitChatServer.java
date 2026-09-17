@@ -19,6 +19,7 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class BukkitChatServer implements ChatServer, ChatPlayerList {
+	protected static final Class<?> NMS_CLASS;
 	private static final Method GET_HANDLE;
 	private static final Method EXECUTE_SYNC;
 	private static final Method GET_SINGLE_PLAYER_NAME;
@@ -30,28 +31,28 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		try {
 			// Gets a method of the CraftServer class, not the Server class
 			GET_HANDLE = server.getClass().getMethod("getServer");
+			if (!Executor.class.isAssignableFrom(GET_HANDLE.getReturnType())) {
+				throw new NoSuchMethodException();
+			}
 		} catch (NoSuchMethodException err) {
 			throw new IllegalStateException(err);
 		}
-		Class<?> nmsClass = GET_HANDLE.getReturnType();
-		if (!Executor.class.isAssignableFrom(nmsClass)) {
-			throw new IllegalStateException();
+		NMS_CLASS = getNMS(server).getClass();
+		try {
+			EXECUTE_SYNC = NMS_CLASS.getMethod("executeSync", Runnable.class);
+			if (EXECUTE_SYNC.getReturnType() != void.class) {
+				throw new NoSuchMethodException();
+			}
+		} catch (NoSuchMethodException err) {
+			throw new IllegalStateException(err);
 		}
 		try {
-			EXECUTE_SYNC = nmsClass.getMethod("executeSync", Runnable.class);
+			GET_SINGLE_PLAYER_NAME = NMS_CLASS.getMethod("getSinglePlayerName");
+			if (GET_SINGLE_PLAYER_NAME.getReturnType() != String.class) {
+				throw new NoSuchMethodException();
+			}
 		} catch (NoSuchMethodException err) {
 			throw new IllegalStateException(err);
-		}
-		if (EXECUTE_SYNC.getReturnType() != void.class) {
-			throw new IllegalStateException();
-		}
-		try {
-			GET_SINGLE_PLAYER_NAME = nmsClass.getMethod("getSinglePlayerName");
-		} catch (NoSuchMethodException err) {
-			throw new IllegalStateException(err);
-		}
-		if (GET_SINGLE_PLAYER_NAME.getReturnType() != String.class) {
-			throw new IllegalStateException();
 		}
 	}
 
@@ -64,14 +65,9 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		return this.server;
 	}
 
-	@Override
-	public ChatServer getServer() {
-		return this;
-	}
-
-	public Executor getNMS() {
+	public static Executor getNMS(Server server) {
 		try {
-			return (Executor) GET_HANDLE.invoke(this.server);
+			return (Executor) GET_HANDLE.invoke(server);
 		} catch (IllegalAccessException err) {
 			throw new IllegalStateException(err);
 		} catch (InvocationTargetException err) {
@@ -80,6 +76,15 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 			if (target instanceof RuntimeException) throw (RuntimeException) target;
 			throw new RuntimeException(err);
 		}
+	}
+
+	public Executor getNMS() {
+		return getNMS(this.server);
+	}
+
+	@Override
+	public ChatServer getServer() {
+		return this;
 	}
 
 	@Override
