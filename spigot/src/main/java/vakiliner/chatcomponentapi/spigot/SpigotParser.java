@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.spigot;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -128,6 +129,19 @@ public class SpigotParser extends BukkitParser {
 		return chatComponent;
 	}
 
+	protected static ChatComponent spigot(BaseComponent[] components) {
+		return spigot(Arrays.asList(components));
+	}
+
+	protected static ChatComponent spigot(List<BaseComponent> components) {
+		if (components.size() == 1) {
+			return spigot(components.get(0));
+		}
+		ChatTextComponent chatComponent = new ChatTextComponent();
+		components.stream().map(SpigotParser::spigot).forEach(chatComponent::append);
+		return chatComponent;
+	}
+
 	public static ClickEvent spigot(ChatClickEvent event) {
 		if (event == null) return null;
 		switch (event.action()) {
@@ -178,7 +192,7 @@ public class SpigotParser extends BukkitParser {
 			if (value instanceof String) {
 				chatComponent = new ChatTextComponent((String) value);
 			} else if (value instanceof BaseComponent[]) {
-				chatComponent = spigot(((BaseComponent[]) value)[0]);
+				chatComponent = spigot((BaseComponent[]) value);
 			} else {
 				throw new IllegalArgumentException("Could not parse ChatComponent from " + value.getClass());
 			}

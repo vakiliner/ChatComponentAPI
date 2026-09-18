@@ -335,6 +335,18 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 	}
 
 	public static ChatComponent deserialize(JsonElement element) {
+		if (element.isJsonArray()) {
+			ChatComponent component = null;
+			for (JsonElement childElement : element.getAsJsonArray()) {
+				ChatComponent child = getDeserializer(childElement).apply(childElement);
+				if (component == null) {
+					component = child;
+				} else {
+					component.append(child);
+				}
+			}
+			return Objects.requireNonNull(component);
+		}
 		return getDeserializer(element).apply(element);
 	}
 
