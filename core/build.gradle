@@ -13,6 +13,7 @@ repositories {
 
 dependencies {
 	compileOnly "com.google.code.gson:gson:${project.gson_version}"
+	testCompileOnly "com.google.code.gson:gson:${project.gson_version}"
 	compileOnly "com.google.guava:guava:${project.google_guava_version}"
 	compileOnly "com.mojang:authlib:${project.authlib_version}"
 }
