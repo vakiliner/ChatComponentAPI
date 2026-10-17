@@ -20,11 +20,10 @@
 			"vakiliner.chatcomponentapi.ChatComponentAPIFabricLoader"
 		]
 	},
-	"mixins": [
-		"chatcomponentapi.mixins.fabric.json"
-	],
+	"accessWidener": "chatcomponentapi.accesswidener",
 	"depends": {
-		"minecraft": "~1.16"
+		"minecraft": "~1.16",
+		"fabricloader": ">=0.8"
 	},
 	"breaks": {
 		"chatmoderator": "<=0.1.3-beta6"

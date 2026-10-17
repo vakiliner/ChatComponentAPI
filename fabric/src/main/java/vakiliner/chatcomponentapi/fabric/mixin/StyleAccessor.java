@@ -9,6 +9,7 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.resources.ResourceLocation;
 
+@Deprecated
 @Mixin(Style.class)
 public interface StyleAccessor {
 	@Invoker("<init>")
