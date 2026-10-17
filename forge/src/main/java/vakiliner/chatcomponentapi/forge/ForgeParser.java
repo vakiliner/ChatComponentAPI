@@ -47,8 +47,6 @@ import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.forge.mixin.ItemStackInfoAccessor;
-import vakiliner.chatcomponentapi.forge.mixin.StyleAccessor;
 
 public class ForgeParser extends BaseParser {
 	@Override
@@ -169,24 +167,23 @@ public class ForgeParser extends BaseParser {
 	public static Style forge(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
 		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleAccessor.newStyle(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		return new Style(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
 	}
 
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(accessor.getColor()));
-		builder.withBold(accessor.getBold());
-		builder.withItalic(accessor.getItalic());
-		builder.withUnderlined(accessor.getUnderlined());
-		builder.withStrikethrough(accessor.getStrikethrough());
-		builder.withObfuscated(accessor.getObfuscated());
-		builder.withClickEvent(forge(accessor.getClickEvent()));
-		builder.withHoverEvent(forge(accessor.getHoverEvent()));
-		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(forge(accessor.$getFont()));
+		builder.withColor(forge(style.color));
+		builder.withBold(style.bold);
+		builder.withItalic(style.italic);
+		builder.withUnderlined(style.underlined);
+		builder.withStrikethrough(style.strikethrough);
+		builder.withObfuscated(style.obfuscated);
+		builder.withClickEvent(forge(style.clickEvent));
+		builder.withHoverEvent(forge(style.hoverEvent));
+		builder.withInsertion(style.insertion);
+		builder.withFont(forge(style.font));
 		return builder.build();
 	}
 
@@ -262,8 +259,7 @@ public class ForgeParser extends BaseParser {
 	@SuppressWarnings("deprecation")
 	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemStackInfo content) {
 		if (content == null) return null;
-		ItemStackInfoAccessor accessor = (ItemStackInfoAccessor) content;
-		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
+		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(content.item)), content.count);
 	}
 
 	public static ResourceLocation forge(ChatId id) {
