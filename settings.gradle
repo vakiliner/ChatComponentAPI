@@ -24,6 +24,6 @@ plugins {
 include 'core'
 include 'craftbukkit'
 include 'spigot'
-include 'paper'
+// include 'paper'
 include 'fabric'
 include 'forge'
