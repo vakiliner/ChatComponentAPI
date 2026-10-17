@@ -20,9 +20,7 @@
 			"vakiliner.chatcomponentapi.ChatComponentAPIFabricLoader"
 		]
 	},
-	"mixins": [
-		"chatcomponentapi.mixins.fabric.json"
-	],
+	"accessWidener": "chatcomponentapi.accesswidener",
 	"depends": {
 		"minecraft": "~1.16"
 	},

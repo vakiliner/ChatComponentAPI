@@ -47,8 +47,6 @@ import vakiliner.chatcomponentapi.component.ChatSelectorComponent;
 import vakiliner.chatcomponentapi.component.ChatStyle;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 import vakiliner.chatcomponentapi.component.ChatTranslateComponent;
-import vakiliner.chatcomponentapi.fabric.mixin.ItemStackInfoAccessor;
-import vakiliner.chatcomponentapi.fabric.mixin.StyleAccessor;
 
 public class FabricParser extends BaseParser {
 	@Override
@@ -169,24 +167,23 @@ public class FabricParser extends BaseParser {
 	public static Style fabric(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
 		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return StyleAccessor.newStyle(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont()));
+		return new Style(fabric(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), fabric(chatStyle.getClickEvent()), fabric(chatStyle.getHoverEvent()), chatStyle.getInsertion(), fabric(chatStyle.getFont()));
 	}
 
 	public static ChatStyle fabric(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
-		StyleAccessor accessor = (StyleAccessor) style;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(fabric(accessor.getColor()));
-		builder.withBold(accessor.getBold());
-		builder.withItalic(accessor.getItalic());
-		builder.withUnderlined(accessor.getUnderlined());
-		builder.withStrikethrough(accessor.getStrikethrough());
-		builder.withObfuscated(accessor.getObfuscated());
-		builder.withClickEvent(fabric(accessor.getClickEvent()));
-		builder.withHoverEvent(fabric(accessor.getHoverEvent()));
-		builder.withInsertion(accessor.getInsertion());
-		builder.withFont(fabric(accessor.$getFont()));
+		builder.withColor(fabric(style.color));
+		builder.withBold(style.bold);
+		builder.withItalic(style.italic);
+		builder.withUnderlined(style.underlined);
+		builder.withStrikethrough(style.strikethrough);
+		builder.withObfuscated(style.obfuscated);
+		builder.withClickEvent(fabric(style.clickEvent));
+		builder.withHoverEvent(fabric(style.hoverEvent));
+		builder.withInsertion(style.insertion);
+		builder.withFont(fabric(style.font));
 		return builder.build();
 	}
 
@@ -258,8 +255,7 @@ public class FabricParser extends BaseParser {
 
 	public static ChatHoverEvent.ShowItem fabric(HoverEvent.ItemStackInfo content) {
 		if (content == null) return null;
-		ItemStackInfoAccessor accessor = (ItemStackInfoAccessor) content;
-		return new ChatHoverEvent.ShowItem(fabric(Registry.ITEM.getKey(accessor.getItem())), accessor.getCount());
+		return new ChatHoverEvent.ShowItem(fabric(Registry.ITEM.getKey(content.item)), content.count);
 	}
 
 	public static ResourceLocation fabric(ChatId id) {
