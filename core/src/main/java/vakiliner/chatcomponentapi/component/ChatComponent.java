@@ -12,6 +12,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import com.google.common.collect.Queues;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -335,6 +338,12 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 	}
 
 	public static ChatComponent deserialize(JsonElement element) {
+		if (element.isJsonArray()) {
+			Queue<ChatComponent> components = StreamSupport.stream(element.getAsJsonArray().spliterator(), false).map(ChatComponent::deserialize).collect(Collectors.toCollection(Queues::newArrayDeque));
+			ChatComponent component = components.remove();
+			components.forEach(component::append);
+			return Objects.requireNonNull(component);
+		}
 		return getDeserializer(element).apply(element);
 	}
 
