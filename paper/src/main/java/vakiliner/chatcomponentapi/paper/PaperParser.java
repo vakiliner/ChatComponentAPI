@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.audience.MessageType;
 import net.kyori.adventure.identity.Identity;
 import net.kyori.adventure.key.Key;
@@ -22,8 +23,6 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import vakiliner.chatcomponentapi.base.ChatPlayer;
-import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
@@ -45,11 +44,11 @@ public class PaperParser extends SpigotParser {
 		this.sendMessage(sender, paper(chatComponent, sender instanceof ConsoleCommandSender), paper(chatMessageType), uuid != null ? Identity.identity(uuid) : null);
 	}
 
-	private void sendMessage(CommandSender sender, Component component, MessageType type, Identity identity) {
+	private void sendMessage(Audience audience, Component component, MessageType type, Identity identity) {
 		if (identity != null) {
-			sender.sendMessage(identity, component, type);
+			audience.sendMessage(identity, component, type);
 		} else {
-			sender.sendMessage(component, type);
+			audience.sendMessage(component, type);
 		}
 	}
 
@@ -67,6 +66,26 @@ public class PaperParser extends SpigotParser {
 	@Override
 	public void kickPlayer(Player player, ChatComponent reason) {
 		player.kick(paper(reason));
+	}
+
+	@Override
+	public ChatComponent getDisplayName(Player player) {
+		return paper(player.displayName());
+	}
+
+	@Override
+	public ChatComponent getDisplayName(Team team) {
+		return paper(team.displayName());
+	}
+
+	@Override
+	public ChatComponent getPrefix(Team team) {
+		return paper(team.prefix());
+	}
+
+	@Override
+	public ChatComponent getSuffix(Team team) {
+		return paper(team.suffix());
 	}
 
 	public static Component paper(ChatComponent raw) {
@@ -288,15 +307,5 @@ public class PaperParser extends SpigotParser {
 		} else {
 			return ChatTextColor.color(color.value(), null);
 		}
-	}
-
-	@Override
-	public ChatPlayer toChatPlayer(Player player) {
-		return player != null ? new PaperChatPlayer(this, player) : null;
-	}
-
-	@Override
-	public ChatTeam toChatTeam(Team team) {
-		return team != null ? new PaperChatTeam(this, team) : null;
 	}
 }
