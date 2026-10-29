@@ -1,8 +1,8 @@
 package vakiliner.chatcomponentapi.spigot;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.bukkit.command.CommandSender;
@@ -241,7 +241,7 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	protected static ChatStyle spigotStyle(BaseComponent component) {
-		Objects.requireNonNull(component);
+		requireNonNull(component);
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
 		builder.withColor(spigotColor(component.getColorRaw()));
 		builder.withBold(component.isBoldRaw());

@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
+import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +31,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 	}
 
 	public ChatComponent(ChatStyle style) {
-		this.style = Objects.requireNonNull(style);
+		this.style = requireNonNull(style);
 	}
 
 	public ChatComponent(ChatTextColor color) {
@@ -183,7 +184,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 	}
 
 	public void setStyle(ChatStyle style) {
-		this.style = Objects.requireNonNull(style);
+		this.style = requireNonNull(style);
 	}
 
 	@Deprecated
@@ -342,7 +343,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 			Queue<ChatComponent> components = StreamSupport.stream(element.getAsJsonArray().spliterator(), false).map(ChatComponent::deserialize).collect(Collectors.toCollection(Queues::newArrayDeque));
 			ChatComponent component = components.remove();
 			components.forEach(component::append);
-			return Objects.requireNonNull(component);
+			return requireNonNull(component);
 		}
 		return getDeserializer(element).apply(element);
 	}

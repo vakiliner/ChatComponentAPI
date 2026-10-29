@@ -1,7 +1,7 @@
 package vakiliner.chatcomponentapi.component;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Map;
-import java.util.Objects;
 import com.google.common.collect.Maps;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -12,8 +12,8 @@ public class ChatClickEvent implements IGsonSerializer {
 	private final String value;
 
 	public ChatClickEvent(Action action, String value) {
-		this.action = Objects.requireNonNull(action);
-		this.value = Objects.requireNonNull(value);
+		this.action = requireNonNull(action);
+		this.value = requireNonNull(value);
 	}
 
 	public ChatClickEvent(ChatClickEvent event) {
