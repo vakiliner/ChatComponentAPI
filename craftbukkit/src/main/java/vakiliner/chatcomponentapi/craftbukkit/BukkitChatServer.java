@@ -1,9 +1,9 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import static java.util.Objects.requireNonNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
@@ -57,8 +57,8 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	public BukkitChatServer(BukkitParser parser, Server server) {
-		this.parser = Objects.requireNonNull(parser);
-		this.server = Objects.requireNonNull(server);
+		this.parser = requireNonNull(parser);
+		this.server = requireNonNull(server);
 	}
 
 	public Server getImpl() {

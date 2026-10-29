@@ -1,6 +1,6 @@
 package vakiliner.chatcomponentapi.fabric;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
@@ -15,8 +15,8 @@ public class FabricChatServer implements ChatServer {
 	protected final MinecraftServer server;
 
 	public FabricChatServer(FabricParser parser, MinecraftServer server) {
-		this.parser = Objects.requireNonNull(parser);
-		this.server = Objects.requireNonNull(server);
+		this.parser = requireNonNull(parser);
+		this.server = requireNonNull(server);
 	}
 
 	public MinecraftServer getImpl() {

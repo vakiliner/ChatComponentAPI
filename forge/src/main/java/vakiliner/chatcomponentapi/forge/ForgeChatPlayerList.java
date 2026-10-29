@@ -1,7 +1,7 @@
 package vakiliner.chatcomponentapi.forge;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
 import net.minecraft.server.players.PlayerList;
@@ -17,8 +17,8 @@ public class ForgeChatPlayerList implements ChatPlayerList {
 	protected final PlayerList playerList;
 
 	public ForgeChatPlayerList(ForgeParser parser, PlayerList playerList) {
-		this.parser = Objects.requireNonNull(parser);
-		this.playerList = Objects.requireNonNull(playerList);
+		this.parser = requireNonNull(parser);
+		this.playerList = requireNonNull(playerList);
 	}
 
 	public PlayerList getImpl() {

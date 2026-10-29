@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
+import static java.util.Objects.requireNonNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -247,7 +248,7 @@ public final class ChatStyle implements IGsonSerializer {
 	}
 
 	public static JsonObject serialize(ChatStyle style, JsonObject object) {
-		Objects.requireNonNull(object);
+		requireNonNull(object);
 		ChatTextColor color = style.color;
 		Boolean bold = style.bold;
 		Boolean italic = style.italic;
