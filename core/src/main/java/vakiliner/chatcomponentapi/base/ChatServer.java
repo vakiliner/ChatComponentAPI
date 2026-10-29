@@ -2,6 +2,7 @@ package vakiliner.chatcomponentapi.base;
 
 import java.util.concurrent.Executor;
 import com.mojang.authlib.GameProfile;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 
 public interface ChatServer extends Executor, ChatCommandSender {
 	ChatPlayerList getPlayerList();
@@ -17,7 +18,12 @@ public interface ChatServer extends Executor, ChatCommandSender {
 
 	boolean isSingleplayer();
 
-	boolean isSingleplayerOwner(GameProfile gameProfile);
+	@Deprecated
+	default boolean isSingleplayerOwner(GameProfile gameProfile) {
+		return this.isSingleplayerOwner(BaseParser.base(gameProfile));
+	}
+
+	boolean isSingleplayerOwner(ChatNameAndId chatNameAndId);
 
 	@Override
 	void execute(Runnable command);
