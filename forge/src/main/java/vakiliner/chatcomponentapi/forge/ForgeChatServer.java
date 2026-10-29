@@ -1,6 +1,6 @@
 package vakiliner.chatcomponentapi.forge;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import java.util.UUID;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
@@ -15,8 +15,8 @@ public class ForgeChatServer implements ChatServer {
 	protected final MinecraftServer server;
 
 	public ForgeChatServer(ForgeParser parser, MinecraftServer server) {
-		this.parser = Objects.requireNonNull(parser);
-		this.server = Objects.requireNonNull(server);
+		this.parser = requireNonNull(parser);
+		this.server = requireNonNull(server);
 	}
 
 	public MinecraftServer getImpl() {

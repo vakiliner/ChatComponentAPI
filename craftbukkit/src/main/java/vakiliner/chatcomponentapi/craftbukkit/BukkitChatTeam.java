@@ -1,6 +1,6 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import org.bukkit.scoreboard.Team;
 import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.common.ChatNamedColor;
@@ -11,8 +11,8 @@ public class BukkitChatTeam implements ChatTeam {
 	protected final Team team;
 
 	public BukkitChatTeam(BukkitParser parser, Team team) {
-		this.parser = Objects.requireNonNull(parser);
-		this.team = Objects.requireNonNull(team);
+		this.parser = requireNonNull(parser);
+		this.team = requireNonNull(team);
 	}
 
 	public Team getTeam() {

@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Objects;
 import java.util.Set;
 import com.google.gson.JsonElement;
@@ -11,7 +12,7 @@ public class ChatSelectorComponent extends ChatComponent {
 	private ChatComponent separator;
 
 	public ChatSelectorComponent(String selector) {
-		this.selector = Objects.requireNonNull(selector);
+		this.selector = requireNonNull(selector);
 	}
 
 	public ChatSelectorComponent(String selector, ChatComponent separator) {
@@ -21,17 +22,17 @@ public class ChatSelectorComponent extends ChatComponent {
 
 	public ChatSelectorComponent(String selector, ChatStyle style) {
 		super(style);
-		this.selector = Objects.requireNonNull(selector);
+		this.selector = requireNonNull(selector);
 	}
 
 	public ChatSelectorComponent(String selector, ChatTextColor color) {
 		super(color);
-		this.selector = Objects.requireNonNull(selector);
+		this.selector = requireNonNull(selector);
 	}
 
 	public ChatSelectorComponent(String selector, ChatComponentFormat format) {
 		super(format);
-		this.selector = Objects.requireNonNull(selector);
+		this.selector = requireNonNull(selector);
 	}
 
 	public ChatSelectorComponent(String selector, ChatComponent separator, ChatStyle style) {
@@ -69,7 +70,7 @@ public class ChatSelectorComponent extends ChatComponent {
 	}
 
 	public void setSelector(String selector) {
-		this.selector = Objects.requireNonNull(selector);
+		this.selector = requireNonNull(selector);
 	}
 
 	public void setSeparator(ChatComponent separator) {

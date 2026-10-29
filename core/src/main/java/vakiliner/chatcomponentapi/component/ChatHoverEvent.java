@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -17,8 +18,8 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 	private final V contents;
 
 	public ChatHoverEvent(Action<V> action, V contents) {
-		this.action = Objects.requireNonNull(action);
-		this.contents = Objects.requireNonNull(contents);
+		this.action = requireNonNull(action);
+		this.contents = requireNonNull(contents);
 	}
 
 	@Deprecated
@@ -166,8 +167,8 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		private final ChatComponent name;
 
 		public ShowEntity(ChatId type, UUID id, ChatComponent name) {
-			this.type = Objects.requireNonNull(type);
-			this.id = Objects.requireNonNull(id);
+			this.type = requireNonNull(type);
+			this.id = requireNonNull(id);
 			this.name = name;
 		}
 
@@ -249,7 +250,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		private final int count;
 
 		public ShowItem(ChatId id, int count) {
-			this.id = Objects.requireNonNull(id);
+			this.id = requireNonNull(id);
 			this.count = count;
 		}
 

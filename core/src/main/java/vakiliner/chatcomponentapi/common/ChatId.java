@@ -1,14 +1,14 @@
 package vakiliner.chatcomponentapi.common;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 
 public class ChatId {
 	private final String namespace;
 	private final String value;
 
 	public ChatId(String namespace, String value) {
-		this.namespace = Objects.requireNonNull(namespace);
-		this.value = Objects.requireNonNull(value);
+		this.namespace = requireNonNull(namespace);
+		this.value = requireNonNull(value);
 	}
 
 	public String namespace() {
