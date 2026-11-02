@@ -13,7 +13,7 @@ import vakiliner.chatcomponentapi.component.ChatComponent;
 public class FabricChatPlayer extends FabricChatOfflinePlayer implements ChatPlayer {
 	protected final ServerPlayer player;
 
-	public  FabricChatPlayer(FabricParser parser, ServerPlayer player) {
+	public FabricChatPlayer(FabricParser parser, ServerPlayer player) {
 		super(parser, player.server, player.getGameProfile());
 		this.player = requireNonNull(player);
 	}
