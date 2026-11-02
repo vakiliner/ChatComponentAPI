@@ -3,7 +3,7 @@ plugins {
 }
 
 repositories {
-	maven {
+    maven {
 		name = 'MinecraftLibs'
 		url = 'https://libraries.minecraft.net'
 	}
