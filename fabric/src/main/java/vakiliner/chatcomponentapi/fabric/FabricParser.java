@@ -53,7 +53,7 @@ public class FabricParser extends BaseParser {
 	public boolean supportsSeparatorInSelector() {
 		return false;
 	}
-	
+
 	@Override
 	public boolean supportsFontInStyle() {
 		return true;
