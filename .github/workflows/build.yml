@@ -10,7 +10,7 @@ jobs:
       - name: Set up editorconfig-checker
         uses: editorconfig-checker/action-editorconfig-checker@main
       - name: Run editorconfig-checker
-        run: editorconfig-checker -f github-actions -dry-run
+        run: editorconfig-checker -f github-actions
   build:
     name: Build
     runs-on: ubuntu-latest
