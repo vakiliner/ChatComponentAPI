@@ -234,7 +234,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 		public static ShowEntity deserialize(JsonElement element, boolean old) {
 			JsonObject object = element.getAsJsonObject();
-			ChatId type = ChatId.of(object.getAsJsonPrimitive("type").getAsString());
+			ChatId type = ChatId.fromString(object.getAsJsonPrimitive("type").getAsString());
 			UUID id = UUID.fromString(object.getAsJsonPrimitive("id").getAsString());
 			JsonElement name = object.get("name");
 			if (name != null) {
@@ -292,7 +292,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 		public static ShowItem deserialize(JsonElement element) {
 			JsonObject object = element.getAsJsonObject();
-			ChatId id = ChatId.of(object.getAsJsonPrimitive("id").getAsString());
+			ChatId id = ChatId.fromString(object.getAsJsonPrimitive("id").getAsString());
 			JsonPrimitive count = object.getAsJsonPrimitive("count");
 			if (count != null) {
 				return new ShowItem(id, count.getAsInt());
