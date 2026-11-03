@@ -211,7 +211,7 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static ChatHoverEvent.ShowEntity spigot(Entity content) {
-		return content != null ? new ChatHoverEvent.ShowEntity(ChatId.of(content.getType()), UUID.fromString(content.getId()), spigot(content.getName())) : null;
+		return content != null ? new ChatHoverEvent.ShowEntity(ChatId.fromString(content.getType()), UUID.fromString(content.getId()), spigot(content.getName())) : null;
 	}
 
 	public static Item spigot(ChatHoverEvent.ShowItem content) {
@@ -219,7 +219,7 @@ public class SpigotParser extends BukkitParser {
 	}
 
 	public static ChatHoverEvent.ShowItem spigot(Item content) {
-		return content != null ? new ChatHoverEvent.ShowItem(ChatId.of(content.getId()), content.getCount()) : null;
+		return content != null ? new ChatHoverEvent.ShowItem(ChatId.fromString(content.getId()), content.getCount()) : null;
 	}
 
 	public static ChatMessageType spigot(vakiliner.chatcomponentapi.common.ChatMessageType type) {
@@ -252,7 +252,7 @@ public class SpigotParser extends BukkitParser {
 		builder.withClickEvent(spigot(component.getClickEvent()));
 		builder.withHoverEvent(spigot(component.getHoverEvent()));
 		builder.withInsertion(component.getInsertion());
-		builder.withFont(ChatId.of(component.getFont()));
+		builder.withFont(ChatId.fromString(component.getFont()));
 		return builder.build();
 	}
 

@@ -294,7 +294,7 @@ public final class ChatStyle implements IGsonSerializer {
 		if (clickEvent != null) builder.withClickEvent(ChatClickEvent.deserialize(clickEvent));
 		if (hoverEvent != null) builder.withHoverEvent(ChatHoverEvent.deserialize(hoverEvent));
 		if (insertion != null) builder.withInsertion(insertion.getAsString());
-		if (font != null) builder.withFont(ChatId.of(font.getAsString()));
+		if (font != null) builder.withFont(ChatId.fromString(font.getAsString()));
 		return builder.build();
 	}
 
