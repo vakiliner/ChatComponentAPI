@@ -1,11 +1,11 @@
 package vakiliner.chatcomponentapi.component;
 
 import static java.util.Objects.requireNonNull;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -55,6 +55,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		}
 	}
 
+	@Override
 	public ChatComponent clone() {
 		return this.clone(true);
 	}
@@ -251,12 +252,13 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		this.setStyle(this.style.withFormats(map));
 	}
 
+	@SuppressWarnings("ReferenceEquality")
 	public void append(ChatComponent component) {
 		if (component == this) throw new IllegalArgumentException("This component cannot be added");
 		List<ChatComponent> extra = component.extra;
 		if (extra != null) {
 			Set<ChatComponent> checked = new HashSet<>();
-			Queue<ChatComponent> queue = new LinkedList<>(extra);
+			Queue<ChatComponent> queue = new ArrayDeque<>(extra);
 			ChatComponent current = null;
 			while ((current = queue.poll()) != null) {
 				if (checked.contains(current)) continue;

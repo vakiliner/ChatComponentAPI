@@ -21,6 +21,7 @@ public class ChatClickEvent implements IGsonSerializer {
 		this.value = event.value;
 	}
 
+	@Override
 	public ChatClickEvent clone() {
 		return new ChatClickEvent(this);
 	}

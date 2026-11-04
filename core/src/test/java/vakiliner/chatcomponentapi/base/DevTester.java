@@ -19,6 +19,7 @@ public abstract class DevTester {
 		this.startTestsBase();
 	}
 
+	@SuppressWarnings({ "ReturnValueIgnored", "ReferenceEquality" })
 	public final void startTestsBase() {
 		test("ChatComponentWithLegacyText", () -> {
 			ChatTextComponent legacyComponent = new ChatTextComponent("legacy");
