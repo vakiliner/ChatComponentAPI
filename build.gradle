@@ -22,7 +22,6 @@ allprojects {
 
 	dependencies {
 		errorprone "com.google.errorprone:error_prone_core:${error_prone_google_version}"
-		compileOnly "com.google.errorprone:error_prone_annotations:${error_prone_google_version}"
 	}
 
 	java.toolchain.languageVersion = JavaLanguageVersion.of(8)
