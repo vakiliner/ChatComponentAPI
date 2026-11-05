@@ -1,7 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
 import static java.util.Objects.requireNonNull;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -55,7 +54,6 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		}
 	}
 
-	@Override
 	public ChatComponent clone() {
 		return this.clone(true);
 	}
@@ -258,7 +256,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		List<ChatComponent> extra = component.extra;
 		if (extra != null) {
 			Set<ChatComponent> checked = new HashSet<>();
-			Queue<ChatComponent> queue = new ArrayDeque<>(extra);
+			Queue<ChatComponent> queue = Queues.newArrayDeque(extra);
 			ChatComponent current = null;
 			while ((current = queue.poll()) != null) {
 				if (checked.contains(current)) continue;
