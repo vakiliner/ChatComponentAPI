@@ -68,14 +68,14 @@ public class ForgeChatServer implements ChatServer {
 		this.server.executeBlocking(command);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server, plugin, runnable);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
 		this.parser.executeBlocking(this.server, plugin, runnable);
 	}
