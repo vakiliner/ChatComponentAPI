@@ -29,8 +29,8 @@ public class BukkitChatPlayer extends BukkitChatOfflinePlayer implements ChatPla
 		return this.parser.getDisplayName(this.getPlayer());
 	}
 
-	@Override
 	@SuppressWarnings("deprecation")
+	@Override
 	public ChatGameMode getGameMode() {
 		return ChatGameMode.getByValue(this.getPlayer().getGameMode().getValue());
 	}

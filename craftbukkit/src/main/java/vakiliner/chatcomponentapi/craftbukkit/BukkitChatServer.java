@@ -175,14 +175,14 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		}
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server.getScheduler(), plugin, runnable);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
 		this.parser.executeBlocking(this.server.getScheduler(), plugin, runnable);
 	}

@@ -46,56 +46,56 @@ public abstract class ChatComponentModified extends ChatComponent {
 		return this.component.getStyle();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public ChatTextColor getColorRaw() {
 		return this.component.getColorRaw();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Boolean isBoldRaw() {
 		return this.component.isBoldRaw();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Boolean isItalicRaw() {
 		return this.component.isItalicRaw();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Boolean isUnderlinedRaw() {
 		return this.component.isUnderlinedRaw();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Boolean isStrikethroughRaw() {
 		return this.component.isStrikethroughRaw();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Boolean isObfuscatedRaw() {
 		return this.component.isObfuscatedRaw();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public String getInsertion() {
 		return this.component.getInsertion();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public ChatClickEvent getClickEvent() {
 		return this.component.getClickEvent();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public ChatHoverEvent<?> getHoverEvent() {
 		return this.component.getHoverEvent();
 	}
@@ -105,14 +105,14 @@ public abstract class ChatComponentModified extends ChatComponent {
 		return this.component.getExtra();
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Boolean getFormatRaw(ChatComponentFormat format) {
 		return this.component.getFormatRaw(format);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public Map<ChatComponentFormat, Boolean> getFormatsRaw() {
 		return this.component.getFormatsRaw();
 	}
@@ -122,74 +122,74 @@ public abstract class ChatComponentModified extends ChatComponent {
 		this.component.setStyle(style);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setColor(ChatTextColor color) {
 		this.component.setColor(color);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setBold(Boolean bold) {
 		this.component.setBold(bold);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setItalic(Boolean italic) {
 		this.component.setItalic(italic);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setUnderlined(Boolean underlined) {
 		this.component.setUnderlined(underlined);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setStrikethrough(Boolean strikethrough) {
 		this.component.setStrikethrough(strikethrough);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setObfuscated(Boolean obfuscated) {
 		this.component.setObfuscated(obfuscated);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setInsertion(String insertion) {
 		this.component.setInsertion(insertion);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setClickEvent(ChatClickEvent clickEvent) {
 		this.component.setClickEvent(clickEvent);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setHoverEvent(ChatHoverEvent<?> hoverEvent) {
 		this.component.setHoverEvent(hoverEvent);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setExtra(Collection<ChatComponent> children) {
 		this.component.setExtra(children);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setFormat(ChatComponentFormat format, Boolean isSet) {
 		this.component.setFormat(format, isSet);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void setFormats(Map<ChatComponentFormat, Boolean> map) {
 		this.component.setFormats(map);
 	}
