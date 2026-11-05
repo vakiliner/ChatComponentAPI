@@ -61,6 +61,7 @@ public final class ChatStyle implements IGsonSerializer {
 		return newBuilder(this);
 	}
 
+	@SuppressWarnings("MissingOverride")
 	public ChatStyle clone() {
 		return new ChatStyle(this);
 	}
