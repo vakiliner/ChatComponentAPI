@@ -44,13 +44,15 @@ public abstract class DevTester {
 		});
 		test("Reference equals ChatComponent extra check", () -> {
 			ChatComponent component = new ChatTextComponent();
-			ChatComponent component2 = new ChatTextComponent();
-			ChatComponent component3 = new ChatComponentEqualsHashCode();
-			component3.append(component);
-			component2.append(new ChatComponentEqualsHashCode());
-			component2.append(component3);
+			ChatComponent append = new ChatTextComponent();
+			ChatComponent a = new ChatComponentEqualsHashCode();
+			ChatComponent b = new ChatComponentEqualsHashCode();
+			a.append(component.copy());
+			b.append(component);
+			append.append(a);
+			append.append(b);
 			try {
-				component.append(component2);
+				component.append(append);
 			} catch (IllegalArgumentException err) {
 				if (err.getClass() != IllegalArgumentException.class || err.getCause() != null || err.getMessage() != "Components are looping, try cloning the component before appending") {
 					throw err;
