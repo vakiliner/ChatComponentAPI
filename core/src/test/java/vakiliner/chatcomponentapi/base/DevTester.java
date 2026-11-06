@@ -40,7 +40,7 @@ public abstract class DevTester {
 		});
 		test("Reference equals ChatComponent extra check", () -> {
 			ChatComponent component = new ChatTextComponent();
-			ChatComponent component2 = new ChatComponentEqualsHashCode();
+			ChatComponent component2 = new ChatTextComponent();
 			ChatComponent component3 = new ChatComponentEqualsHashCode();
 			component3.append(component);
 			component2.append(new ChatComponentEqualsHashCode());
