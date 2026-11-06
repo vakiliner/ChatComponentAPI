@@ -42,25 +42,12 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		this(ChatStyle.EMPTY.withFormat(format));
 	}
 
-	protected ChatComponent(ChatComponent component, boolean cloneExtra) {
+	protected ChatComponent(ChatComponent component) {
 		this.style = component.style;
-		if (cloneExtra) {
-			List<ChatComponent> clone = component.extra;
-			if (clone != null) {
-				List<ChatComponent> extra = this.extra = new ArrayList<>();
-				clone.forEach((c) -> extra.add(c.clone(true)));
-			}
-		} else {
-			this.extra = component.extra;
-		}
+		this.extra = component.extra;
 	}
 
-	@SuppressWarnings("MissingOverride")
-	public ChatComponent clone() {
-		return this.clone(true);
-	}
-
-	public abstract ChatComponent clone(boolean cloneExtra);
+	public abstract ChatComponent copy();
 
 	public String toLegacyText() {
 		return this.toLegacyText(null, Collections.emptySet());
@@ -257,7 +244,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		if (component == this) throw new IllegalArgumentException("This component cannot be added");
 		List<ChatComponent> extra = component.extra;
 		if (extra != null && !extra.isEmpty()) {
-			Collection<ChatComponent> checked = Sets.newHashSet();
+			Collection<ChatComponent> checked = Sets.newIdentityHashSet();
 			Queue<ChatComponent> queue = Queues.newArrayDeque(extra);
 			ChatComponent current;
 			while ((current = queue.poll()) != null) {

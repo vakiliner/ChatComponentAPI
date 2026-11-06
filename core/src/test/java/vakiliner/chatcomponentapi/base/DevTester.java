@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.component.ChatComponentEqualsHashCode;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 
@@ -28,15 +29,37 @@ public abstract class DevTester {
 			return chatComponentWithLegacyText.toLegacyText().equals(legacyComponent.toLegacyText()) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
 		test("Looping ChatComponent extra", () -> {
-			ChatComponent component1 = new ChatTextComponent("123");
-			ChatComponent component2 = new ChatTextComponent("456");
-			component1.append(component2);
+			ChatComponent component = new ChatTextComponent();
+			ChatComponent test = new ChatTextComponent();
+			test.append(component);
 			try {
-				component2.append(component1);
-			} catch (Throwable err) {
-				component2.append(component1.clone());
+				component.append(test);
+			} catch (IllegalArgumentException err) {
+				if (err.getClass() != IllegalArgumentException.class || err.getCause() != null || err.getMessage() != "Components are looping, try cloning the component before appending") {
+					throw err;
+				}
+				component = component.copy();
+				component.append(test);
 			}
-			component1.serialize().toString();
+			component.serialize().toString();
+		});
+		test("Reference equals ChatComponent extra check", () -> {
+			ChatComponent component = new ChatTextComponent();
+			ChatComponent append = new ChatTextComponent();
+			ChatComponent a = new ChatComponentEqualsHashCode();
+			ChatComponent b = new ChatComponentEqualsHashCode();
+			a.append(component.copy());
+			b.append(component);
+			append.append(a);
+			append.append(b);
+			try {
+				component.append(append);
+			} catch (IllegalArgumentException err) {
+				if (err.getClass() != IllegalArgumentException.class || err.getCause() != null || err.getMessage() != "Components are looping, try cloning the component before appending") {
+					throw err;
+				}
+			}
+			component.serialize().toString();
 		});
 	}
 
