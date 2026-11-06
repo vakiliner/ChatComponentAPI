@@ -28,15 +28,6 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		this(action, (V) contents);
 	}
 
-	public ChatHoverEvent(ChatHoverEvent<V> event) {
-		this.action = event.action;
-		this.contents = event.contents;
-	}
-
-	public ChatHoverEvent<V> clone() {
-		return new ChatHoverEvent<>(this);
-	}
-
 	public Action<V> action() {
 		return this.action;
 	}

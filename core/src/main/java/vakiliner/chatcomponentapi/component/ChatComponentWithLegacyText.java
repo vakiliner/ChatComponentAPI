@@ -27,7 +27,7 @@ public class ChatComponentWithLegacyText extends ChatComponentModified {
 	}
 
 	@Override
-	public ChatComponent clone(boolean cloneExtra) {
+	public ChatComponentWithLegacyText copy() {
 		return new ChatComponentWithLegacyText(this);
 	}
 

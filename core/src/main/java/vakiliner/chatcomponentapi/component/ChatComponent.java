@@ -42,24 +42,12 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		this(ChatStyle.EMPTY.withFormat(format));
 	}
 
-	protected ChatComponent(ChatComponent component, boolean cloneExtra) {
+	protected ChatComponent(ChatComponent component) {
 		this.style = component.style;
-		if (cloneExtra) {
-			List<ChatComponent> clone = component.extra;
-			if (clone != null) {
-				List<ChatComponent> extra = this.extra = new ArrayList<>();
-				clone.forEach((c) -> extra.add(c.clone(true)));
-			}
-		} else {
-			this.extra = component.extra;
-		}
+		this.extra = component.extra;
 	}
 
-	public ChatComponent clone() {
-		return this.clone(true);
-	}
-
-	public abstract ChatComponent clone(boolean cloneExtra);
+	public abstract ChatComponent copy();
 
 	public String toLegacyText() {
 		return this.toLegacyText(null, Collections.emptySet());
