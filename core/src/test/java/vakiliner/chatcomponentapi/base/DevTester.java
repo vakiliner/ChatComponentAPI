@@ -36,7 +36,8 @@ public abstract class DevTester {
 				if (err.getClass() != IllegalArgumentException.class || err.getCause() != null || err.getMessage() != "Components are looping, try cloning the component before appending") {
 					throw err;
 				}
-				component2.append(component1.copy());
+				component2 = component2.copy();
+				component2.append(component1);
 			}
 			component1.serialize().toString();
 		});
