@@ -52,7 +52,7 @@ public abstract class DevTester {
 			try {
 				component.append(component2);
 			} catch (IllegalArgumentException err) {
-				if (err.getClass() != IllegalArgumentException.class || err.getMessage() != "Components are looping, try cloning the component before appending") {
+				if (err.getClass() != IllegalArgumentException.class || err.getCause() != null || err.getMessage() != "Components are looping, try cloning the component before appending") {
 					throw err;
 				}
 			}
