@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.function.BooleanSupplier;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.component.ChatComponentEqualsHashCode;
 import vakiliner.chatcomponentapi.component.ChatComponentWithLegacyText;
 import vakiliner.chatcomponentapi.component.ChatTextComponent;
 
@@ -36,6 +37,22 @@ public abstract class DevTester {
 				component2.append(component1.clone());
 			}
 			component1.serialize().toString();
+		});
+		test("Reference equals ChatComponent extra check", () -> {
+			ChatComponent component = new ChatTextComponent();
+			ChatComponent component2 = new ChatComponentEqualsHashCode();
+			ChatComponent component3 = new ChatComponentEqualsHashCode();
+			component3.append(component);
+			component2.append(new ChatComponentEqualsHashCode());
+			component2.append(component3);
+			try {
+				component.append(component2);
+			} catch (IllegalArgumentException err) {
+				if (err.getClass() != IllegalArgumentException.class || err.getMessage() != "Components are looping, try cloning the component before appending") {
+					throw err;
+				}
+			}
+			component.serialize().toString();
 		});
 	}
 
