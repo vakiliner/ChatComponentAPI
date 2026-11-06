@@ -261,7 +261,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 			Queue<ChatComponent> queue = Queues.newArrayDeque(extra);
 			ChatComponent current;
 			while ((current = queue.poll()) != null) {
-				if (checked.add(current)) continue;
+				if (!checked.add(current)) continue;
 				if (current == this) throw new IllegalArgumentException("Components are looping, try cloning the component before appending");
 				List<ChatComponent> e = current.extra;
 				if (e != null) queue.addAll(e);
