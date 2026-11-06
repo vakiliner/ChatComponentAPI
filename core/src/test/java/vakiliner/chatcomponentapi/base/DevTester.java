@@ -27,19 +27,19 @@ public abstract class DevTester {
 			return chatComponentWithLegacyText.toLegacyText().equals(legacyComponent.toLegacyText()) && chatComponentWithLegacyText.getComponent() == chatComponent;
 		});
 		test("Looping ChatComponent extra", () -> {
-			ChatComponent component1 = new ChatTextComponent("123");
-			ChatComponent component2 = new ChatTextComponent("456");
-			component1.append(component2);
+			ChatComponent component = new ChatTextComponent();
+			ChatComponent test = new ChatTextComponent();
+			test.append(component);
 			try {
-				component2.append(component1);
+				component.append(test);
 			} catch (IllegalArgumentException err) {
 				if (err.getClass() != IllegalArgumentException.class || err.getCause() != null || err.getMessage() != "Components are looping, try cloning the component before appending") {
 					throw err;
 				}
-				component2 = component2.copy();
-				component2.append(component1);
+				component = component.copy();
+				component.append(test);
 			}
-			component1.serialize().toString();
+			component.serialize().toString();
 		});
 	}
 
