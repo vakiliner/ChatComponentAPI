@@ -256,14 +256,13 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 	public void append(ChatComponent component) {
 		if (component == this) throw new IllegalArgumentException("This component cannot be added");
 		List<ChatComponent> extra = component.extra;
-		if (extra != null) {
+		if (extra != null && !extra.isEmpty()) {
 			Collection<ChatComponent> checked = Sets.newHashSet();
 			Queue<ChatComponent> queue = Queues.newArrayDeque(extra);
 			ChatComponent current;
 			while ((current = queue.poll()) != null) {
-				if (checked.contains(current)) continue;
+				if (checked.add(current)) continue;
 				if (current == this) throw new IllegalArgumentException("Components are looping, try cloning the component before appending");
-				checked.add(current);
 				List<ChatComponent> e = current.extra;
 				if (e != null) queue.addAll(e);
 			}
