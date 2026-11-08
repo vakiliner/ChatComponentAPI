@@ -48,6 +48,7 @@ public final class ChatStyle implements IGsonSerializer {
 		return newBuilder(this);
 	}
 
+	@SuppressWarnings("ReferenceEquality")
 	public boolean isEmpty() {
 		return this == EMPTY;
 	}
@@ -181,9 +182,9 @@ public final class ChatStyle implements IGsonSerializer {
 	}
 
 	public ChatStyle applyTo(ChatStyle style) {
-		if (this == EMPTY) {
+		if (this.isEmpty()) {
 			return style;
-		} else if (style == EMPTY) {
+		} else if (style.isEmpty()) {
 			return this;
 		} else return new ChatStyle(
 			this.color			!= null ? this.color			: style.color,

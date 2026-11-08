@@ -239,6 +239,7 @@ public abstract class ChatComponent implements ChatHoverEvent.IContent {
 		this.setStyle(this.style.withFormats(map));
 	}
 
+	@SuppressWarnings("ReferenceEquality")
 	public void append(ChatComponent component) {
 		if (component == this) throw new IllegalArgumentException("This component cannot be added");
 		List<ChatComponent> extra = component.extra;
