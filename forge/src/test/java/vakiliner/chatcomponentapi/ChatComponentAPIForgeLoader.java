@@ -5,11 +5,11 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
+import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
 import vakiliner.chatcomponentapi.forge.ForgeDevTester;
 import vakiliner.chatcomponentapi.forge.ForgeParser;
@@ -32,8 +32,8 @@ public class ChatComponentAPIForgeLoader implements IForgeChatPlugin {
 	}
 
 	@SubscribeEvent
-	public void onRegisterCommands(RegisterCommandsEvent event) {
-		CommandDispatcher<CommandSourceStack> dispatcher = event.getDispatcher();
+	public void onRegisterCommands(FMLServerStartingEvent event) {
+		CommandDispatcher<CommandSourceStack> dispatcher = event.getCommandDispatcher();
 		dispatcher.register(testCommand());
 	}
 

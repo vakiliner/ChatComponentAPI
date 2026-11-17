@@ -1,23 +1,21 @@
 package vakiliner.chatcomponentapi.forge;
 
-import static net.minecraft.Util.NIL_UUID;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSource;
-import net.minecraft.core.Registry;
 import net.minecraft.network.chat.ChatType;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.SelectorComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundChatPacket;
@@ -25,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.PlayerList;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.scores.PlayerTeam;
 import vakiliner.chatcomponentapi.base.BaseParser;
 import vakiliner.chatcomponentapi.base.ChatCommandSender;
@@ -37,7 +34,7 @@ import vakiliner.chatcomponentapi.base.ChatTeam;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
-import vakiliner.chatcomponentapi.common.ChatTextColor;
+import vakiliner.chatcomponentapi.common.ChatNamedColor;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatClickEvent;
 import vakiliner.chatcomponentapi.component.ChatComponent;
@@ -56,16 +53,15 @@ public class ForgeParser extends BaseParser {
 
 	@Override
 	public boolean supportsFontInStyle() {
-		return true;
+		return false;
 	}
 
 	public void sendMessage(CommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
-		if (uuid == null) uuid = NIL_UUID;
 		Component component = forge(chatComponent, commandSource instanceof MinecraftServer);
 		if (commandSource instanceof ServerPlayer) {
-			((ServerPlayer) commandSource).sendMessage(component, forge(type), uuid);
+			((ServerPlayer) commandSource).sendMessage(component, forge(type));
 		} else {
-			commandSource.sendMessage(component, uuid);
+			commandSource.sendMessage(component);
 		}
 	}
 
@@ -74,9 +70,8 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
-		if (uuid == null) uuid = NIL_UUID;
-		ClientboundChatPacket packet = new ClientboundChatPacket(forge(component), forge(type), uuid);
-		playerList.getServer().sendMessage(forge(component, true), uuid);
+		ClientboundChatPacket packet = new ClientboundChatPacket(forge(component), forge(type));
+		playerList.getServer().sendMessage(forge(component, true));
 		if (predicate == null) {
 			playerList.broadcastAll(packet);
 		} else for (ServerPlayer player : playerList.getPlayers()) {
@@ -121,7 +116,7 @@ public class ForgeParser extends BaseParser {
 		if (raw instanceof ChatComponentModified) {
 			raw = ((ChatComponentModified) raw).getComponent(isConsole);
 		}
-		final MutableComponent component;
+		final Component component;
 		if (raw instanceof ChatTextComponent) {
 			ChatTextComponent chatComponent = (ChatTextComponent) raw;
 			component = new TextComponent(chatComponent.getText());
@@ -166,15 +161,25 @@ public class ForgeParser extends BaseParser {
 
 	public static Style forge(ChatStyle chatStyle) {
 		if (chatStyle == null) return null;
-		if (chatStyle.isEmpty()) return Style.EMPTY;
-		return new Style(forge(chatStyle.getColor()), chatStyle.getBold(), chatStyle.getItalic(), chatStyle.getUnderlined(), chatStyle.getStrikethrough(), chatStyle.getObfuscated(), forge(chatStyle.getClickEvent()), forge(chatStyle.getHoverEvent()), chatStyle.getInsertion(), forge(chatStyle.getFont()));
+		Style style = new Style();
+		if (chatStyle.isEmpty()) return style;
+		style.setColor(forge(ChatTextFormat.getFromColor(chatStyle.getColor(), null)));
+		style.setBold(chatStyle.getBold());
+		style.setItalic(chatStyle.getItalic());
+		style.setUnderlined(chatStyle.getUnderlined());
+		style.setStrikethrough(chatStyle.getStrikethrough());
+		style.setObfuscated(chatStyle.getObfuscated());
+		style.setClickEvent(forge(chatStyle.getClickEvent()));
+		style.setHoverEvent(forge(chatStyle.getHoverEvent()));
+		style.setInsertion(chatStyle.getInsertion());
+		return style;
 	}
 
 	public static ChatStyle forge(Style style) {
 		if (style == null) return null;
 		if (style.isEmpty()) return ChatStyle.EMPTY;
 		ChatStyle.Builder builder = ChatStyle.newBuilder();
-		builder.withColor(forge(style.color));
+		builder.withColor(ChatNamedColor.getByFormat(forge(style.color)));
 		builder.withBold(style.bold);
 		builder.withItalic(style.italic);
 		builder.withUnderlined(style.underlined);
@@ -183,7 +188,6 @@ public class ForgeParser extends BaseParser {
 		builder.withClickEvent(forge(style.clickEvent));
 		builder.withHoverEvent(forge(style.hoverEvent));
 		builder.withInsertion(style.insertion);
-		builder.withFont(forge(style.font));
 		return builder.build();
 	}
 
@@ -213,15 +217,16 @@ public class ForgeParser extends BaseParser {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	public static HoverEvent forge(ChatHoverEvent<?> event) {
 		if (event == null) return null;
 		ChatHoverEvent.Action<?> action = event.action();
 		if (action == ChatHoverEvent.Action.SHOW_TEXT) {
-			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, forge(event.getValue(ChatHoverEvent.Action.SHOW_TEXT)));
+			return new HoverEvent(HoverEvent.Action.SHOW_TEXT, forge(event.getValue()));
 		} else if (action == ChatHoverEvent.Action.SHOW_ENTITY) {
-			return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, forge(event.getValue(ChatHoverEvent.Action.SHOW_ENTITY)));
+			return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, forge(event.getValue()));
 		} else if (action == ChatHoverEvent.Action.SHOW_ITEM) {
-			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, forge(event.getValue(ChatHoverEvent.Action.SHOW_ITEM)));
+			return new HoverEvent(HoverEvent.Action.SHOW_ITEM, forge(event.getValue()));
 		} else {
 			throw new IllegalArgumentException("Unknown ChatHoverEvent.Action " + action);
 		}
@@ -229,37 +234,17 @@ public class ForgeParser extends BaseParser {
 
 	public static ChatHoverEvent<?> forge(HoverEvent event) {
 		if (event == null) return null;
-		HoverEvent.Action<?> action = event.getAction();
+		HoverEvent.Action action = event.getAction();
+		Component contents = event.getValue();
 		if (action == HoverEvent.Action.SHOW_TEXT) {
-			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, forge(event.getValue(HoverEvent.Action.SHOW_TEXT)));
-		} else if (action == HoverEvent.Action.SHOW_ENTITY) {
-			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, forge(event.getValue(HoverEvent.Action.SHOW_ENTITY)));
-		} else if (action == HoverEvent.Action.SHOW_ITEM) {
-			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, forge(event.getValue(HoverEvent.Action.SHOW_ITEM)));
-		} else {
-			throw new IllegalArgumentException("Unknown HoverEvent.Action " + action);
+			return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, forge(contents));
 		}
-	}
-
-	@SuppressWarnings("deprecation")
-	public static HoverEvent.EntityTooltipInfo forge(ChatHoverEvent.ShowEntity content) {
-		return content != null ? new HoverEvent.EntityTooltipInfo(Registry.ENTITY_TYPE.get(forge(content.getType())), content.getUniqueId(), forge(content.getName())) : null;
-	}
-
-	@SuppressWarnings("deprecation")
-	public static ChatHoverEvent.ShowEntity forge(HoverEvent.EntityTooltipInfo content) {
-		return content != null ? new ChatHoverEvent.ShowEntity(forge(Registry.ENTITY_TYPE.getKey(content.type)), content.id, forge(content.name)) : null;
-	}
-
-	@SuppressWarnings("deprecation")
-	public static HoverEvent.ItemStackInfo forge(ChatHoverEvent.ShowItem content) {
-		return content != null ? new HoverEvent.ItemStackInfo(new ItemStack(Registry.ITEM.get(forge(content.getItem())), content.getCount())) : null;
-	}
-
-	@SuppressWarnings("deprecation")
-	public static ChatHoverEvent.ShowItem forge(HoverEvent.ItemStackInfo content) {
-		if (content == null) return null;
-		return new ChatHoverEvent.ShowItem(forge(Registry.ITEM.getKey(content.item)), content.count);
+		JsonElement value = new Gson().fromJson(contents.getContents(), JsonElement.class);
+		switch (action) {
+			case SHOW_ENTITY: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, ChatHoverEvent.ShowEntity.deserialize(value, true));
+			case SHOW_ITEM: return new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, ChatHoverEvent.ShowItem.deserialize(value));
+			default: throw new IllegalArgumentException("Unknown action");
+		}
 	}
 
 	public static ResourceLocation forge(ChatId id) {
@@ -294,14 +279,6 @@ public class ForgeParser extends BaseParser {
 
 	public static ChatTextFormat forge(ChatFormatting formatting) {
 		return formatting != null ? ChatTextFormat.getByName(formatting.getName()) : null;
-	}
-
-	public static TextColor forge(ChatTextColor color) {
-		return color != null ? TextColor.parseColor(color.toString()) : null;
-	}
-
-	public static ChatTextColor forge(TextColor color) {
-		return color != null ? ChatTextColor.of(color.toString()) : null;
 	}
 
 	public ChatPlayer toChatPlayer(ServerPlayer player) {
