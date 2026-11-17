@@ -12,6 +12,8 @@ public interface ChatServer extends Executor, ChatCommandSender {
 		return true;
 	}
 
+	boolean isSameThread();
+
 	boolean isDedicatedServer();
 
 	String getSingleplayerName();
