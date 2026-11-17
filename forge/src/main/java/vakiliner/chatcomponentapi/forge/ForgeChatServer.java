@@ -39,6 +39,11 @@ public class ForgeChatServer implements ChatServer {
 	}
 
 	@Override
+	public boolean isSameThread() {
+		return this.server.isSameThread();
+	}
+
+	@Override
 	public boolean isDedicatedServer() {
 		return this.server.isDedicatedServer();
 	}

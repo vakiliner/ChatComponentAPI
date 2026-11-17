@@ -103,6 +103,11 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	@Override
+	public boolean isSameThread() {
+		return this.server.isPrimaryThread();
+	}
+
+	@Override
 	public boolean isDedicatedServer() {
 		return true;
 	}
