@@ -7,6 +7,7 @@ import org.bukkit.OfflinePlayer;
 import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 
 public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 	protected final BukkitParser parser;
@@ -22,8 +23,13 @@ public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 	}
 
 	@Override
+	public ChatNameAndId getNameAndId() {
+		return new ChatNameAndId(this.player.getUniqueId(), this.player.getName());
+	}
+
+	@Override
 	public GameProfile getGameProfile() {
-		return new GameProfile(this.player.getUniqueId(), this.player.getName());
+		return this.getNameAndId().toGameProfile();
 	}
 
 	@Override
