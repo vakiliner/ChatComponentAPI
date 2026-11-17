@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[32,)"
+loaderVersion="[29,)"
 license="${license}"
 issueTrackerURL="https://github.com/vakiliner/ChatComponentAPI/issues"
 
@@ -17,4 +17,4 @@ updateJSONURL="https://raw.githubusercontent.com/vakiliner/ChatComponentAPI/refs
 [[dependencies.chatcomponentapi]]
 	modId="minecraft"
 	mandatory=true
-	versionRange="[1.16,1.17)"
+	versionRange="[1.15,1.16)"
