@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.forge;
 
+import static net.minecraft.Util.NIL_UUID;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -7,7 +8,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.core.Registry;
 import net.minecraft.network.chat.ChatType;
@@ -60,7 +60,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public void sendMessage(CommandSource commandSource, ChatComponent chatComponent, ChatMessageType type, UUID uuid) {
-		if (uuid == null) uuid = Util.NIL_UUID;
+		if (uuid == null) uuid = NIL_UUID;
 		Component component = forge(chatComponent, commandSource instanceof MinecraftServer);
 		if (commandSource instanceof ServerPlayer) {
 			((ServerPlayer) commandSource).sendMessage(component, forge(type), uuid);
@@ -74,7 +74,7 @@ public class ForgeParser extends BaseParser {
 	}
 
 	public void broadcastMessage(PlayerList playerList, ChatComponent component, ChatMessageType type, UUID uuid, Predicate<? super ChatPlayer> predicate) {
-		if (uuid == null) uuid = Util.NIL_UUID;
+		if (uuid == null) uuid = NIL_UUID;
 		ClientboundChatPacket packet = new ClientboundChatPacket(forge(component), forge(type), uuid);
 		playerList.getServer().sendMessage(forge(component, true), uuid);
 		if (predicate == null) {

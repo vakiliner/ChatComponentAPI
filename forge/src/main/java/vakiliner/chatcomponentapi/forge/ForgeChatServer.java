@@ -1,6 +1,6 @@
 package vakiliner.chatcomponentapi.forge;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import java.util.UUID;
 import net.minecraft.server.MinecraftServer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
@@ -15,8 +15,8 @@ public class ForgeChatServer implements ChatServer {
 	protected final MinecraftServer server;
 
 	public ForgeChatServer(ForgeParser parser, MinecraftServer server) {
-		this.parser = Objects.requireNonNull(parser);
-		this.server = Objects.requireNonNull(server);
+		this.parser = requireNonNull(parser);
+		this.server = requireNonNull(server);
 	}
 
 	public MinecraftServer getImpl() {
@@ -68,14 +68,14 @@ public class ForgeChatServer implements ChatServer {
 		this.server.executeBlocking(command);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server, plugin, runnable);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
 		this.parser.executeBlocking(this.server, plugin, runnable);
 	}

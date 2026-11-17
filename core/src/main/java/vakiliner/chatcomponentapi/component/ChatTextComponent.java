@@ -1,6 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import java.util.Set;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,32 +26,32 @@ public class ChatTextComponent extends ChatComponent {
 	}
 
 	public ChatTextComponent(String text) {
-		this.text = Objects.requireNonNull(text);
+		this.text = requireNonNull(text);
 	}
 
 	public ChatTextComponent(String text, ChatStyle style) {
 		super(style);
-		this.text = Objects.requireNonNull(text);
+		this.text = requireNonNull(text);
 	}
 
 	public ChatTextComponent(String text, ChatTextColor color) {
 		super(color);
-		this.text = Objects.requireNonNull(text);
+		this.text = requireNonNull(text);
 	}
 
 	public ChatTextComponent(String text, ChatComponentFormat format) {
 		super(format);
-		this.text = Objects.requireNonNull(text);
+		this.text = requireNonNull(text);
 	}
 
-	public ChatTextComponent(ChatTextComponent component, boolean cloneExtra) {
-		super(component, cloneExtra);
+	public ChatTextComponent(ChatTextComponent component) {
+		super(component);
 		this.text = component.text;
 	}
 
 	@Override
-	public ChatTextComponent clone(boolean cloneExtra) {
-		return new ChatTextComponent(this, cloneExtra);
+	public ChatTextComponent copy() {
+		return new ChatTextComponent(this);
 	}
 
 	public String getText() {
@@ -59,7 +59,7 @@ public class ChatTextComponent extends ChatComponent {
 	}
 
 	public void setText(String text) {
-		this.text = Objects.requireNonNull(text);
+		this.text = requireNonNull(text);
 	}
 
 	@Override
@@ -73,7 +73,7 @@ public class ChatTextComponent extends ChatComponent {
 			return true;
 		} else if (!(obj instanceof ChatTextComponent)) {
 			return false;
-		} else  {
+		} else {
 			ChatTextComponent other = (ChatTextComponent) obj;
 			return super.equals(other) && this.text.equals(other.text);
 		}

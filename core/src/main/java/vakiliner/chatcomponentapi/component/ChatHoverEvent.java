@@ -1,5 +1,6 @@
 package vakiliner.chatcomponentapi.component;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -17,23 +18,14 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 	private final V contents;
 
 	public ChatHoverEvent(Action<V> action, V contents) {
-		this.action = Objects.requireNonNull(action);
-		this.contents = Objects.requireNonNull(contents);
+		this.action = requireNonNull(action);
+		this.contents = requireNonNull(contents);
 	}
 
 	@Deprecated
 	@SuppressWarnings("unchecked")
 	public ChatHoverEvent(Action<V> action, Object contents) {
 		this(action, (V) contents);
-	}
-
-	public ChatHoverEvent(ChatHoverEvent<V> event) {
-		this.action = event.action;
-		this.contents = event.contents;
-	}
-
-	public ChatHoverEvent<V> clone() {
-		return new ChatHoverEvent<>(this);
 	}
 
 	public Action<V> action() {
@@ -166,8 +158,8 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		private final ChatComponent name;
 
 		public ShowEntity(ChatId type, UUID id, ChatComponent name) {
-			this.type = Objects.requireNonNull(type);
-			this.id = Objects.requireNonNull(id);
+			this.type = requireNonNull(type);
+			this.id = requireNonNull(id);
 			this.name = name;
 		}
 
@@ -233,7 +225,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 		public static ShowEntity deserialize(JsonElement element, boolean old) {
 			JsonObject object = element.getAsJsonObject();
-			ChatId type = ChatId.of(object.getAsJsonPrimitive("type").getAsString());
+			ChatId type = ChatId.fromString(object.getAsJsonPrimitive("type").getAsString());
 			UUID id = UUID.fromString(object.getAsJsonPrimitive("id").getAsString());
 			JsonElement name = object.get("name");
 			if (name != null) {
@@ -249,7 +241,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 		private final int count;
 
 		public ShowItem(ChatId id, int count) {
-			this.id = Objects.requireNonNull(id);
+			this.id = requireNonNull(id);
 			this.count = count;
 		}
 
@@ -291,7 +283,7 @@ public class ChatHoverEvent<V extends ChatHoverEvent.IContent> implements IGsonS
 
 		public static ShowItem deserialize(JsonElement element) {
 			JsonObject object = element.getAsJsonObject();
-			ChatId id = ChatId.of(object.getAsJsonPrimitive("id").getAsString());
+			ChatId id = ChatId.fromString(object.getAsJsonPrimitive("id").getAsString());
 			JsonPrimitive count = object.getAsJsonPrimitive("count");
 			if (count != null) {
 				return new ShowItem(id, count.getAsInt());

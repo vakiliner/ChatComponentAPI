@@ -27,6 +27,7 @@ import vakiliner.chatcomponentapi.common.ChatId;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.common.ChatTextFormat;
 import vakiliner.chatcomponentapi.component.ChatComponent;
+import vakiliner.chatcomponentapi.component.ChatTextComponent;
 
 public class BukkitParser extends BaseParser {
 	@Override
@@ -108,6 +109,22 @@ public class BukkitParser extends BaseParser {
 
 	public void kickPlayer(Player player, ChatComponent reason) {
 		player.kickPlayer(reason != null ? reason.toLegacyText() : null);
+	}
+
+	public ChatComponent getDisplayName(Player player) {
+		return new ChatTextComponent(player.getDisplayName());
+	}
+
+	public ChatComponent getDisplayName(Team team) {
+		return new ChatTextComponent(team.getDisplayName());
+	}
+
+	public ChatComponent getPrefix(Team team) {
+		return new ChatTextComponent(team.getPrefix());
+	}
+
+	public ChatComponent getSuffix(Team team) {
+		return new ChatTextComponent(team.getSuffix());
 	}
 
 	public static ChatColor bukkit(ChatTextFormat color) {

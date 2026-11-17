@@ -77,7 +77,7 @@ public class ForgeDevTester extends DevTester {
 			return true;
 		});
 		test("Parse ChatHoverEvent", () -> {
-			ChatHoverEvent<?>[] input = { new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("123")), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, new ChatHoverEvent.ShowEntity(ChatId.of("creeper"), UUID.randomUUID(), new ChatTextComponent("Hello"))), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, new ChatHoverEvent.ShowItem(ChatId.of("dirt"), 15)) };
+			ChatHoverEvent<?>[] input = { new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("123")), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ENTITY, new ChatHoverEvent.ShowEntity(ChatId.minecraft("creeper"), UUID.randomUUID(), new ChatTextComponent("Hello"))), new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_ITEM, new ChatHoverEvent.ShowItem(ChatId.minecraft("dirt"), 15)) };
 			ChatHoverEvent<?>[] output = new ChatHoverEvent[input.length];
 			for (int i = 0; i < input.length; i++) {
 				HoverEvent test = ForgeParser.forge(input[i]);
@@ -130,7 +130,7 @@ public class ForgeDevTester extends DevTester {
 			builder.withClickEvent(new ChatClickEvent(ChatClickEvent.Action.RUN_COMMAND, "/chatcomponentapi test"));
 			builder.withHoverEvent(new ChatHoverEvent<>(ChatHoverEvent.Action.SHOW_TEXT, new ChatTextComponent("world")));
 			builder.withInsertion("Test");
-			if (this.parser.supportsFontInStyle()) builder.withFont(ChatId.of("default"));
+			if (this.parser.supportsFontInStyle()) builder.withFont(ChatId.minecraft("default"));
 			ChatStyle input = builder.build();
 			Style test = ForgeParser.forge(input);
 			ChatStyle output = ForgeParser.forge(test);
