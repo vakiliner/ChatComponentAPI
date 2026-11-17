@@ -16,6 +16,14 @@ public final class ChatNameAndId {
 		this(gameProfile.getId(), gameProfile.getName());
 	}
 
+	public static ChatNameAndId name(String name) {
+		return new ChatNameAndId(null, name);
+	}
+
+	public static ChatNameAndId id(UUID uuid) {
+		return new ChatNameAndId(uuid, null);
+	}
+
 	public UUID id() {
 		return this.id;
 	}
