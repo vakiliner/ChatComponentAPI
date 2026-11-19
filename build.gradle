@@ -1,6 +1,9 @@
 plugins {
 	id 'dev.architectury.loom' version "${loom_version}" apply false
+	id 'net.ltgt.errorprone' version "${error_prone_plugin_version}" apply false
 }
+
+import net.ltgt.gradle.errorprone.CheckSeverity
 
 var core = project(':core')
 var craftbukkit = findProject(':craftbukkit')
@@ -9,8 +12,17 @@ var paper = findProject(':paper')
 var fabric = findProject(':fabric')
 var forge = findProject(':forge')
 
+repositories {
+	mavenCentral()
+}
+
 allprojects {
 	apply plugin: 'java'
+	apply plugin: 'net.ltgt.errorprone'
+
+	dependencies {
+		errorprone "com.google.errorprone:error_prone_core:${error_prone_google_version}"
+	}
 
 	java.toolchain.languageVersion = JavaLanguageVersion.of(8)
 
@@ -33,6 +45,14 @@ allprojects {
 
 	tasks.withType(JavaCompile).configureEach {
 		options.encoding = 'UTF-8'
+		options.errorprone {
+			check('EqualsHashCode', CheckSeverity.OFF)
+			check('EqualsGetClass', CheckSeverity.OFF)
+			check('AmbiguousMethodReference', CheckSeverity.OFF)
+			check('InlineMeSuggester', CheckSeverity.OFF)
+			check('DoNotCallSuggester', CheckSeverity.OFF)
+			check('ObjectToString', CheckSeverity.OFF)
+		}
 	}
 }
 

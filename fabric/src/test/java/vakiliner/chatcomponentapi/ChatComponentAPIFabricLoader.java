@@ -24,6 +24,7 @@ public class ChatComponentAPIFabricLoader implements ModInitializer, IFabricChat
 		try {
 			net.fabricmc.fabric.api.command.v1.CommandRegistrationCallback.EVENT.register(this::register);
 		} catch (NoClassDefFoundError err) {
+			// Launch without commands
 		}
 		TESTER.startTests(TESTER::startTests);
 	}
