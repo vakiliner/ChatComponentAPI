@@ -1,9 +1,10 @@
 package vakiliner.chatcomponentapi.fabric;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Predicate;
+import com.google.common.collect.Collections2;
 import net.minecraft.server.players.PlayerList;
 import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
@@ -12,15 +13,14 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
 import vakiliner.chatcomponentapi.component.ChatComponent;
-import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class FabricChatPlayerList implements ChatPlayerList {
 	protected final FabricParser parser;
 	protected final PlayerList playerList;
 
 	public FabricChatPlayerList(FabricParser parser, PlayerList playerList) {
-		this.parser = Objects.requireNonNull(parser);
-		this.playerList = Objects.requireNonNull(playerList);
+		this.parser = requireNonNull(parser);
+		this.playerList = requireNonNull(playerList);
 	}
 
 	public PlayerList getImpl() {
@@ -54,7 +54,7 @@ public class FabricChatPlayerList implements ChatPlayerList {
 
 	@Override
 	public Collection<? extends ChatPlayer> getPlayers() {
-		return new ParseCollection<>(this.playerList.getPlayers(), this.parser::toChatPlayer);
+		return Collections2.transform(this.playerList.getPlayers(), this.parser::toChatPlayer);
 	}
 
 	@Override

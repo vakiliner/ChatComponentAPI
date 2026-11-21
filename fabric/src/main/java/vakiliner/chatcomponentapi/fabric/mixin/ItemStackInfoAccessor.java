@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.HoverEvent.ItemStackInfo;
 import net.minecraft.world.item.Item;
 
+@Deprecated
 @Mixin(ItemStackInfo.class)
 public interface ItemStackInfoAccessor {
 	@Accessor("item")

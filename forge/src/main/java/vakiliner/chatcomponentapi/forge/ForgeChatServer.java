@@ -1,13 +1,13 @@
 package vakiliner.chatcomponentapi.forge;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import java.util.UUID;
-import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
 import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 import vakiliner.chatcomponentapi.component.ChatComponent;
 
 public class ForgeChatServer implements ChatServer {
@@ -15,8 +15,8 @@ public class ForgeChatServer implements ChatServer {
 	protected final MinecraftServer server;
 
 	public ForgeChatServer(ForgeParser parser, MinecraftServer server) {
-		this.parser = Objects.requireNonNull(parser);
-		this.server = Objects.requireNonNull(server);
+		this.parser = requireNonNull(parser);
+		this.server = requireNonNull(server);
 	}
 
 	public MinecraftServer getImpl() {
@@ -39,6 +39,11 @@ public class ForgeChatServer implements ChatServer {
 	}
 
 	@Override
+	public boolean isSameThread() {
+		return this.server.isSameThread();
+	}
+
+	@Override
 	public boolean isDedicatedServer() {
 		return this.server.isDedicatedServer();
 	}
@@ -54,8 +59,8 @@ public class ForgeChatServer implements ChatServer {
 	}
 
 	@Override
-	public boolean isSingleplayerOwner(GameProfile gameProfile) {
-		return this.server.isSingleplayerOwner(gameProfile);
+	public boolean isSingleplayerOwner(ChatNameAndId chatNameAndId) {
+		return this.server.isSingleplayerOwner(chatNameAndId.toGameProfile());
 	}
 
 	@Override
@@ -68,14 +73,14 @@ public class ForgeChatServer implements ChatServer {
 		this.server.executeBlocking(command);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server, plugin, runnable);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
 		this.parser.executeBlocking(this.server, plugin, runnable);
 	}

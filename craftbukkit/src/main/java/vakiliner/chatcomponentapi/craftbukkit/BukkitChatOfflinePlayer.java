@@ -1,20 +1,21 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import com.mojang.authlib.GameProfile;
 import vakiliner.chatcomponentapi.base.ChatOfflinePlayer;
 import vakiliner.chatcomponentapi.base.ChatTeam;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 
 public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 	protected final BukkitParser parser;
 	protected final OfflinePlayer player;
 
 	public BukkitChatOfflinePlayer(BukkitParser parser, OfflinePlayer player) {
-		this.parser = Objects.requireNonNull(parser);
-		this.player = Objects.requireNonNull(player);
+		this.parser = requireNonNull(parser);
+		this.player = requireNonNull(player);
 	}
 
 	public OfflinePlayer getPlayer() {
@@ -22,8 +23,13 @@ public class BukkitChatOfflinePlayer implements ChatOfflinePlayer {
 	}
 
 	@Override
+	public ChatNameAndId getNameAndId() {
+		return new ChatNameAndId(this.player.getUniqueId(), this.player.getName());
+	}
+
+	@Override
 	public GameProfile getGameProfile() {
-		return new GameProfile(this.player.getUniqueId(), this.player.getName());
+		return this.getNameAndId().toGameProfile();
 	}
 
 	@Override

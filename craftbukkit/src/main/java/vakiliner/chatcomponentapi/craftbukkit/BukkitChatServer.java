@@ -1,16 +1,16 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import static java.util.Objects.requireNonNull;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.Executor;
 import java.util.function.Predicate;
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.BanList.Type;
-import com.mojang.authlib.GameProfile;
+import com.google.common.collect.Collections2;
 import vakiliner.chatcomponentapi.base.ChatIpBanList;
 import vakiliner.chatcomponentapi.base.ChatPlayer;
 import vakiliner.chatcomponentapi.base.ChatPlayerList;
@@ -18,8 +18,8 @@ import vakiliner.chatcomponentapi.base.ChatServer;
 import vakiliner.chatcomponentapi.base.ChatUserBanList;
 import vakiliner.chatcomponentapi.base.IChatPlugin;
 import vakiliner.chatcomponentapi.common.ChatMessageType;
+import vakiliner.chatcomponentapi.common.ChatNameAndId;
 import vakiliner.chatcomponentapi.component.ChatComponent;
-import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	protected static final Class<?> NMS_CLASS;
@@ -60,8 +60,8 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	public BukkitChatServer(BukkitParser parser, Server server) {
-		this.parser = Objects.requireNonNull(parser);
-		this.server = Objects.requireNonNull(server);
+		this.parser = requireNonNull(parser);
+		this.server = requireNonNull(server);
 	}
 
 	public Server getImpl() {
@@ -116,6 +116,11 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	@Override
+	public boolean isSameThread() {
+		return this.server.isPrimaryThread();
+	}
+
+	@Override
 	public boolean isDedicatedServer() {
 		return true;
 	}
@@ -140,7 +145,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 	}
 
 	@Override
-	public boolean isSingleplayerOwner(GameProfile gameProfile) {
+	public boolean isSingleplayerOwner(ChatNameAndId chatNameAndId) {
 		return false;
 	}
 
@@ -156,7 +161,7 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 
 	@Override
 	public Collection<? extends ChatPlayer> getPlayers() {
-		return new ParseCollection<>(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
+		return Collections2.transform(this.server.getOnlinePlayers(), this.parser::toChatPlayer);
 	}
 
 	@Override
@@ -188,14 +193,14 @@ public class BukkitChatServer implements ChatServer, ChatPlayerList {
 		}
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void execute(IChatPlugin plugin, Runnable runnable) {
 		this.parser.execute(this.server.getScheduler(), plugin, runnable);
 	}
 
-	@Override
 	@Deprecated
+	@Override
 	public void executeBlocking(IChatPlugin plugin, Runnable runnable) {
 		this.parser.executeBlocking(this.server.getScheduler(), plugin, runnable);
 	}

@@ -12,7 +12,7 @@ dependencies {
 
 loom {
 	forge {
-		mixinConfig 'chatcomponentapi.mixins.forge.json'
+		accessTransformer(file('src/main/resources/META-INF/accesstransformer.cfg'))
 	}
 }
 
