@@ -1,7 +1,7 @@
 package vakiliner.chatcomponentapi.craftbukkit;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Date;
-import java.util.Objects;
 import org.bukkit.BanEntry;
 import vakiliner.chatcomponentapi.base.ChatBanEntry;
 
@@ -10,8 +10,8 @@ public class BukkitChatBanEntry implements ChatBanEntry {
 	protected final BanEntry banEntry;
 
 	public BukkitChatBanEntry(BukkitParser parser, BanEntry banEntry) {
-		this.parser = Objects.requireNonNull(parser);
-		this.banEntry = Objects.requireNonNull(banEntry);
+		this.parser = requireNonNull(parser);
+		this.banEntry = requireNonNull(banEntry);
 	}
 
 	public BanEntry getImpl() {

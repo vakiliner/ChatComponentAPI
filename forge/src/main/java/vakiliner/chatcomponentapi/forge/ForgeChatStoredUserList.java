@@ -1,20 +1,20 @@
 package vakiliner.chatcomponentapi.forge;
 
+import static java.util.Objects.requireNonNull;
 import java.util.Collection;
-import java.util.Objects;
+import com.google.common.collect.Collections2;
 import net.minecraft.server.players.StoredUserEntry;
 import net.minecraft.server.players.StoredUserList;
 import vakiliner.chatcomponentapi.base.ChatStoredUserEntry;
 import vakiliner.chatcomponentapi.base.ChatStoredUserList;
-import vakiliner.chatcomponentapi.util.ParseCollection;
 
 public abstract class ForgeChatStoredUserList<Key, HandleKey, Entry extends ChatStoredUserEntry, HandleEntry extends StoredUserEntry<HandleKey>, List extends StoredUserList<HandleKey, HandleEntry>> implements ChatStoredUserList<Key, Entry> {
 	protected final ForgeParser parser;
 	protected final List list;
 
 	public ForgeChatStoredUserList(ForgeParser parser, List list) {
-		this.parser = Objects.requireNonNull(parser);
-		this.list = Objects.requireNonNull(list);
+		this.parser = requireNonNull(parser);
+		this.list = requireNonNull(list);
 	}
 
 	protected abstract HandleKey cast(Key key);
@@ -33,7 +33,7 @@ public abstract class ForgeChatStoredUserList<Key, HandleKey, Entry extends Chat
 
 	@Override
 	public Collection<Entry> getEntries() {
-		return new ParseCollection<>(this.list.getEntries(), this::cast);
+		return Collections2.transform(this.list.getEntries(), this::cast);
 	}
 
 	@Override
@@ -46,8 +46,7 @@ public abstract class ForgeChatStoredUserList<Key, HandleKey, Entry extends Chat
 		if (obj == this) {
 			return true;
 		} else if (obj != null && this.getClass() == obj.getClass()) {
-			@SuppressWarnings("rawtypes")
-			ForgeChatStoredUserList other = (ForgeChatStoredUserList) obj;
+			ForgeChatStoredUserList<?, ?, ?, ?, ?> other = (ForgeChatStoredUserList<?, ?, ?, ?, ?>) obj;
 			return this.parser.equals(other.parser) && this.list.equals(other.list);
 		} else {
 			return false;
